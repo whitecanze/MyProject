@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/ddbad6351c.js" crossorigin="anonymous"></script>
+    <title>Add Subject</title>
+</head>
+
+<body style="background-color: rgba(31, 31, 31, 1);">
+    {% with getallsj = sjdata %}
+    {% with getallst = stdata %}
+    <div class="container">
+        <div class="card" style="margin-top:15%;">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="row">
+                            <a href="/" class="btn btn-warning btn-lg">
+                                <i class="fas fa-backspace"></i> กลับ</a>
+                        </div>
+                        <div class="row" style="text-align: center;font-size:4.8rem;margin-top:2%;">
+                            <span>ระบบการเพิ่มวิชาเรียน</span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="row">
+                            <h1>ข้อมูลนิสิต</h1>
+                        </div>
+                        <div class="row" style="display: block;">
+                            <h5>รหัสนิสิต : {{data["st_id"]}}</h5>
+                            <h5>ชื่อ : {{data['fname']}} {{data['lname']}}</h5>
+                            <h5>คณะ : {{data['fac_name']}}</h5>
+                            <h5>สาขา : {{data['br_name']}}</h5>
+                            <h5>ชั้นปี : {{data['st_level']}}</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+
+
+                <div class="row">
+                    <div class="col-2">
+                        <label for="sel1">
+                            <h2>เลือกวิชา</h2>
+                        </label>
+                    </div>
+                    <div class="col-10">
+                        <form action="/addstsj" method="POST">
+                            <div class="row">
+                                <div class="col-10">
+                                    <div class="form-group">
+                                        <input type="hidden" name="st_id" value="{{data["st_id"]}}">
+                                        <select class="form-control" name="sj1" id="sj1" onclick="chk1()"
+                                            style="font-size: 1.5rem;">
+                                            {% for chkstdata in getallst %}
+                                            {% with chkenroll = chkstdata['enroll'] %}
+                                            {% with chksjenroll = chkenroll['sj_enroll'] %}
+                                            {% with chksjlist = chksjenroll['sj_list'] %}
+                                            {% with getsj1 = chksjlist['sj_1'] %}
+                                            {% with getsj2 = chksjlist['sj_2'] %}
+                                            {% with getsj3 = chksjlist['sj_3'] %}
+                                            {% with getsj4 = chksjlist['sj_4'] %}
+                                            {% with getsj5 = chksjlist['sj_5'] %}
+                                            {% with getsj6 = chksjlist['sj_6'] %}
+                                            {% with getsj7 = chksjlist['sj_7'] %}
+                                            {% for sjdata in getallsj %}
+                                            {% with sjdetail = sjdata['sj_detail'] %}
+                                            {% if sjdata['sj_id'] != getsj1['sj_id'] and sjdata['sj_id'] != getsj2['sj_id'] and sjdata['sj_id'] != getsj3['sj_id'] and sjdata['sj_id'] != getsj4['sj_id'] and sjdata['sj_id'] != getsj5['sj_id'] and sjdata['sj_id'] != getsj6['sj_id'] and sjdata['sj_id'] != getsj7['sj_id'] %}
+                                            <option
+                                                value="{{sjdata['sj_id']}}:{{sjdetail['sj_name']}}:{{sjdetail['sj_StartTime']}}:{{sjdetail['sj_FinishTime']}}:{{sjdetail['sj_date']}}">
+                                                {{sjdata['sj_id']}} :: {{sjdetail['sj_name']}}
+                                            </option>
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% endfor %}
+                                            {% endwith %}
+                                            {% endwith %}
+                                            {% endwith %}
+                                            {% endwith %}
+                                            {% endwith %}
+                                            {% endwith %}
+                                            {% endwith %}
+                                            {% endwith %}
+                                            {% endwith %}
+                                            {% endwith %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <button class="btn btn-primary btn-lg" type="submit"
+                                            onclick="return confirm('คุณต้องการเพิ่มวิชาที่เลือกใช่หรือไม่?')"><i
+                                                class="fas fa-plus"></i> เพิ่ม</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-2">
+                        <h6>รายละเอียดวิชา :: </h6>
+                    </div>
+                    <div class="col-2">
+                        <span>รหัสวิชา :
+                            <span id="newsjid">-</span>
+                        </span>
+                    </div>
+                    <div class="col-4">
+                        <span>ชื่อวิชา :
+                            <span id="newsjname">-</span>
+                        </span>
+                    </div>
+                    <div class="col-2">
+                        <span>วันที่ :
+                            <span id="newsjdate">-</span>
+                        </span>
+                    </div>
+                    <div class="col-2">
+                        <span>เวลาเรียน :
+                            <span id="newsjstart">-</span> ถึง
+                            <span id="newsjend">-</span> น.
+                        </span>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    function chk1() {
+                        const getid = document.getElementById('sj1');
+                        const shtxt1 = document.getElementById('newsjid');
+                        const shtxt2 = document.getElementById('newsjname');
+                        const shtxt3 = document.getElementById('newsjdate');
+                        const shtxt4 = document.getElementById('newsjstart');
+                        const shtxt5 = document.getElementById('newsjend');
+                        const splitdata = getid.value.split(":");
+                        shtxt1.innerHTML = splitdata[0];
+                        shtxt2.innerHTML = splitdata[1];
+                        if (splitdata[4] == "Mon") {
+                            shtxt3.innerHTML = "วันจันทร์";
+                        } else if (splitdata[4] == "Tue") {
+                            shtxt3.innerHTML = "วันอังคาร";
+                        } else if (splitdata[4] == "Wed") {
+                            shtxt3.innerHTML = "วันพุธ";
+                        } else if (splitdata[4] == "Thu") {
+                            shtxt3.innerHTML = "วันพฤหัสบดี";
+                        } else if (splitdata[4] == "Fri") {
+                            shtxt3.innerHTML = "วันศุกร์";
+                        } else if (splitdata[4] == "Sat") {
+                            shtxt3.innerHTML = "วันเสาร์";
+                        } else if (splitdata[4] == "Sun") {
+                            shtxt3.innerHTML = "วันอาทิตย์";
+                        } else
+                            shtxt3.innerHTML = splitdata[4];
+                        shtxt4.innerHTML = splitdata[2];
+                        shtxt5.innerHTML = splitdata[3];
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+    {% endwith %}
+    {% endwith %}
+</body>
+
+</html>
