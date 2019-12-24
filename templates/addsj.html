@@ -10,15 +10,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/ddbad6351c.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <title>Add Subject</title>
 </head>
 
 <body style="background-color: rgba(31, 31, 31, 1);">
     {% with getallsj = sjdata %}
     {% with getallst = stdata %}
-    <div class="container">
+    <div class="container w3-animate-zoom">
         <div class="card" style="margin-top:15%;">
-            <div class="card-header">
+            <div class="card-header w3-animate-zoom">
                 <div class="row">
                     <div class="col-8">
                         <div class="row">
@@ -43,10 +44,7 @@
                     </div>
                 </div>
             </div>
-
-            <div class="card-body">
-
-
+            <div class="card-body w3-animate-zoom">
                 <div class="row">
                     <div class="col-2">
                         <label for="sel1">
@@ -107,11 +105,8 @@
                         </form>
                     </div>
                 </div>
-
-
             </div>
-
-            <div class="card-footer">
+            <div class="card-footer w3-animate-zoom">
                 <div class="row">
                     <div class="col-2">
                         <h6>รายละเอียดวิชา :: </h6>
@@ -138,42 +133,43 @@
                         </span>
                     </div>
                 </div>
-                <script type="text/javascript">
-                    function chk1() {
-                        const getid = document.getElementById('sj1');
-                        const shtxt1 = document.getElementById('newsjid');
-                        const shtxt2 = document.getElementById('newsjname');
-                        const shtxt3 = document.getElementById('newsjdate');
-                        const shtxt4 = document.getElementById('newsjstart');
-                        const shtxt5 = document.getElementById('newsjend');
-                        const splitdata = getid.value.split(":");
-                        shtxt1.innerHTML = splitdata[0];
-                        shtxt2.innerHTML = splitdata[1];
-                        if (splitdata[4] == "Mon") {
-                            shtxt3.innerHTML = "วันจันทร์";
-                        } else if (splitdata[4] == "Tue") {
-                            shtxt3.innerHTML = "วันอังคาร";
-                        } else if (splitdata[4] == "Wed") {
-                            shtxt3.innerHTML = "วันพุธ";
-                        } else if (splitdata[4] == "Thu") {
-                            shtxt3.innerHTML = "วันพฤหัสบดี";
-                        } else if (splitdata[4] == "Fri") {
-                            shtxt3.innerHTML = "วันศุกร์";
-                        } else if (splitdata[4] == "Sat") {
-                            shtxt3.innerHTML = "วันเสาร์";
-                        } else if (splitdata[4] == "Sun") {
-                            shtxt3.innerHTML = "วันอาทิตย์";
-                        } else
-                            shtxt3.innerHTML = splitdata[4];
-                        shtxt4.innerHTML = splitdata[2];
-                        shtxt5.innerHTML = splitdata[3];
-                    }
-                </script>
+
             </div>
         </div>
     </div>
     {% endwith %}
     {% endwith %}
 </body>
+<script>
+    function chk1() {
+        let getid = document.getElementById('sj1')
+        let shtxt1 = document.getElementById('newsjid')
+        let shtxt2 = document.getElementById('newsjname')
+        let shtxt3 = document.getElementById('newsjdate')
+        let shtxt4 = document.getElementById('newsjstart')
+        let shtxt5 = document.getElementById('newsjend')
+        let splitdata = getid.value.split(":")
+        shtxt1.innerHTML = splitdata[0]
+        shtxt2.innerHTML = splitdata[1]
+        if (splitdata[4] == "Mon") {
+            shtxt3.innerHTML = "วันจันทร์"
+        } else if (splitdata[4] == "Tue") {
+            shtxt3.innerHTML = "วันอังคาร"
+        } else if (splitdata[4] == "Wed") {
+            shtxt3.innerHTML = "วันพุธ"
+        } else if (splitdata[4] == "Thu") {
+            shtxt3.innerHTML = "วันพฤหัสบดี"
+        } else if (splitdata[4] == "Fri") {
+            shtxt3.innerHTML = "วันศุกร์"
+        } else if (splitdata[4] == "Sat") {
+            shtxt3.innerHTML = "วันเสาร์"
+        } else if (splitdata[4] == "Sun") {
+            shtxt3.innerHTML = "วันอาทิตย์"
+        } else
+            shtxt3.innerHTML = splitdata[4]
+        shtxt4.innerHTML = splitdata[2]
+        shtxt5.innerHTML = splitdata[3]
+    }
+</script>
 
 </html>

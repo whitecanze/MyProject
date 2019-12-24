@@ -1,8 +1,8 @@
 import numpy as np
 import cv2
 import dlib
-import os
 import pickle
+import os
 path = './facedata/'
 detector = dlib.get_frontal_face_detector()
 sp = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
