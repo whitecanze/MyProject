@@ -1,9 +1,11 @@
 body {
-    color: white;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    color: black;
     user-select: none;
 }
-
-
 
 .card.main-1>.card-header,
 .card.main-2>.card-header,
