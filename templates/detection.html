@@ -16,6 +16,14 @@
             color: white;
         }
     </style>
+    <script>
+        $(document).ready(function () {
+            setInterval("ajaxd()", 1000)
+        })
+        function ajaxd() {
+            $("#sysStatus").load("/checkstd", function () {})
+        }
+    </script>
 </head>
 
 <body>
@@ -42,18 +50,22 @@
                         </div>
                         <div class="overflow-none">
                             <ul class="list-group">
-                                {% with num1 = 10 %}
+                                <!-- {% with num1 = 10 %}
                                 {% for x in range(num1) %}
                                 <li class="list-group-item" style="color: black;">{{x+1}}</li>
                                 {% endfor %}
-                                {% endwith %}
+                                {% endwith %} -->
+                                <li class="list-group-item" style="color: black;" id="sysStatus">{{std_status}}</li>
+                                <!-- {% for getst in std_status %}
+                                <li class="list-group-item" style="color: black;">{{getst['st_id']}}</li>
+                                {% endfor %} -->
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-8">
-                <img style="width:auto;height:100%;" src="{{ url_for('video_feed') }}">
+                <!-- <img style="width:auto;height:100%;" src="{{ url_for('video_feed') }}"> -->
             </div>
         </div>
     </div>

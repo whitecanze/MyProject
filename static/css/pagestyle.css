@@ -3,6 +3,8 @@ body {
     user-select: none;
 }
 
+
+
 .card.main-1>.card-header,
 .card.main-2>.card-header,
 .card.main-3>.card-header {
@@ -53,11 +55,10 @@ table {
     height: 100%;
     background: rgba(31, 31, 64, 1);
     display: grid;
-    grid-template-rows: 10% 85% 5%;
+    grid-template-rows: 10% 90%;
     grid-template-areas:
         "header"
-        "body"
-        "footer";
+        "body";
 }
 
 #page-content-wrapper {

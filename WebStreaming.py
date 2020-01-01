@@ -8,7 +8,7 @@ import dlib
 import pickle
 import werkzeug
 from werkzeug.utils import secure_filename
-from flask import Flask, render_template, Response, redirect, url_for, request, flash
+from flask import Flask, render_template, Response, redirect, url_for, request, flash, jsonify
 from facedetection import FaceDetectionCamera
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
@@ -233,6 +233,28 @@ def upload_image():
             else:
                 flash("That file extension is not allowed", "danger")
                 return redirect(url_for('index'))
+
+@app.route("/checkstd")
+def chkstd():
+    std = mongo.db.stdata.find({})
+    # for getchk in std:
+    #     if std['st_status'] == "Checked":
+    #         print("ID: {0} Name:{1} {2}".format(std['st_id'],std['f_name',std['l_name']]))
+    #         std_status = "ID: {0} Name:{1} {2}".format(std['st_id'], std['f_name', std['l_name']])
+    #     else:
+    #         pass
+    #     return std_status
+    std_status = []
+    for getstid in std:
+        if getstid['st_status'] == "Checked":
+            stdid = getstid['st_id']
+            datadic = {
+                "st_id": stdid 
+            }
+            std_status.append(datadic)
+        else:
+            pass
+    return jsonify(std_status)
 
 @app.route('/gencamera')
 def generate(camera):
@@ -589,12 +611,11 @@ def stsjconclusion(st_id, sj_id):
     result = mongo.db.stdata.find({'st_id': stid})
     return render_template('conclusion.html', data1=st_id, data2=sj_id, getdb=result)
 
-
-@app.route('/time_feed')
-def time_feed():
-    def generate():
-        yield datetime.now().strftime("%A %d-%m-%Y %H:%M")
-    return Response(generate(), mimetype='text')
+# @app.route('/time_feed')
+# def time_feed():
+#     def generate():
+#         yield datetime.now().strftime("%A %d-%m-%Y %H:%M")
+#     return Response(generate(), mimetype='text')
 
 
 if __name__ == '__main__':
