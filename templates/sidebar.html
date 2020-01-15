@@ -1,0 +1,169 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/animation2.css') }}">
+<style>
+
+</style>
+<!-- background animation -->
+<ul class="circles">
+    {% for anim1 in range(10) %}
+    <li></li>
+    {% endfor %}
+</ul>
+<div class="sidebar-logo">
+</div>
+<div class="sidebar-header w3-animate-opacity">
+    <div class="" align="center" style="margin-top:3%;">
+        <img class="lazy" data-src="{{ url_for('static', filename='img/icon.webp') }}" width="120px" height="120px"
+            alt="">
+        <noscript>
+            <img src="{{ url_for('static', filename='img/icon.webp') }}" width="120px" height="120px" alt="">
+        </noscript>
+        <h1 style="font-weight: bold;color:rgba(253, 184, 19, 1);">{{sendtextpage['sidebartexthead']}}</h1>
+    </div>
+    <!-- <hr style="border-color: rgba(253, 184, 19, 1);"> -->
+
+</div>
+<div class="sidebar-body w3-animate-opacity" style="z-index:1;align-items:center; ">
+    <ul class="sidebar-nav ">
+        <li id="rel1" style="display:block;">
+            <a href="" data-toggle="collapse" data-target="#collapsibleNavbar" aria-expanded="false"
+                onclick="toggleChevron(this)" id="firstchoice">
+                <div class="row">
+                    <div class="col-4" style="text-align:center;padding:0;">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div class="col-8" style="padding:0;text-align:left;">
+                        {{sendtextpage['sidebartextbody1']}}
+                        <i class="fas fa-caret-down"></i>
+                    </div>
+                </div>
+            </a>
+        </li>
+        <div class="collapse navbar-collapse " id="collapsibleNavbar">
+            <ul class="navbar-nav" id="mininav1">
+                <li class="nav-item add1" id="add1">
+                    <a href="" data-toggle="modal" style="font-size: 1.25rem;" data-target="#modalcreate">
+                        <div class="row">
+                            <div class="col-4" style="text-align: center;">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <div class="col-8" style="padding:0;text-align:left;">
+                                {{sendtextpage['sidebartextsubbody1']}}
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item add2" id="add2">
+                    <a class="nav-link" href="" data-toggle="modal" style="font-size: 1.25rem;"
+                        data-target="#modaladdsj">
+                        <div class="row">
+                            <div class="col-4" style="text-align: center;">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="col-8" style="padding:0;text-align:left;">
+                                {{sendtextpage['sidebartextsubbody2']}}
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item add3" id="add3">
+                    <a class="nav-link" href="" data-toggle="modal" style="font-size: 1.25rem;"
+                        data-target="#modaladdimage">
+                        <div class="row">
+                            <div class="col-4" style="text-align: center;">
+                                <i class="fas fa-code-branch"></i>
+                            </div>
+                            <div class="col-8" style="padding:0;text-align:left;">
+                                {{sendtextpage['sidebartextsubbody4']}}
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <!-- <li class="nav-item add4" id="add4">
+                    <a class="nav-link" href="/convertimg" style="font-size: 1.25rem;">
+                        <div class="row">
+                            <div class="col-4" style="text-align: center;">
+                                <i class="far fa-images"></i>
+                            </div>
+                            <div class="col-8" style="padding:0;text-align:left;">
+                                Convert To Webp
+                            </div>
+                        </div>
+                    </a>
+                </li> -->
+            </ul>
+        </div>
+        </li>
+        <li id="rel2">
+            <a href="training" id="myTraining">
+                <div class="row">
+                    <div class="col-4" style="text-align:center;padding:0;">
+                        <i class="fab fa-react"></i>
+                    </div>
+                    <div class="col-8" style="padding:0;text-align:left;left:0;">
+                        {{sendtextpage['sidebartextbody2']}}
+                    </div>
+                </div>
+            </a>
+        </li>
+        <li id="rel3">
+            <a href="detection">
+                <div class="row">
+                    <div class="col-4" style="text-align:center;padding:0;">
+                        <i class="fas fa-fingerprint"></i>
+                    </div>
+                    <div class="col-8" style="padding:0;text-align:left;left:0;">
+                        {{sendtextpage['sidebartextbody3']}}
+                    </div>
+                </div>
+            </a>
+        </li>
+        <li id="rel4">
+            <a href="/count">
+                <div class="row">
+                    <div class="col-4" style="text-align:center;padding:0;">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="col-8" style="padding:0;text-align:left;left:0;">
+                        {{sendtextpage['sidebartextbody4']}}
+                    </div>
+                </div>
+            </a>
+        </li>
+        <li id="rel5">
+            <a href="/chkimage">
+                <div class="row">
+                    <div class="col-4" style="text-align:center;padding:0;">
+                        <i class="far fa-images"></i>
+                    </div>
+                    <div class="col-8" style="padding:0;text-align:left;left:0;">
+                        {{sendtextpage['sidebartextsubbody3']}}
+                    </div>
+                </div>
+            </a>
+        </li>
+    </ul>
+</div>
+
+<script>
+    $("#firstchoice").on('click', () => {
+        let reletive1 = document.getElementById("rel1")
+        let reletive2 = document.getElementById("rel2")
+        let reletive3 = document.getElementById("rel3")
+        let reletive4 = document.getElementById("rel4")
+        let reletive5 = document.getElementById("rel5")
+        if (reletive1.className == "" && reletive2.className == "" && reletive3.className == "" &&
+            reletive4.className == "" && reletive5.className == "") {
+            reletive1.className += "short"
+            reletive2.className += "short"
+            reletive3.className += "short"
+            reletive4.className += "short"
+            reletive5.className += "short"
+        } else {
+            reletive1.className = reletive1.className.replace(/(?:^|\s)short(?!\S)/g, '')
+            reletive2.className = reletive2.className.replace(/(?:^|\s)short(?!\S)/g, '')
+            reletive3.className = reletive3.className.replace(/(?:^|\s)short(?!\S)/g, '')
+            reletive4.className = reletive4.className.replace(/(?:^|\s)short(?!\S)/g, '')
+            reletive5.className = reletive5.className.replace(/(?:^|\s)short(?!\S)/g, '')
+        }
+    });
+</script>

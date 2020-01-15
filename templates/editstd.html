@@ -1,0 +1,51 @@
+<div id="modaleditstd{{data["st_id"]}}" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: rgba(0, 0, 64, 1);color:rgba(253, 184, 19, 1);">
+                <h4 class="modal-title">แบบฟอร์มจัดการข้อมูล</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form action="/updatestd" method="POST">
+                    <div class="form-group">
+                        <label>รหัสนิสิต:{{data["st_id"]}}</label>
+                        <input type="hidden" class="form-control" name="st_id" value="{{data["st_id"]}}">
+                    </div>
+                    <div class="form-group">
+                        <label>ชื่อ:</label>
+                        <input type="text" class="form-control" name="fname" value="{{data["f_name"]}}">
+                    </div>
+                    <div class="form-group">
+                        <label>นามสกุล:</label>
+                        <input type="text" class="form-control" name="lname" value="{{data["l_name"]}}">
+                    </div>
+                    <div class="form-group">
+                        <label>สถานะ:</label>
+                        <select class="form-control" id="sel1" name="st_status" require>
+                            {% if data["st_status"] == "none" %}
+                            <option selected hidden>{{data["st_status"]}}
+                            </option>
+                            <option>Checked</option>
+                            {% else %}
+                            <option selected hidden>{{data["st_status"]}}
+                            </option>
+                            <option>none</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary btn-lg" type="submit">แก้ไข</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <form action="/deletestd" method="POST">
+                    <input type="hidden" class="form-control" name="st_id" value="{{data["st_id"]}}">
+                    <button type="submit" class="btn btn-outline-danger btn-lg"
+                        onclick="return confirm('คุณต้องการลบข้อมูลหรือไม่?')">ลบข้อมูล</button>
+                </form>
+                <button type="button" class="btn btn-outline-secondary btn-lg" data-dismiss="modal">ปิด</button>
+            </div>
+        </div>
+    </div>
+</div>

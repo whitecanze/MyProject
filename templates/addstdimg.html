@@ -1,0 +1,111 @@
+<div id="modaladdimage{{data['st_id']}}" class="modal fade" role="dialog" align="start">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: rgba(0, 0, 64, 1);color:rgba(253, 184, 19, 1);">
+                <h4 class="modal-title">เพิ่มรูปภาพ :: {{data['st_id']}}
+                </h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="height: 500px;overflow:hidden;">
+                <!-- <form action="/upload-image" method="POST" enctype="multipart/form-data">
+                    <div class="bg-upload">
+                        <img class="blah" src="{{ url_for('static',filename='img/img-people.webp') }}" alt="your image" />
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p for="file-upload" id="text-name"></p>
+                    </div>
+                    <label for="file-upload" class="myfancybtn" id="custom-select-img-btn">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span>SELECT PHOTO</span>
+                    </label>
+
+                    <input type="hidden" name="mycount" value="{{cimg2}}">
+                    <input type="hidden" name="imgname" value="{{data['st_id']}}.jpg">
+                    <input type="hidden" name="st_id" value="{{data['st_id']}}">
+                    <input class="file-upload" name="image" type="file" style="display:none;">
+                    <button type="submit" class="myfancybtn" id="custom-upload-btn">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span>UPLOAD
+                        </span>
+                    </button>
+                </form> -->
+
+                <!-- <h3>จำนวนรูปในระบบ : </h3> -->
+                <label
+                    style="position:absolute;top:-10%;left:5%;font-size: 20rem;color:rgba(31, 31, 64, 0.5);font-weight:bold;">{{data['image_list']}}</label>
+                <form action="/upload-image" method="POST" enctype="multipart/form-data" class="myform1">
+                    <input type="hidden" name="mycount" value="{{data['image_list']}}">
+                    <input type="hidden" name="imgname" value="{{data['st_id']}}.jpg">
+                    <input type="hidden" name="st_id" value="{{data['st_id']}}">
+                    <div class="bg-upload">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="box">
+                        <input type="file" name="image" id="file-1" class="inputfile" />
+                        <label for="file-1" class="" id="img-select">
+                            <span for="file-1"></span>
+                            <span for="file-1"></span>
+                            <span for="file-1"></span>
+                            <span for="file-1"></span>
+                            <p for="file-1"><i class="fas fa-upload"></i>&nbsp;Choose a file&hellip;</p>
+                        </label>
+                        <!-- <label for="file-1" class="choose-img"><span>Choose a file&hellip;</span></label> -->
+                    </div>
+                    <button type="submit" class="myfancybtn uploadbtn" id="custom-upload-btn">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        UPLOAD
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    'use strict';
+
+
+    (function (document, window, index) {
+        var inputs = document.querySelectorAll('.inputfile');
+        Array.prototype.forEach.call(inputs, function (input) {
+            var label = input.nextElementSibling,
+                labelVal = label.innerHTML;
+
+
+            $(inputs).mouseover((e) => {
+                label.querySelector('p').style.color = "var(--main-color1)"
+            })
+            $(inputs).mouseout((e) => {
+                label.querySelector('p').style.color = "var(--main-color2)"
+            })
+
+            input.addEventListener('change', function (e) {
+                var fileName = '';
+                fileName = e.target.value.split('\\').pop();
+
+                if (fileName) {
+                    label.querySelector('p').innerHTML = "<i class='fas fa-upload'></i>&nbsp;" +
+                        fileName;
+                } else {
+                    label.innerHTML = labelVal;
+                }
+            });
+
+            // Firefox bug fix
+            input.addEventListener('focus', function () {
+                input.classList.add('has-focus');
+            });
+            input.addEventListener('blur', function () {
+                input.classList.remove('has-focus');
+            });
+        });
+    }(document, window, 0));
+</script>

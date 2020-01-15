@@ -1,0 +1,21 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/wateranimation.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/animation.css') }}">
+
+<div class="loader-wrapper" id="loaderpage">
+    <canvas id="c"></canvas>
+    <div class="col" align="center">
+        <div class="loading-spinner">
+            <div class="loading-list">
+                {% for animspin in range(4) %}
+                <div></div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="content">
+            <h1 id="waitingtxt1">LOADING</h1>
+            <h1 id="waitingtxt2">LOADING</h1>
+        </div>
+        <!-- <h1 class="textwaiting" id="waitingtxt">LOADING...</h1> -->
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/bgcanvas.js') }}"></script>

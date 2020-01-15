@@ -1,0 +1,158 @@
+{% with getenroll = data['enroll'] %}
+{% with getsjenroll = getenroll['sj_enroll'] %}
+{% with getsjlist = getsjenroll['sj_list'] %}
+{% with bgColor = ['primary','success','info','warning','danger','secondary','dark'] %}
+<div id="modalsjtable{{data["st_id"]}}" class="modal fade" role="dialog" style="user-select: none;font-weight:bold;">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-header w3-animate-top"
+                style="background-color: rgba(0, 0, 64, 1);color:rgba(253, 184, 19, 1);">
+                <h2 class="modal-title">ตารางวิชา</h2>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body w3-animate-opacity">
+                <br>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-10">
+                            <h3>รหัสนิสิต : {{data["st_id"]}}</h3>
+                            <h3>ชื่อ : {{data['f_name']}} {{data['l_name']}}
+                            </h3>
+                        </div>
+                        <div class="col-2">
+                            <div class="btn-group-vertical">
+                                <center>
+                                    <form action="/addsj" method="POST">
+                                        <input type="hidden" name="st_id" value="{{data["st_id"]}}">
+                                        <input type="hidden" name="st_fname" value="{{data["f_name"]}}">
+                                        <input type="hidden" name="st_lname" value="{{data["l_name"]}}">
+                                        <input type="hidden" name="fac_name" value="{{data["fac_name"]}}">
+                                        <input type="hidden" name="level" value="{{data["st_level"]}}">
+                                        <input type="hidden" name="branch" value="{{data["br_name"]}}">
+                                        <button type="submit" class="btn btn-outline-success">
+                                            <i class="fas fa-plus"></i>
+                                            &nbsp;&nbsp;
+                                            เพิ่มวิชาเรียน</button>
+                                    </form>
+                                </center>
+                                <!-- <center>
+                                    <a class="btn btn-outline-warning btn-xs" href="">
+                                        ตารางสรุปทั้งหมด
+                                    </a>
+                                </center> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                {% for i in getsjlist %}
+                {% with num = loop.index %}
+                {% with txtlist = 'sj_{}'.format(num) %}
+                {% with getsj = getsjlist[txtlist] %}
+                {% if getsj['sj_id'] != '-' %}
+                <div class="container">
+                    <div id="accordion">
+                        <div class="card bg-{{bgColor[num-1]}} text-white" data-toggle="collapse"
+                            href="#collapse{{num}}">
+                            <div class="card-header">
+                                <a style="text-align:start;">
+                                    วิชา {{getsj['sj_id']}} ::
+                                    {{getsj['sj_name']}}
+                                </a>
+                            </div>
+                            <div id="collapse{{num}}" class="collapse" data-parent="#accordion">
+                                <div class="row" style="margin: 0;">
+                                    <div class="col-10" style="background-color: rgba(31,31,31, 0.5);">
+                                        <div class="card-body text-white"
+                                            style="background-color: rgba(31,31,31, 0.5);width:100%;height:100%;">
+                                            <h3 style="text-align: center;font-weight:bold;">
+                                                รายละเอียดเพิ่มเติมเกี่ยวกับวิชา
+                                            </h3>
+                                            <hr>
+                                            <div class="row" style="">
+                                                <div class="col">
+                                                    <p>รหัสวิชา :
+                                                        {{getsj['sj_id']}}
+                                                    </p>
+                                                    <p>ชื่อวิชา :
+                                                        {{getsj['sj_name']}}
+                                                    </p>
+                                                </div>
+                                                <div class="col">
+                                                    <p>เข้าเรียนล่าสุดวันที่
+                                                        :
+                                                        none
+                                                    </p>
+                                                    <p>เวลา : none </p>
+                                                </div>
+                                                <div class="w-100"></div>
+                                                <div class="col">
+                                                    {% with datedic = {'Mon':'วันจันทร์','Tue':'วันอังคาร','Wed':'วันพุธ','Thu':'วันพฤหัสบดี','Fri':'วันศุกร์','Sat':'วันเสาร์','Sun':'วันอาทิตย์'}  %}
+                                                    {% for k,v in datedic.items()  %}
+                                                    {% if getsj['sj_date'] == k %}
+                                                    <p>วันที่ : {{v}}</p>
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                    {% endwith %}
+                                                    <p>เวลา
+                                                        :{{getsj['sj_begin']}}
+                                                        ถึง
+                                                        {{getsj['sj_finish']}}
+                                                    </p>
+                                                </div>
+                                                <div class="col">
+                                                    <p>สาย :
+                                                        {{data['late']}}
+                                                        ครั้ง
+                                                    </p>
+                                                    <p>ขาดเรียน :
+                                                        {{data['absent']}}
+                                                        ครั้ง
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="background-color: rgba(31,31,31, 0.5);">
+                                        <div class="card-body text-white"
+                                            style="background-color: rgba(31,31,31, 0.5);width:100%;height:100%;">
+                                            <div class="row">
+                                                <a class="btn btn-{{bgColor[num-1]}} btn-xs"
+                                                    style="margin-top:30px;color:white;font-weight:bold;"
+                                                    href="/stsjconclusion/{{data['st_id']}}/{{getsj['sj_id']}}">ตารางสรุปผลการเข้าเรียน</a>
+                                            </div>
+                                            <div class="row">
+                                                <form action="/deletestsj" method="POST">
+                                                    <input type="hidden" class="form-control" name="stid"
+                                                        value="{{data['st_id']}}">
+                                                    <input type="hidden" class="form-control" name="sjid"
+                                                        value="{{getsj['sj_id']}}">
+                                                    <button type="submit" class="btn btn-outline-danger btn-lg"
+                                                        style="margin-top:30px;color:white;font-weight:bold;width:100%;"
+                                                        onclick="return confirm('คุณต้องการลบวิชานี้หรือไม่?')">ลบวิชาเรียน</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endwith %}
+                {% endwith %}
+                {% endwith %}
+                {% endfor %}
+                <br>
+            </div>
+            <div class="modal-footer w3-animate-bottom">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">ปิด</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endwith %}
+{% endwith %}
+{% endwith %}
+{% endwith %}

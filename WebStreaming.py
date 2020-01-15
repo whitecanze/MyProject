@@ -9,21 +9,30 @@ import pickle
 import werkzeug
 from werkzeug.utils import secure_filename
 from flask import Flask, render_template, Response, redirect, url_for, request, flash, jsonify
+import json
+from bson import json_util, ObjectId
+from flask_cors import CORS
 from facedetection import FaceDetectionCamera
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
 from pymongo import ReturnDocument
 from PIL import Image
 from datetime import datetime
+from webptools import webplib as webp
 
 app = Flask(__name__)
+app.debug = True
+app.use_reloader = True
 app.secret_key = 'kimetsu no yaiba'
 app.config["MONGO_URI"] = "mongodb://localhost:27017/student"
-app.config["SERVER_NAME"] = 'localhost:5000'
-app.config["IMAGE_UPLOADS"] = "./DataSet"
+app.config["SERVER_NAME"] = '192.168.43.116:8485'
+app.config["IMAGE_UPLOADS"] = "./static/photodataset"
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPEG", "JPG", "PNG", "GIF", "WEBP"]
 mongo = PyMongo(app)
 app.app_context
+
+CORS(app, resources={r'/*': {'origins': '*'}})
+
 
 class Controlstdata:
     def updatesj(self, oldsj_id, faculty, sj_id, sj_name, sj_StartTime, sj_FinishTime, sj_date):
@@ -90,7 +99,7 @@ class Controlstdata:
 
     def insertData(self, st_id, fname, lname, fac, br, stlevel, status):
         mongo.db.stdata.insert(
-            {"st_id": int(st_id), "f_name": fname, "l_name": lname, "fac_name": fac, "br_name": br, "st_level": stlevel, "last_check": "-","st_chk": "-","st_status": status, "absent": 0,
+            {"st_id": int(st_id), "f_name": fname, "l_name": lname, "fac_name": fac, "br_name": br, "st_level": stlevel, "last_check": "-", "st_chk": "-", "st_status": status, "absent": 0,
                 "late": 0,
             "enroll": {
                 "sj_enroll": {
@@ -102,7 +111,17 @@ class Controlstdata:
                         "sj_5": {"sj_id": "-", "sj_name": "-", "sj_date": "-", "sj_begin": "-", "sj_finish": "-", "sj_chktime": {"week1": {"learning_date": "-", "chk_status": "-"}, "week2": {"learning_date": "-", "chk_status": "-"}, "week3": {"learning_date": "-", "chk_status": "-"}, "week4": {"learning_date": "-", "chk_status": "-"}, "week5": {"learning_date": "-", "chk_status": "-"}, "week6": {"learning_date": "-", "chk_status": "-"}, "week7": {"learning_date": "-", "chk_status": "-"}, "week8": {"learning_date": "-", "chk_status": "-"}, "week9": {"learning_date": "-", "chk_status": "-"}, "week10": {"learning_date": "-", "chk_status": "-"}, "week11": {"learning_date": "-", "chk_status": "-"}, "week12": {"learning_date": "-", "chk_status": "-"}, "week13": {"learning_date": "-", "chk_status": "-"}, "week14": {"learning_date": "-", "chk_status": "-"}, "week15": {"learning_date": "-", "chk_status": "-"}, "week16": {"learning_date": "-", "chk_status": "-"}}},
                         "sj_6": {"sj_id": "-", "sj_name": "-", "sj_date": "-", "sj_begin": "-", "sj_finish": "-", "sj_chktime": {"week1": {"learning_date": "-", "chk_status": "-"}, "week2": {"learning_date": "-", "chk_status": "-"}, "week3": {"learning_date": "-", "chk_status": "-"}, "week4": {"learning_date": "-", "chk_status": "-"}, "week5": {"learning_date": "-", "chk_status": "-"}, "week6": {"learning_date": "-", "chk_status": "-"}, "week7": {"learning_date": "-", "chk_status": "-"}, "week8": {"learning_date": "-", "chk_status": "-"}, "week9": {"learning_date": "-", "chk_status": "-"}, "week10": {"learning_date": "-", "chk_status": "-"}, "week11": {"learning_date": "-", "chk_status": "-"}, "week12": {"learning_date": "-", "chk_status": "-"}, "week13": {"learning_date": "-", "chk_status": "-"}, "week14": {"learning_date": "-", "chk_status": "-"}, "week15": {"learning_date": "-", "chk_status": "-"}, "week16": {"learning_date": "-", "chk_status": "-"}}},
                         "sj_7": {"sj_id": "-", "sj_name": "-", "sj_date": "-", "sj_begin": "-", "sj_finish": "-", "sj_chktime": {"week1": {"learning_date": "-", "chk_status": "-"}, "week2": {"learning_date": "-", "chk_status": "-"}, "week3": {"learning_date": "-", "chk_status": "-"}, "week4": {"learning_date": "-", "chk_status": "-"}, "week5": {"learning_date": "-", "chk_status": "-"}, "week6": {"learning_date": "-", "chk_status": "-"}, "week7": {"learning_date": "-", "chk_status": "-"}, "week8": {"learning_date": "-", "chk_status": "-"}, "week9": {"learning_date": "-", "chk_status": "-"}, "week10": {"learning_date": "-", "chk_status": "-"}, "week11": {"learning_date": "-", "chk_status": "-"}, "week12": {"learning_date": "-", "chk_status": "-"}, "week13": {"learning_date": "-", "chk_status": "-"}, "week14": {"learning_date": "-", "chk_status": "-"}, "week15": {"learning_date": "-", "chk_status": "-"}, "week16": {"learning_date": "-", "chk_status": "-"}}},
-                    }}}})
+                    }}},
+            "image_list": 0
+            })
+
+    def insertImg(self, student_id, img_num):
+                mongo.db.stdata.update_one({"st_id": int(student_id)}, {"$set": {
+            "image_list": int(img_num)}})
+
+    def deleteImg(self, student_id):
+        mongo.db.stdata.update_one({"st_id": int(student_id)}, {"$set": {
+            "image_list": 0}})
 
 
 class DataGenerator:
@@ -181,6 +200,7 @@ class TrainData:
                 ids.append(id)
         return faceSamples, ids
 
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     result = mongo.db.stdata.find({})
@@ -191,22 +211,25 @@ def index():
     getSubject = mongo.db.subject.find({})
     shSj = mongo.db.subject.find({})
     shSj2 = mongo.db.subject.find({})
+    imglist = mongo.db.dbimagelist.find({})
 
     co1 = mongo.db.stdata.count_documents({})
     co2 = mongo.db.dbfaculty.count_documents({})
     co3 = mongo.db.subject.count_documents({})
+    co4 = mongo.db.dbimagelist.count_documents({})
 
-    textpage = {"sidebartexthead": "ระบบจัดการ",
+    textpage = {"sidebartexthead": "แถบเครื่องมือ",
                 "sidebartextbody1": "จัดการ",
                 "sidebartextsubbody1": "เพิ่มนักเรียน",
                 "sidebartextsubbody2": "เพิ่มวิชา",
-                "sidebartextsubbody3": "เพิ่มรูปภาพ",
+                "sidebartextsubbody3": "ดูรูปภาพ",
                 "sidebartextsubbody4": "เพิ่มคณะและสาขา",
                 "sidebartextbody2": "เรียนรู้",
                 "sidebartextbody3": "ระบบตรวจจับ",
                 "sidebartextbody4": "นับรูป", }
 
     return render_template('index.html', selfac=getfac3, selsj=shSj2, sendtextpage=textpage, countst=co1, countfac=co2, countsj=co3, shfaculty=getfac, shfaculty2=getfac2, shbranch=getbr, datas=result, shsj=shSj, getsj=getSubject)
+
 
 def allowed_image(filename):
     if not "." in filename:
@@ -217,98 +240,134 @@ def allowed_image(filename):
     else:
         return False
 
+
 @app.route("/upload-image", methods=["GET", "POST"])
 def upload_image():
     if request.method == "POST":
+        addimg = Controlstdata()
         if request.files:
             imgname = request.form['imgname']
+            st_id = request.form['st_id']
+            count2 = request.form['mycount']
+            imgsplit = imgname.split('.')
+            newname = st_id + "_" + str(int(count2) + 1) + "." + "jpg"
             image = request.files["image"]
-            if image.filename == "":
-                flash("No image name", "warning")
-                return redirect(url_for('index'))
-            if allowed_image(image.filename):
-                image.save(os.path.join(app.config["IMAGE_UPLOADS"], imgname))
-                flash("Upload new image {}".format(imgname), "success")
-                return redirect(url_for('index'))
-            else:
-                flash("That file extension is not allowed", "danger")
+
+            try:
+                print(newname)
+                if image.filename == "":
+                    flash("No image file", "warning")
+                    return redirect(url_for('index'))
+                if allowed_image(image.filename):
+                    image.save(os.path.join(
+                        app.config["IMAGE_UPLOADS"], newname))
+                    addimg.insertImg(st_id, int(count2) + 1)
+                    flash("Upload new image {}".format(newname), "success")
+                    return redirect(url_for('index'))
+                else:
+                    flash("That file extension is not allowed", "danger")
+                    return redirect(url_for('index'))
+
+            except pymongo.errors.DuplicateKeyError:
+                flash('Data is dupicate!', "danger")
                 return redirect(url_for('index'))
 
-@app.route("/checkstd")
+# @app.route("/convertimg")
+# def convertimg():
+#     img_folder_path2 = './static/photodataset'
+#     dirListing2 = os.listdir(img_folder_path2)
+#     n_count2 = len(dirListing2)
+#     for x in range(3):
+#         print(webp.cwebp("./static/photodataset/60017144_"+str(int(x+1))+".jpg","./static/photodataset/60017144_"+str(int(x+1))+".webp", "-q 80"))
+
+#     flash('Convert Success!', "Success")
+#     return redirect(url_for('index'))
+
+@app.route("/chkimage")
+def chkimage():
+    return render_template('imagepage.html')
+
+
+@app.route("/checkstdimg", methods=["POST"])
+def chkstdimg():
+    std = mongo.db.stdata.find({})
+    response = []
+    for getchk in std:
+        if (getchk['image_list'] > 0):
+            getchk['_id'] = str(getchk['_id'])
+            response.append(getchk)
+    return json.dumps(response)
+
+@app.route("/checkstd", methods=["POST"])
 def chkstd():
     std = mongo.db.stdata.find({})
-    # for getchk in std:
-    #     if std['st_status'] == "Checked":
-    #         print("ID: {0} Name:{1} {2}".format(std['st_id'],std['f_name',std['l_name']]))
-    #         std_status = "ID: {0} Name:{1} {2}".format(std['st_id'], std['f_name', std['l_name']])
-    #     else:
-    #         pass
-    #     return std_status
-    std_status = []
-    for getstid in std:
-        if getstid['st_status'] == "Checked":
-            stdid = getstid['st_id']
-            datadic = {
-                "st_id": stdid 
-            }
-            std_status.append(datadic)
-        else:
-            pass
-    return jsonify(std_status)
+    response = []
+    for getchk in std:
+        if (getchk['st_status'] == "Checked"):
+            getchk['_id'] = str(getchk['_id'])
+            response.append(getchk)
+
+    return json.dumps(response)
 
 @app.route('/gencamera')
 def generate(camera):
     while True:
         # try:
-            frame = camera.get_frame()
-            yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+        frame = camera.get_frame()
+        yield (b'--frame\r\n' b'Content-Type: image/webp\r\n\r\n' + frame + b'\r\n\r\n')
         # except (RuntimeError, TypeError, NameError):
         #     print('except')
 
 
 @app.route("/training")
 def training():
-    try:
-        TD = TrainData('DataSet')
-        print("\n Training faces. It will take a few seconds. Wait ...")
-        faces, ids = TD.getImagesAndLabels()
-        TD.recognizer.train(faces, np.array(ids))
-        TD.recognizer.write('Trainer/trainer.yml')
-        print("\n {0} faces trained. Exiting Program".format(
-            len(np.unique(ids))))
-        flash('Complete! {0} faces trained.'.format(
-            len(np.unique(ids))), "success")
-        return redirect(url_for('index'))
-    except cv2.error:
-        flash('No data for training! {0} faces trained.'.format(
-            len(np.unique(ids))), "danger")
-        return redirect(url_for('index'))
+    # try:
+    #     TD = TrainData('DataSet')
+    #     print("\n Training faces. It will take a few seconds. Wait ...")
+    #     faces, ids = TD.getImagesAndLabels()
+    #     TD.recognizer.train(faces, np.array(ids))
+    #     TD.recognizer.write('Trainer/trainer.yml')
+    #     print("\n {0} faces trained. Exiting Program".format(
+    #         len(np.unique(ids))))
+    #     flash('Complete! {0} faces trained.'.format(
+    #         len(np.unique(ids))), "success")
+    #     return redirect(url_for('index'))
+    # except cv2.error:
+    #     flash('No data for training! {0} faces trained.'.format(
+    #         len(np.unique(ids))), "danger")
+    #     return redirect(url_for('index'))
 
-    # path = './DataSet/'
-    # detector = dlib.get_frontal_face_detector()
-    # sp = dlib.shape_predictor('./model/shape_predictor_68_face_landmarks.dat')
-    # model = dlib.face_recognition_model_v1(
-    #     './model/dlib_face_recognition_resnet_model_v1.dat')
+    path = './static/photodataset/'
+    detector = dlib.get_frontal_face_detector()
+    sp = dlib.shape_predictor('./model/shape_predictor_68_face_landmarks.dat')
+    model = dlib.face_recognition_model_v1(
+        './model/dlib_face_recognition_resnet_model_v1.dat')
 
-    # FACE_DESC = []
-    # FACE_NAME = []
-    # trained = []
-    # for fn in os.listdir(path):
-    #     if fn.endswith('.jpg'):
-    #         img = cv2.imread(path + fn)[:, :, ::-1]
-    #         dets = detector(img, 1)
-    #         for k, d in enumerate(dets):
-    #             shape = sp(img, d)
-    #             face_desc = model.compute_face_descriptor(img, shape, 5)
-    #             FACE_DESC.append(np.array(face_desc))
-    #             trained.append(fn)
-    #             print('Training....', fn)
-    #             FACE_NAME.append(fn[: fn.index('_')])
+    FACE_DESC = []
+    FACE_NAME = []
+    trained = []
+    getcount = []
+    for fn in os.listdir(path):
+        if fn.endswith('.jpg'):
+            img = cv2.imread(path + fn)[:, :, ::-1]
+            dets = detector(img, 1)
+            for k, d in enumerate(dets):
+                shape = sp(img, d)
+                face_desc = model.compute_face_descriptor(img, shape, 5)
+                FACE_DESC.append(np.array(face_desc))
+                trained.append(fn)
+                print('Training....', fn)
+                FACE_NAME.append(fn[: fn.index('_')])
 
-    # pickle.dump((FACE_DESC, FACE_NAME), open('./Trainer/trainset.pk', 'wb'))
+    pickle.dump((FACE_DESC, FACE_NAME), open('./Trainer/trainset.pk', 'wb'))
 
-    # flash('Complete! trained. {}'.format(trained), "success")
-    # return redirect(url_for('index'))   
+    # for indexX in trained:
+    #     datasplit = indexX.split('_')
+    #     print(datasplit[0])
+    #     getcount.append(datasplit[0])
+
+    flash('Complete! trained. {}'.format(trained), "success")
+    return redirect(url_for('index'))
 
 
 @app.route('/detection')
@@ -364,8 +423,8 @@ def create():
             contst = Controlstdata()
             contst.insertData(st_id, fname, lname, fac, br, stlevel, status)
             flash("Welcome {0}".format(st_id), "success")
-            return render_template('getdata.html', data=st_id, lvl=level)
-            # return redirect(url_for('index'))
+            # return render_template('getdata.html', data=st_id, lvl=level)
+            return redirect(url_for('index'))
         except pymongo.errors.DuplicateKeyError:
             flash('Data is dupicate!', "danger")
             return redirect(url_for('index'))
@@ -414,10 +473,10 @@ def addnewsj():
                 trandate = "Sun"
 
             contst = Controlstdata()
-            contst.insertnewsj(faculty, sj_id.upper(), sj_name,
-                            sj_StartTime, sj_FinishTime, trandate)
+            contst.insertnewsj(faculty, sj_id.upper(), sj_name,sj_StartTime, sj_FinishTime, trandate)
 
-            flash("Add New Subject Complate {}".format(sj_id.upper()+" :: "+sj_name), "success")
+            flash("Add New Subject Complate {}".format(
+                sj_id.upper()+" :: "+sj_name), "success")
             return redirect(url_for('index'))
         except pymongo.errors.DuplicateKeyError:
             flash('Data is dupicate!', "danger")
@@ -535,12 +594,15 @@ def updatestd():
 
 @app.route("/count")
 def count():
-    import multiprocessing as mp
-    img_folder_path = './DataSet'
-    dirListing = os.listdir(img_folder_path)
+    img_folder_path1 = './DataSet'
+    img_folder_path2 = './static/photodataset'
+    dirListing1 = os.listdir(img_folder_path1)
+    dirListing2 = os.listdir(img_folder_path2)
 
-    n_count = len(dirListing)
-    flash('Total image {0}'.format(len(dirListing)), "success")
+    n_count1 = len(dirListing1)
+    n_count2 = len(dirListing2)
+    flash('Total image from DataSet folder {0} and Total image from photodataset folder {1}'.format(
+        len(dirListing1), len(dirListing2)), "success")
     return redirect(url_for('index'))
 
 
@@ -550,15 +612,18 @@ def deletestd():
         st_id = request.form['st_id']
         contst = Controlstdata()
         contst.deleteData(st_id)
-        dirListing = os.listdir(app.config["IMAGE_UPLOADS"])
-        maxlist = len(dirListing)
-        # if os.path.exists("./DataSet/{0}_1.jpg".format(st_id)):
-        #         os.remove(
-        #             "./DataSet/{0}_1.jpg".format(st_id))
-        #         print("{0}_1.jpg Deleted!".format(st_id))
-        # else:
-        #     pass
-        for num in range(maxlist+1):
+        dirListing1 = os.listdir(app.config["IMAGE_UPLOADS"])
+        dirListing2 = os.listdir("./DataSet")
+        maxlist1 = len(dirListing1)
+        maxlist2 = len(dirListing2)
+        for num in range(maxlist1+1):
+            if os.path.exists("./static/photodataset/{0}_{1}.jpg".format(st_id, str(num+1))):
+                os.remove(
+                    "./static/photodataset/{0}_{1}.jpg".format(st_id, str(num+1)))
+                print("{0}_1.jpg Deleted!".format(st_id))
+            else:
+                pass
+        for num in range(maxlist2+1):
             if os.path.exists("./DataSet/{0}.{1}.{2}.jpg".format("Student", st_id, str(num))):
                 os.remove(
                     "./DataSet/{0}.{1}.{2}.jpg".format("Student", st_id, str(num)))
@@ -590,6 +655,7 @@ def deletesj():
         flash('Deleted! {}'.format(sj_id), "danger")
         return redirect(url_for('index'))
 
+
 @app.route('/video_feed')
 def video_feed():
     return Response(generate(FaceDetectionCamera()), mimetype='multipart/x-mixed-replace; boundary=frame')
@@ -611,12 +677,18 @@ def stsjconclusion(st_id, sj_id):
     result = mongo.db.stdata.find({'st_id': stid})
     return render_template('conclusion.html', data1=st_id, data2=sj_id, getdb=result)
 
+@app.route('/stsjconclusionall/<st_id>', methods=['GET'])
+def stsjconclusionall(st_id):
+    stid = st_id
+    result = mongo.db.stdata.find({'st_id': stid})
+    return render_template('conclusionall.html', data1=st_id,getdb=result)
+
 # @app.route('/time_feed')
 # def time_feed():
 #     def generate():
-#         yield datetime.now().strftime("%A %d-%m-%Y %H:%M")
+#         yield datetime.now().strftime("%A %d-%m-%Y %H:%M:%S")
 #     return Response(generate(), mimetype='text')
 
 
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=True)
+    app.run(host='192.168.43.116', port='8485')
