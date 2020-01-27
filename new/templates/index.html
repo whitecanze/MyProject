@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="{{ url_for('static', filename='img/icon.webp') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Kanit&display=swap" rel="stylesheet">
+    <!-- css and script -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pagestyle.css') }}">
+    <title>ระบบจัดการ</title>
+
+    <!-- font awesome -->
+    <!-- <script rel="preload" src="https://kit.fontawesome.com/ddbad6351c.js" crossorigin="anonymous"></script> -->
+</head>
+
+<body id="root">
+    <!-- loadding page -->
+    {% include 'loadingpage.html' %}
+    <!-- content wrapper -->
+    <div id="wrapper" class="menuDisplayed" style="overflow:hidden;">
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper" style="overflow:hidden;z-index:3;">
+            {% include 'sidebar.html' %}
+        </div>
+        <!-- body content -->
+        <div id="page-content-wrapper" style="overflow:auto;">
+            <div id="top"></div>
+            <!-- alert -->
+            {% include 'aleart.html' %}
+            <!-- top logo  -->
+            <div class="container w3-animate-opacity" align="center">
+                <img class="lazy" data-src="{{ url_for('static', filename='img/logo.webp') }}" alt="">
+                <noscript>
+                    <img src="{{ url_for('static', filename='img/logo.webp') }}" alt="">
+                </noscript>
+            </div>
+            <!-- navigation bar -->
+            {% include 'navbar.html' %}
+            <!-- sub content -->
+            {% include 'subcontent.html' %}
+            <!-- form add student -->
+            {% include 'addstd.html' %}
+            <!-- main content -->
+            <div class="main-content" style="margin-top: 1%;overflow:hidden;">
+                <div class="row" id="mian-container">
+                    <!-- left side detail -->
+                    <div class="col-8" style="padding:0;left:1.8%;" id="main-left-content">
+                        <div class="w3-animate-opacity" id="student-table-container">
+                            <!-- table student -->
+                            {% include 'studenttable.html' %}
+                        </div>
+                    </div>
+                    <!-- right side detail -->
+                    <div class="col-4" style="padding: 0%;" id="main-right-content">
+                        <div class="row">
+                            <!-- subject list -->
+                            {% include 'listsj.html' %}
+                            <!-- faculty list -->
+                            {% include 'faclist.html' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <!-- footer -->
+            {% include 'footer.html' %}
+        </div>
+    </div>
+</body>
+<script src="{{ url_for('static', filename='js/myscript.js') }}"></script>
+<script src="{{ url_for('static', filename='js/loading.js') }}"></script>
+<script async src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@12.4.0/dist/lazyload.min.js"></script>
+
+<script>
+    window.lazyLoadOptions = {
+        elements_selector: '.lazy'
+    }
+</script>
+<script>
+
+</script>
+
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="{{ url_for('static', filename='img/icon.webp') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Kanit&display=swap" rel="stylesheet">
+    <!-- css and script -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pagestyle.css') }}">
+    <title>ระบบจัดการ</title>
+
+    <!-- font awesome -->
+    <!-- <script rel="preload" src="https://kit.fontawesome.com/ddbad6351c.js" crossorigin="anonymous"></script> -->
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: var(--main-color2);
+        color: #fff;
+    }
+
+    .search-image-wrapper {
+        width: 100vw;
+        height: 100vh;
+        position: absolute;
+        z-index: 2;
+        top: 0;
+        text-align: center;
+    }
+
+    .search-wrapper {
+        position: absolute;
+        top: 10%;
+        width: 100vw;
+        height: 250px;
+    }
+
+    .my-search {
+        position: absolute;
+        border-radius: 20px;
+        top: 30%;
+        left: 25%;
+        width: 50%;
+        min-height: 100px;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .result-data-wrapper {
+        position: absolute;
+        z-index: 2;
+        top: 27%;
+        left: 30%;
+        width: 40%;
+        max-height: 20%;
+        overflow: hidden;
+        overflow-y: auto;
+        -ms-overflow-style: none;
+        background-color: transparent;
+    }
+
+    .result-data-wrapper::-webkit-scrollbar {
+        display: none;
+    }
+
+    .sub-wrapper-box {
+        overflow: hidden;
+    }
+
+    .image-wrapper {
+        position: absolute;
+        z-index: 2;
+        width: 50%;
+        height: 45%;
+        left: 25%;
+        top: 45%;
+        overflow: hidden;
+        overflow-y: auto;
+    }
+
+    .listimage {
+        height: 300px;
+    }
+
+    .listimage>li {
+        background-color: white;
+    }
+
+    .listimage>li>span {
+        position: absolute;
+        left: 25%;
+        padding-top: 50px;
+        font-size: 1.5rem;
+    }
+</style>
+
+<body>
+    <!-- loadding page -->
+    {% include 'loadingpage.html' %}
+    <nav class="navbar sticky-top justify-content-between" style="padding:0" id="top-nav">
+        <button class="back-home-btn" id="back-btn" onclick="location.href='/'">
+            <i class="fas fa-arrow-left" id=""></i>
+            <span id="back-text"></span>
+        </button>
+        <div class="nav-text">
+            <h1 class="nav-head-text">ดูรูปภาพ</h1>
+        </div>
+    </nav>
+    <div class="search-image-wrapper">
+        <div class="search-wrapper">
+            <p style="font-size: 3rem;">ค้นหารูปภาพ <span id="countloop"></span> </p>
+            <div class="my-search" align="center">
+                <div class="form__group field">
+                    <input type="search" class="form__field" name="search" id="search" placeholder="ค้นหารูปภาพ"
+                        autocomplete="off" />
+                    <label for="search" class="form__label">ชื่อ หรือ รหัสนิสิต</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="result-data-wrapper">
+        <div class="sub-wrapper-box">
+            <ul class="result-list" id="result"></ul>
+        </div>
+    </div>
+    <div class="image-wrapper" style="">
+        <ul class="listimage" id="img-result" style="list-style-type: none;"></ul>
+    </div>
+
+</body>
+<script src="{{ url_for('static', filename='js/myscript.js') }}"></script>
+<script src="{{ url_for('static', filename='js/loading.js') }}"></script>
+<script src="{{ url_for('static', filename='js/nav-hide.js') }}"></script>
+<script async src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@12.4.0/dist/lazyload.min.js"></script>
+
+<script>
+    window.lazyLoadOptions = {
+        elements_selector: '.lazy'
+    }
+
+    $('#back-btn').mouseover((event) => {
+        document.getElementById('back-text').innerHTML = "กลับหน้าแรก"
+    })
+    $('#back-btn').mouseout((event) => {
+        document.getElementById('back-text').innerHTML = ""
+    })
+
+    $(document).ready(() => {
+        $('#search').on('input', (e) => {
+            if ('' == this.value) {
+                $('#result').html('')
+                $('#img-result').html('')
+            }
+        })
+        $('#search').keyup(() => {
+            $('#result').html('')
+            $('#img-result').html('')
+            let keyword = $('#search').val()
+            let expression = new RegExp(keyword, "i")
+            if (keyword != "") {
+                $.ajax({
+                    url: '/checkstdimg',
+                    type: 'POST',
+                    data: 'json',
+                    success: (data) => {
+                        $.each(JSON.parse(data), (key, value) => {
+                            let cst_id = value.st_id.toString()
+                            if (cst_id.search(expression) != -1 || value.f_name
+                                .search(
+                                    expression) != -1) {
+                                $('#result').append(
+                                    "<li class='list-group-item' style='color:black;'>" +
+                                    "รหัสนิสิต: " + value.st_id + " " +
+                                    "ชื่อ-นามสกุล: " +
+                                    value.f_name + " " + value.l_name +
+                                    " <span style='position:absolute;right:10px;'>" +
+                                    "รูปภาพ: " + value.image_list +
+                                    "รูป </span>" +
+                                    "</li>")
+                                for (let i = 1; i <= value.image_list; i++) {
+                                    $('#img-result').append(
+                                        '<li style="color:black;"><img width="15%" height="15%" src="../static/photodataset/' +
+                                        cst_id + '_' + i + '.jpg">' +
+                                        '<span>ชื่อรูปภาพ :' +
+                                        cst_id + '_' + i + '.JPG</span>' +
+                                        '</li>'
+                                    )
+                                }
+                            }
+                        })
+                    }
+                })
+            } else {
+                $('#result').html('')
+                $('#img-result').html('')
+            }
+        })
+    })
+</script>
+
+</html>

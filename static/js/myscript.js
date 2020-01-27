@@ -106,8 +106,6 @@ togglesj = (div) => {
     }
 }
 
-
-
 // font awesome
 (function () {
     var css = document.createElement('link');
@@ -116,3 +114,15 @@ togglesj = (div) => {
     css.type = 'text/css';
     document.getElementsByTagName('head')[0].appendChild(css);
 })();
+
+// sidebar hover toggle
+// hover
+$('#sidebar-wrapper').mouseover(() => {
+    $('#wrapper').removeClass('menuSubDisplayed')
+    $('#wrapper').addClass('menuDisplayed')
+})
+// out
+$('#sidebar-wrapper').mouseout(() => {
+    $('#wrapper').removeClass('menuDisplayed')
+    $('#wrapper').addClass('menuSubDisplayed')
+})

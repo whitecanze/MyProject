@@ -1,0 +1,1 @@
+{"_id":{"$oid":"5e2db0d72bbe6ab656cc488c"},"username":"admin","password":"$argon2id$v=19$m=102400,t=4,p=8$Xcs5R4jx3rtXai1lDKHUWg$uBMES6/nOBSZ5l24uE0tqw"}

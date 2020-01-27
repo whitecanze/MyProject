@@ -1,0 +1,5 @@
+{"_id":{"$oid":"5dc3ba45f492e307388b04f5"},"sj_id":"ER0415","fac_name":"วิศวกรรมศาสตร์","sj_detail":{"sj_name":"โครงงานวิศวกรรมคอมพิวเตอร์ 2","sj_StartTime":"13.00","sj_FinishTime":"18.00","sj_date":"Wed"}}
+{"_id":{"$oid":"5dc3ba9bf492e307388b04f6"},"sj_id":"ER0423","fac_name":"วิศวกรรมศาสตร์","sj_detail":{"sj_name":"เทคโนโลยีธุรกิจอิเล็กทรอนิกส์","sj_StartTime":"9.00","sj_FinishTime":"13.00","sj_date":"Tue"}}
+{"_id":{"$oid":"5dc3bacef492e307388b04f7"},"sj_id":"ER0433","fac_name":"วิศวกรรมศาสตร์","sj_detail":{"sj_name":"การบริหารจัดการระบบเครือข่าย","sj_StartTime":"12.00","sj_FinishTime":"16.00","sj_date":"Mon"}}
+{"_id":{"$oid":"5dff03a644dd1a59f8eb2578"},"sj_id":"ER0413","fac_name":"วิศวกรรมศาสตร์","sj_detail":{"sj_name":"กฏหมายและจริยธรรมทางคอมพิวเตอร์","sj_StartTime":"9.00","sj_FinishTime":"12.00","sj_date":"Wed"}}
+{"_id":{"$oid":"5e01f3125741830b2a8e7d9b"},"sj_id":"TEST01","fac_name":"วิศวกรรมศาสตร์","sj_detail":{"sj_name":"ทดสอบ1","sj_StartTime":"1.00","sj_FinishTime":"20.00","sj_date":"Mon"}}

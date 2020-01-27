@@ -1,6 +1,9 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/animation2.css') }}">
 <style>
-
+    #mytext-test1 {
+        color: var(--main-color1);
+        transform: rotate(-90deg);
+    }
 </style>
 <!-- background animation -->
 <ul class="circles">
@@ -17,7 +20,8 @@
         <noscript>
             <img src="{{ url_for('static', filename='img/icon.webp') }}" width="120px" height="120px" alt="">
         </noscript>
-        <h1 style="font-weight: bold;color:rgba(253, 184, 19, 1);">{{sendtextpage['sidebartexthead']}}</h1>
+        <h1 id="sidebar-headtext" style="font-weight: bold;color:rgba(253, 184, 19, 1);">
+            {{sendtextpage['sidebartexthead']}}</h1>
     </div>
     <!-- <hr style="border-color: rgba(253, 184, 19, 1);"> -->
 
@@ -78,18 +82,6 @@
                         </div>
                     </a>
                 </li>
-                <!-- <li class="nav-item add4" id="add4">
-                    <a class="nav-link" href="/convertimg" style="font-size: 1.25rem;">
-                        <div class="row">
-                            <div class="col-4" style="text-align: center;">
-                                <i class="far fa-images"></i>
-                            </div>
-                            <div class="col-8" style="padding:0;text-align:left;">
-                                Convert To Webp
-                            </div>
-                        </div>
-                    </a>
-                </li> -->
             </ul>
         </div>
         </li>
@@ -141,7 +133,23 @@
                 </div>
             </a>
         </li>
+        <!-- <li id="rel6">
+            <a href="/userlogin">
+                <div class="row">
+                    <div class="col-4" style="text-align:center;padding:0;">
+                        <i class="far fa-images"></i>
+                    </div>
+                    <div class="col-8" style="padding:0;text-align:left;left:0;">
+                        ทดสอบ
+                    </div>
+                </div>
+            </a>
+        </li> -->
     </ul>
+</div>
+<div class="sidebar-footer w3-animate-opacity">
+    <span id="textcon1" style="font-weight: bold;">{{username}}</span><br><br>
+    <a href="/userlogin">ADD USER</a> <span id="textcon2">|</span> <a href="/userlogout">LOGOUT</a>
 </div>
 
 <script>

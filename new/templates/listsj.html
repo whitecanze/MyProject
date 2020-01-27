@@ -1,0 +1,32 @@
+<div class="card showing-card" style="width:95%;height:280px;" id="card-sj-list">
+    <nav class="navbar navbar-expand-sm sticky-top justify-content-center"
+        style="background-color:rgba(31, 31, 64, 1);z-index:1;">
+        <h1 style="color:rgba(253, 184, 19, 1);">รายชื่อวิชาในระบบ </h1>
+    </nav>
+    <ul class="list-group" style="overflow:auto;">
+        {% with getshsj = shsj %}
+        {% for data in getshsj %}
+        {% with getsjdetail = data['sj_detail'] %}
+        <li class="list-group-item" style="color:rgba(31, 31, 64, 1);font-weight: bold;font-size:1.1rem;">
+            <div class="row">
+                <div class="col-11" data-toggle="tooltip1" title="{{data['fac_name']}}">
+                    {{data['sj_id']}} :
+                    {{getsjdetail['sj_name']}}
+                </div>
+                <div class="col-1">
+                    <a href="" id="gear1" data-toggle="modal" data-target="#modaleditsj{{data['sj_id']}}"><i
+                            class="fas fa-cog" style="font-size:1.5rem;" data-toggle="tooltip1"
+                            title="แก้ไขจัดการข้อมูลวิชา"></i></a>
+                </div>
+            </div>
+        </li>
+        <!-- add new subject -->
+        {% include 'addnewsj.html' %}
+        <!-- edit subject -->
+        {% include 'editsj.html' %}
+
+        {% endwith %}
+        {% endfor %}
+        {% endwith %}
+    </ul>
+</div>

@@ -1,0 +1,46 @@
+<div class="container-fluid" style="margin-top:1%;">
+    <div class="card-columns w3-animate-opacity">
+        <div class="card main-1">
+            <div class="card-header text-center">
+                <h1 class="card-text" style="">จำนวนนักเรียนในระบบ</h1>
+            </div>
+            <div class="collapse navbar-collapse show" id="body-data1">
+                <div class="card-body text-center">
+                    <h1 class="card-text">จำนวน: {{countst}} คน</h1>
+                </div>
+            </div>
+            <div class="card-footer text-center footer-sub-content" onclick="togglestd(this)" data-toggle="collapse"
+                data-target="#body-data1" aria-expanded="true">
+                <i class="fas fa-eye-slash" id="eye1"></i>
+            </div>
+        </div>
+        <div class="card main-2">
+            <div class="card-header text-center">
+                <h1 class="card-text">จำนวนคณะในระบบ</h1>
+            </div>
+            <div class="collapse navbar-collapse show" id="body-data2">
+                <div class="card-body text-center">
+                    <h1 class="card-text">จำนวน: {{countfac}} คณะ</h1>
+                </div>
+            </div>
+            <div class="card-footer text-center footer-sub-content" onclick="togglefac(this)" data-toggle="collapse"
+                data-target="#body-data2" aria-expanded="true">
+                <i class="fas fa-eye-slash" id="eye1"></i>
+            </div>
+        </div>
+        <div class="card main-3">
+            <div class="card-header text-center">
+                <h1 class="card-text">จำนวนวิชาในระบบ</h1>
+            </div>
+            <div class="collapse navbar-collapse show" id="body-data3">
+                <div class="card-body text-center">
+                    <h1 class="card-text">จำนวน: {{countsj}} วิชา</h1>
+                </div>
+            </div>
+            <div class="card-footer text-center footer-sub-content" onclick="togglesj(this)" data-toggle="collapse"
+                data-target="#body-data3" aria-expanded="true">
+                <i class="fas fa-eye-slash" id="eye1"></i>
+            </div>
+        </div>
+    </div>
+</div>

@@ -62,13 +62,36 @@ table {
 
 #sidebar-wrapper>.sidebar-body {
     text-align: center;
-    margin-top: 50%;
+    margin-top: 80%;
     grid-area: body;
 }
 
 #sidebar-wrapper>.sidebar-footer {
+    background-color: var(--main-color2-9);
     text-align: center;
     grid-area: footer;
+    color: white;
+    animation: trancolortext1 .5s forwards;
+    z-index: 1;
+}
+
+#sidebar-wrapper>.sidebar-footer a:hover {
+    color: var(--main-color1);
+    font-weight: bold;
+    text-decoration: none;
+    transition: all .5s ease;
+    animation: transize .5s forwards;
+
+}
+
+@keyframes transize {
+    from {
+        font-size: 1rem;
+    }
+
+    to {
+        font-size: 1.5rem;
+    }
 }
 
 #sidebar-wrapper {
@@ -77,10 +100,11 @@ table {
     height: 100%;
     background: var(--main-color2);
     display: grid;
-    grid-template-rows: 10% 90%;
+    grid-template-rows: 10% 80% 10%;
     grid-template-areas:
         "header"
-        "body";
+        "body"
+        "footer";
     transition: all .5s;
 }
 
@@ -89,7 +113,6 @@ table {
     height: 100%;
     position: absolute;
     transition: all .5s;
-
 }
 
 
@@ -190,6 +213,22 @@ table {
 
 #wrapper.menuSubDisplayed .sidebar-body::-webkit-scrollbar {
     width: 3px;
+}
+
+#wrapper.menuSubDisplayed .sidebar-footer #textcon1 {
+    opacity: .5;
+}
+@keyframes trancolortext1{
+    form{
+        opacity: .5;
+    }
+    to{
+        opacity: 1;
+    }
+}
+#wrapper.menuSubDisplayed .sidebar-footer a,
+#wrapper.menuSubDisplayed .sidebar-footer #textcon2 {
+    display: none;
 }
 
 .sidebar-nav {
@@ -1015,9 +1054,10 @@ table.table.mytable>thead>tr {
     border-image: linear-gradient(to right, var(--main-color2), var(--main-color1));
     border-image-slice: 1;
 }
+
 .form__field::-webkit-search-cancel-button {
-    color:var(--main-color1);
-    background-color:var(--main-color1);
+    color: var(--main-color1);
+    background-color: var(--main-color1);
 }
 
 .form__field:focus~.form__label {

@@ -26,7 +26,8 @@
     <!-- loadding page -->
     {% include 'loadingpage.html' %}
     <!-- content wrapper -->
-    <div id="wrapper" class="menuDisplayed" style="overflow:hidden;">
+    <div id="wrapper" class="menuSubDisplayed" style="overflow:hidden;">
+        <!-- <div id="wrapper" class="menuDisplayed" style="overflow:hidden;"> -->
         <!-- Sidebar -->
         <div id="sidebar-wrapper" style="overflow:hidden;z-index:3;">
             {% include 'sidebar.html' %}
@@ -69,6 +70,135 @@
                         </div>
                     </div>
                 </div>
+                <style>
+                    .grid-head-text {
+                        text-align: center;
+                        color: var(--main-color1);
+                        font-weight: bold;
+                        font-size: 2.5rem;
+                        background-color: var(--main-color2);
+                        grid-area: texthead;
+                    }
+
+                    .grid-menu-sj {
+                        background-color: var(--main-color2);
+                        color: var(--main-color1);
+                        grid-area: sjmenu;
+                    }
+
+                    .grid-menu-sj>ul {
+                        margin-left: 1%;
+                        margin-right: 1%;
+                        margin-bottom: 1%;
+                        width: 98%;
+                        height: 75%;
+                        overflow: auto;
+                    }
+
+                    .grid-menu-sj>ul>li {
+                        background-color: white;
+                        color: var(--main-color2);
+                    }
+
+                    .grid-menu-sj>ul>li:hover {
+                        background-color: var(--main-color2);
+                        color: var(--main-color1);
+                    }
+
+                    .grid-id {
+                        grid-area: dataid;
+                        background-color: aquamarine;
+                    }
+
+                    .grid-name {
+                        grid-area: dataname;
+                        background-color: blueviolet;
+                    }
+
+                    .day-text {
+                        grid-area: daytext;
+                        background-color: brown;
+                    }
+
+                    .day-list {
+                        grid-area: daylist;
+                        background-color: cadetblue;
+                        display: grid;
+                        grid-template-columns: repeat(16, 1fr);
+                    }
+
+                    .grid-day {
+                        display: grid;
+                        grid-area: dataday;
+                        width: 100%;
+                        height: 100px;
+                        grid-template-rows: 50% 50%;
+                        grid-template-areas:
+                            "daytext"
+                            "daylist";
+                    }
+
+                    .grid-chk-table {
+                        background-color: white;
+                        grid-area: chktable;
+                    }
+
+                    .grid-data-header {
+                        display: grid;
+                        text-align: center;
+                        background-color: aquamarine;
+                        width: 100%;
+                        height: 100px;
+                        grid-template-columns: 10% 10% 80%;
+                        grid-template-areas:
+                            "dataid dataname dataday";
+                    }
+
+                    .grid-std-chk {
+                        width: 98%;
+                        height: 500px;
+                        margin-left: 1%;
+                        margin-top: 1%;
+                        background-color: aquamarine;
+                        display: grid;
+                        grid-template-rows: 15% 85%;
+                        grid-template-columns: 30% 70%;
+                        grid-template-areas:
+                            "texthead texthead"
+                            "sjmenu chktable";
+                    }
+                </style>
+                <div class="grid-std-chk">
+                    <div class="grid-head-text">ตารางแสดงรายละเอียดการเข้าชั้นเรียน</div>
+                    <div class="grid-menu-sj">
+                        <nav class="navbar navbar-expand-sm sticky-top justify-content-center"
+                            style="background-color:rgba(31, 31, 64, 1);z-index:1;">
+                            <h1 style="color:rgba(253, 184, 19, 1);">รายชื่อวิชา</h1>
+                        </nav>
+                        <ul class="list-group list-group-flush" id="list-sj-data">
+                        </ul>
+                    </div>
+                    <div class="grid-chk-table">
+                        <div class="grid-data-header">
+                            <div class="grid-id">
+                                <h3>รหัสนิสิต</h3>
+                            </div>
+                            <div class="grid-name">
+                                <h3>ชื่อ-นามสกุล</h3>
+                            </div>
+                            <div class="grid-day">
+                                <div class="day-text">
+                                    <h1>สัปดาห์ที่</h1>
+                                </div>
+                                <div class="day-list">
+                                    {% for x in range(16) %}
+                                    <h5>{{x+1}}</h5>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <br>
             <!-- footer -->
@@ -86,7 +216,29 @@
     }
 </script>
 <script>
-
+    $(document).ready(() => {
+        $.ajax({
+            url: '/chksjlist',
+            type: 'POST',
+            data: 'json',
+            success: (data) => {
+                jpdata = JSON.parse(data)
+                $("#list-sj-data").empty()
+                if (jpdata != "") {
+                    $.each(jpdata, (index, item) => {
+                        $('<li class="list-group-item">').text(item.sj_id + ":" + item
+                            .sj_detail.sj_name).append($(
+                            '</li>')).appendTo("#list-sj-data")
+                    });
+                } else {
+                    $.each(jpdata, (index, item) => {
+                        $('<li class="list-group-item">').text("NONE").append($(
+                            '</li>')).appendTo("#list-sj-data")
+                    });
+                }
+            },
+        })
+    });
 </script>
 
 </html>

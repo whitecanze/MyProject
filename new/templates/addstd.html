@@ -1,0 +1,66 @@
+    <div id="modalcreate" class="modal fade" role="dialog" align="start">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: rgba(0, 0, 64, 1);color:rgba(253, 184, 19, 1)" ;>
+                    <h4 class="modal-title">แบบฟอร์มบันทึกข้อมูล</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form action="/create" method="POST">
+                        <div class="form-group">
+                            <label>รหัสนิสิต:</label>
+                            <input type="hidden" name="st_status" value="none">
+                            <input type="number" class="form-control" name="st_id" value="" require>
+                        </div>
+                        <div class="form-group">
+                            <label>ชื่อ:</label>
+                            <input type="text" class="form-control" name="fname" value="" require>
+                        </div>
+                        <div class="form-group">
+                            <label>นามสกุล:</label>
+                            <input type="text" class="form-control" name="lname" value="" require>
+                        </div>
+                        <div class="form-group">
+                            <label for="sel1">คณะ:</label>
+                            <select class="form-control" id="sel1" name="faculty">
+                                {% for getfac in shfaculty%}
+                                <option>{{getfac['fac_name']}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sel1">สาขาวิชา:</label>
+                            <select class="form-control" id="sel1" name="branch">
+                                {% for getbr in shbranch %}
+                                <option>{{getbr['br_name']}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sel1">ชั้นปี:</label>
+                            <select class="form-control" id="sel1" name="stlevel">
+                                <option>4</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sel1">ระดับความแม่นยำ:</label>
+                            <input type="hidden" name="level" value="1">
+                            <select class="form-control" id="sel1" name="level" disabled>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="dif"
+                                style="color:gray;">*ระดับความแม่นยำยิ่งสูงยิ่งเก็บจำนวนข้อมูลมาก</label><br>
+                            <button class="btn btn-outline-warning btn-lg" type="submit">ส่ง</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">ปิด</button>
+                </div>
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,69 @@
+<div class="card showing-card" id="card-table-student">
+    <div class="card-header"
+        style="text-align:center;background-color:rgba(31, 31, 64, 1);border-bottom:solid 1px rgba(253, 184, 19, 1);">
+        <h1 style="color:rgba(253, 184, 19, 1);">รายชื่อนักเรียน</h1>
+    </div>
+    <div class="card-body std-datalist">
+        <table class="table mytable">
+            <thead>
+                <tr>
+                    <th>คณะ</th>
+                    <th>สาขา</th>
+                    <th>รหัสนิสิต</th>
+                    <th>ชื่อ</th>
+                    <th>นามสกุล</th>
+                    <th>เช็คชื่อ</th>
+                    <th>จัดการ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in datas %}
+                <tr class="">
+                    <td>{{data["fac_name"]}}</td>
+                    <td>{{data["br_name"]}}</td>
+                    <td>{{data["st_id"]}}</td>
+                    <td>{{data["f_name"]}}</td>
+                    <td>{{data["l_name"]}}</td>
+                    <td data-toggle="tooltip1" title="{{data["last_check"]}}">
+                        {{data["st_status"]}}</td>
+                    <td>
+                        <div class="btn-group">
+                            <div class="row">
+                                <div class="col-3">
+                                    <a href="" id="addimagebtn" data-toggle="modal"
+                                        data-target="#modaladdimage{{data['st_id']}}">
+                                        <i class="fas fa-camera-retro" style="font-size:1.5rem;" data-toggle="tooltip1"
+                                            title="เพิ่มรูปภาพ"></i>
+                                </div>
+                                <div class="col-3">
+                                    <a href="" id="sjdatabtn" data-toggle="modal"
+                                        data-target="#modalsjtable{{data['st_id']}}">
+                                        <i class="fas fa-info-circle" style="font-size:1.5rem;" data-toggle="tooltip1"
+                                            title="แสดงรายวิชาที่ลงทะเบียน"></i></a>
+                                </div>
+                                <div class="col-3">
+                                    <a href="/stsjconclusionall/{{data['st_id']}}" id="chkdatabtn">
+                                        <i class="far fa-calendar-check" style="font-size:1.5rem;"
+                                            data-toggle="tooltip1" title="ข้อมูลการเข้าเรียน"></i>
+                                </div>
+                                <div class="col-3">
+                                    <a href="" id="gear1" data-toggle="modal"
+                                        data-target="#modaleditstd{{data['st_id']}}">
+                                        <i class="fas fa-cog" style="font-size:1.5rem;" data-toggle="tooltip1"
+                                            title="แก้ไขจัดการข้อมูลนักเรียน"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <!-- add student picture -->
+                {% include 'addstdimg.html' %}
+                <!-- edit student data -->
+                {% include 'editstd.html' %}
+                <!-- student subject data -->
+                {% include 'stdsj.html' %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

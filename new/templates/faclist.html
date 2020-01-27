@@ -1,0 +1,21 @@
+<div class="card showing-card" style="width:95%;height:280px;margin-top:4%;" id="card-fac-list">
+    <nav class="navbar navbar-expand-sm sticky-top justify-content-center"
+        style="background-color:rgba(31, 31, 64, 1);z-index:1;">
+        <h1 style="color:rgba(253, 184, 19, 1);">รายชื่อคณะ</h1>
+    </nav>
+    <ul class="list-group" style="overflow:auto;">
+        {% for getfaclist in selfac %}
+        <li class="list-group-item" style="color:rgba(31, 31, 64, 1);font-weight: bold;font-size:1.1rem;">
+            <div class="row">
+                <div class="col-11" data-toggle="tooltip1" title="">
+                    {{getfaclist['fac_name']}}
+                </div>
+                <!-- <div class="col-1">
+                    <a href="" id="gear1" data-toggle="modal" data-target="#"><i class="fas fa-cog"
+                            style="font-size:1.5rem;" data-toggle="tooltip1" title="แก้ไขจัดการข้อมูลวิชา"></i></a>
+                </div> -->
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>

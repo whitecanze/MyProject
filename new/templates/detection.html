@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="{{ url_for('static', filename='img/icon.webp') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Kanit&display=swap" rel="stylesheet">
+
+    <!-- css and script -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pagestyle.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animation.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animation2.css') }}">
+    <style>
+        body {
+            background-color: rgba(31, 31, 31, 1);
+            color: white;
+            overflow: hidden;
+        }
+    </style>
+    <script>
+    </script>
+</head>
+
+<body id="mypage">
+    {% include 'loadingpage.html' %}
+    <nav class="navbar sticky-top justify-content-between" style="padding:0" id="top-nav">
+        <button class="back-home-btn" id="back-btn" onclick="location.href='/'">
+            <i class="fas fa-arrow-left" id=""></i>
+            <span id="back-text"></span>
+        </button>
+        <div class="nav-text">
+            <h1 class="nav-head-text">ระบบตรวจจับใบหน้า</h1>
+        </div>
+    </nav>
+    <nav class="navbar fixed-bottom justify-content-between" style="padding:0" id="bottom-nav">
+        <div>
+            <button class="open-std-chklist" id="btnshow1" onclick="showbar(this)">
+                <i class="far fa-calendar-check"></i>
+                <span id="open-std-cklist-text"></span>
+            </button>
+            <button class="close-std-chklist" id="btnhide1" onclick="hidebar(this)">
+                <i class="fas fa-ban"></i>
+                <span id="close-std-cklist-text"></span>
+            </button>
+            <button class="open-camera-btn" id="btnopen1" onclick="openCamera();">
+                <i class="fas fa-video"></i>
+                <span id="open-camera-text"></span>
+            </button>
+            <button class="close-camera-btn" id="btnclose1" onclick="closeCamera();">
+                <i class="fas fa-video-slash"></i>
+                <span id="close-camera-text"></span>
+            </button>
+            <button class="full-sc-btn" id="fullscreen-btn" onclick="openFullscreen(this);">
+                <span id="screen-text"></span>
+                <i class="fas fa-expand" id="icon-screen"></i>
+            </button>
+        </div>
+    </nav>
+    <div class="show-std-name-box" id="bar-data">
+        <div class="grid-data-main" id="bar-data-main">
+            <div class="grid-header" id="bar-data-header">
+                <h1>รายชื่อนักเรียน</h1>
+            </div>
+            <div class="grid-body" id="bar-data-body">
+                <div class="container-for-std-list" id="myboxforshow">
+                    <ul class="list-group list-group-flush"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bg bg-color" id="background-box">
+        <img style="width:100%;height:100%;background-color:rgba(31, 31, 31, 1);"
+            src="{{ url_for('static', filename='img/waiting_camera.webp') }}" id="myvideo">
+        <div class="centered1" id="center-text1">
+            <h1 class="text-close-camera"><i class="fas fa-video-slash"></i><br>CLOSE</h1>
+        </div>
+        <div class="centered2" id="center-text2">
+            <h1 class="text-open-camera"><i class="fas fa-video"></i><br>OPEN</h1>
+        </div>
+    </div>
+</body>
+<script>
+    setInterval(() => {
+        $.ajax({
+            url: '/checkstd',
+            type: 'POST',
+            data: 'json',
+            success: (data) => {
+                jpdata = JSON.parse(data)
+                $("#myboxforshow").empty()
+                if (jpdata != "") {
+                    $.each(jpdata, (index, item) => {
+                        $("<ul class='list-group list-group-flush'>").append($(
+                                "<li class='list-group-item'>"
+                            ).text(item.st_id + ":" + item.f_name).append($(
+                                "<i class='fas fa-check'></i>"
+                            )))
+                            .appendTo(
+                                "#myboxforshow")
+                    });
+                } else {
+                    $("<ul class='list-group list-group-flush'>").append($(
+                        "<li class='list-group-item'>").text("NONE")).appendTo("#myboxforshow")
+                }
+            },
+        })
+    }, 1000);
+
+    $('#btnshow1').mouseover((envent) => {
+        document.getElementById('open-std-cklist-text').innerHTML = "แสดงแถบรายชื่อ"
+    })
+
+    $('#btnshow1').mouseout((envent) => {
+        document.getElementById('open-std-cklist-text').innerHTML = ""
+    })
+
+    $('#btnhide1').mouseover((envent) => {
+        document.getElementById('close-std-cklist-text').innerHTML = "ซ่อนแถบรายชื่อ"
+    })
+
+    $('#btnhide1').mouseout((envent) => {
+        document.getElementById('close-std-cklist-text').innerHTML = ""
+    })
+
+
+    $('#back-btn').mouseover((event) => {
+        document.getElementById('back-text').innerHTML = "กลับหน้าแรก"
+    })
+    $('#back-btn').mouseout((event) => {
+        document.getElementById('back-text').innerHTML = ""
+    })
+
+    $('#btnopen1').mouseover((event) => {
+        document.getElementById('open-camera-text').innerHTML = "เปิดกล้อง"
+    })
+    $('#btnopen1').mouseout((event) => {
+        document.getElementById('open-camera-text').innerHTML = ""
+    })
+
+    $('#btnclose1').mouseover((event) => {
+        document.getElementById('close-camera-text').innerHTML = "ปิดกล้อง"
+    })
+    $('#btnclose1').mouseout((event) => {
+        document.getElementById('close-camera-text').innerHTML = ""
+    })
+
+    $('#fullscreen-btn').mouseover((event) => {
+        if (document.getElementById('icon-screen').className == "fas fa-compress") {
+            document.getElementById('screen-text').innerHTML = "ออกจากเต็มหน้าจอ"
+        } else {
+            document.getElementById('screen-text').innerHTML = "เต็มหน้าจอ"
+        }
+    })
+    $('#fullscreen-btn').mouseout((event) => {
+        document.getElementById('screen-text').innerHTML = ""
+    })
+
+    let elem = document.getElementById("mypage");
+    let myimg = document.getElementById("myvideo");
+    let btnopen = document.getElementById("btnopen1")
+    let btnclose = document.getElementById("btnclose1")
+
+    function hidebar(e) {
+        let bar = document.getElementById("bar-data")
+        let bar2 = document.getElementById("bar-data-main")
+        let bar3 = document.getElementById("bar-data-header")
+        let bar4 = document.getElementById("bar-data-body")
+        let btn = document.getElementById("btnshow1")
+        $('#bar-data').fadeOut('slow')
+        bar.style.opacity = '1'
+        e.style.display = "none"
+        btn.style.display = "unset"
+    }
+
+    function showbar(e) {
+        let bar = document.getElementById("bar-data")
+        let bar2 = document.getElementById("bar-data-main")
+        let bar3 = document.getElementById("bar-data-header")
+        let bar4 = document.getElementById("bar-data-body")
+        let btn = document.getElementById("btnhide1")
+        $('#bar-data').fadeIn('slow')
+        e.style.display = "none"
+        btn.style.display = "unset"
+        /*setTimeout(function () {
+            bar.style.opacity = '0.3'
+        }, 5000);*/
+    }
+
+    /*$('#bar-data').mouseover(()=>{
+        let bar = document.getElementById("bar-data")
+        bar.style.opacity = '1'
+    })
+
+    $('#bar-data').mouseleave(()=>{
+        let bar = document.getElementById("bar-data")
+        bar.style.opacity = '.3'
+    })*/
+
+    function openCamera() {
+        let txt1 = document.getElementById("waitingtxt1")
+        let txt2 = document.getElementById("waitingtxt2")
+        txt1.style.webkitTextStroke = "1px green"
+        txt2.style.color = 'green'
+        txt1.innerHTML = "OPENING"
+        txt2.innerHTML = "OPENING"
+        btnopen.style.display = "none"
+        btnclose.style.display = "unset"
+        myimg.onload = $('.loader-wrapper').fadeIn("slow")
+        myimg.src = "{{ url_for('video_feed') }}"
+        myimg.addEventListener("load", function () {
+            $('.loader-wrapper').fadeOut("slow");
+            $('.centered1').css({
+                visibility: 'hidden'
+            })
+            $('.centered2').css({
+                visibility: 'visible'
+            })
+            setTimeout(function () {
+                $('#center-text2').fadeOut('slow')
+            }, 2000);
+        })
+    }
+
+    function closeCamera() {
+        let txt1 = document.getElementById("waitingtxt1")
+        let txt2 = document.getElementById("waitingtxt2")
+        txt1.style.webkitTextStroke = "1px red"
+        txt2.style.color = 'red'
+        txt1.innerHTML = "CLOSING"
+        txt2.innerHTML = "CLOSING"
+        btnopen.style.display = "unset"
+        btnclose.style.display = "none"
+        myimg.onload = $('.loader-wrapper').fadeIn("slow");
+        myimg.src = "{{ url_for('static', filename='img/waiting_camera.webp') }}"
+        myimg.addEventListener("load", function () {
+            $('.loader-wrapper').fadeOut("slow");
+            $('.centered1').css({
+                visibility: 'visible'
+            })
+            $('.centered2').css({
+                visibility: 'hidden'
+            })
+            setTimeout(function () {
+                $('#center-text1').fadeIn('slow')
+            }, 1000);
+        })
+    }
+
+    function openFullscreen(button) {
+        $(button).find('i').toggleClass('fas fa-expand fas fa-compress');
+
+        elem.webkitRequestFullscreen()
+        if ((document.fullScreenElement && document.fullScreenElement !== null) || (!document.mozFullScreen &&
+                !document.webkitIsFullScreen)) {
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.mozRequestFullScreen) {
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullScreen) {
+                elem.webkitRequestFullScreen();
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitCancelFullScreen) {
+                document.webkitCancelFullScreen();
+            }
+        }
+    }
+</script>
+<script src="{{ url_for('static', filename='js/myscript.js') }}"></script>
+<script src="{{ url_for('static', filename='js/loading.js') }}"></script>
+<script src="{{ url_for('static', filename='js/nav-hide.js') }}"></script>
+
+</html>

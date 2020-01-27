@@ -55,9 +55,12 @@
                         <div class="card bg-{{bgColor[num-1]}} text-white" data-toggle="collapse"
                             href="#collapse{{num}}">
                             <div class="card-header">
-                                <a style="text-align:start;">
+                                <a style="text-align:start;width:100vw;">
                                     วิชา {{getsj['sj_id']}} ::
                                     {{getsj['sj_name']}}
+                                    <span style="position:absolute;right:1%;">
+                                        คลิกเพื่อดูเพิ่มเติม
+                                    </span>
                                 </a>
                             </div>
                             <div id="collapse{{num}}" class="collapse" data-parent="#accordion">

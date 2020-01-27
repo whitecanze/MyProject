@@ -3,12 +3,13 @@ import time
 import pymongo
 import cv2
 import datetime
+from datetime import timedelta
 import os
 import dlib
 import pickle
 import werkzeug
 from werkzeug.utils import secure_filename
-from flask import Flask, render_template, Response, redirect, url_for, request, flash, jsonify
+from flask import Flask, render_template, Response, redirect, url_for, request, flash, jsonify,session
 import json
 from bson import json_util, ObjectId
 from flask_cors import CORS
@@ -19,6 +20,7 @@ from pymongo import ReturnDocument
 from PIL import Image
 from datetime import datetime
 from webptools import webplib as webp
+from passlib.hash import argon2
 
 app = Flask(__name__)
 app.debug = True
@@ -203,33 +205,38 @@ class TrainData:
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    result = mongo.db.stdata.find({})
-    getfac = mongo.db.dbfaculty.find({})
-    getfac2 = mongo.db.dbfaculty.find({})
-    getfac3 = mongo.db.dbfaculty.find({})
-    getbr = mongo.db.dbbranch.find({})
-    getSubject = mongo.db.subject.find({})
-    shSj = mongo.db.subject.find({})
-    shSj2 = mongo.db.subject.find({})
-    imglist = mongo.db.dbimagelist.find({})
+    if session.get("username",None) is not None:
+        result = mongo.db.stdata.find({})
+        getfac = mongo.db.dbfaculty.find({})
+        getfac2 = mongo.db.dbfaculty.find({})
+        getfac3 = mongo.db.dbfaculty.find({})
+        getbr = mongo.db.dbbranch.find({})
+        getSubject = mongo.db.subject.find({})
+        shSj = mongo.db.subject.find({})
+        shSj2 = mongo.db.subject.find({})
+        imglist = mongo.db.dbimagelist.find({})
 
-    co1 = mongo.db.stdata.count_documents({})
-    co2 = mongo.db.dbfaculty.count_documents({})
-    co3 = mongo.db.subject.count_documents({})
-    co4 = mongo.db.dbimagelist.count_documents({})
+        co1 = mongo.db.stdata.count_documents({})
+        co2 = mongo.db.dbfaculty.count_documents({})
+        co3 = mongo.db.subject.count_documents({})
+        co4 = mongo.db.dbimagelist.count_documents({})
 
-    textpage = {"sidebartexthead": "แถบเครื่องมือ",
-                "sidebartextbody1": "จัดการ",
-                "sidebartextsubbody1": "เพิ่มนักเรียน",
-                "sidebartextsubbody2": "เพิ่มวิชา",
-                "sidebartextsubbody3": "ดูรูปภาพ",
-                "sidebartextsubbody4": "เพิ่มคณะและสาขา",
-                "sidebartextbody2": "เรียนรู้",
-                "sidebartextbody3": "ระบบตรวจจับ",
-                "sidebartextbody4": "นับรูป", }
+        sessionname = session.get('username')
 
-    return render_template('index.html', selfac=getfac3, selsj=shSj2, sendtextpage=textpage, countst=co1, countfac=co2, countsj=co3, shfaculty=getfac, shfaculty2=getfac2, shbranch=getbr, datas=result, shsj=shSj, getsj=getSubject)
+        textpage = {"sidebartexthead": "แถบเครื่องมือ",
+                    "sidebartextbody1": "จัดการ",
+                    "sidebartextsubbody1": "เพิ่มนักเรียน",
+                    "sidebartextsubbody2": "เพิ่มวิชา",
+                    "sidebartextsubbody3": "ดูรูปภาพ",
+                    "sidebartextsubbody4": "เพิ่มคณะและสาขา",
+                    "sidebartextbody2": "เรียนรู้",
+                    "sidebartextbody3": "ระบบตรวจจับ",
+                    "sidebartextbody4": "นับรูป", }
 
+        return render_template('index.html', username=sessionname, selfac=getfac3, selsj=shSj2, sendtextpage=textpage, countst=co1, countfac=co2, countsj=co3, shfaculty=getfac, shfaculty2=getfac2, shbranch=getbr, datas=result, shsj=shSj, getsj=getSubject)
+    else:
+        flash('Please login!', "warning")
+        return redirect(url_for('userlogin'))
 
 def allowed_image(filename):
     if not "." in filename:
@@ -240,48 +247,40 @@ def allowed_image(filename):
     else:
         return False
 
-
 @app.route("/upload-image", methods=["GET", "POST"])
 def upload_image():
-    if request.method == "POST":
-        addimg = Controlstdata()
-        if request.files:
-            imgname = request.form['imgname']
-            st_id = request.form['st_id']
-            count2 = request.form['mycount']
-            imgsplit = imgname.split('.')
-            newname = st_id + "_" + str(int(count2) + 1) + "." + "jpg"
-            image = request.files["image"]
+    if session.get("username", None) is not None:
+        if request.method == "POST":
+            addimg = Controlstdata()
+            if request.files:
+                imgname = request.form['imgname']
+                st_id = request.form['st_id']
+                count2 = request.form['mycount']
+                imgsplit = imgname.split('.')
+                newname = st_id + "_" + str(int(count2) + 1) + "." + "jpg"
+                image = request.files["image"]
 
-            try:
-                print(newname)
-                if image.filename == "":
-                    flash("No image file", "warning")
+                try:
+                    print(newname)
+                    if image.filename == "":
+                        flash("No image file", "warning")
+                        return redirect(url_for('index'))
+                    if allowed_image(image.filename):
+                        image.save(os.path.join(
+                            app.config["IMAGE_UPLOADS"], newname))
+                        addimg.insertImg(st_id, int(count2) + 1)
+                        flash("Upload new image {}".format(newname), "success")
+                        return redirect(url_for('index'))
+                    else:
+                        flash("That file extension is not allowed", "danger")
+                        return redirect(url_for('index'))
+
+                except pymongo.errors.DuplicateKeyError:
+                    flash('Data is dupicate!', "danger")
                     return redirect(url_for('index'))
-                if allowed_image(image.filename):
-                    image.save(os.path.join(
-                        app.config["IMAGE_UPLOADS"], newname))
-                    addimg.insertImg(st_id, int(count2) + 1)
-                    flash("Upload new image {}".format(newname), "success")
-                    return redirect(url_for('index'))
-                else:
-                    flash("That file extension is not allowed", "danger")
-                    return redirect(url_for('index'))
-
-            except pymongo.errors.DuplicateKeyError:
-                flash('Data is dupicate!', "danger")
-                return redirect(url_for('index'))
-
-# @app.route("/convertimg")
-# def convertimg():
-#     img_folder_path2 = './static/photodataset'
-#     dirListing2 = os.listdir(img_folder_path2)
-#     n_count2 = len(dirListing2)
-#     for x in range(3):
-#         print(webp.cwebp("./static/photodataset/60017144_"+str(int(x+1))+".jpg","./static/photodataset/60017144_"+str(int(x+1))+".webp", "-q 80"))
-
-#     flash('Convert Success!', "Success")
-#     return redirect(url_for('index'))
+    else:
+        flash('Please login!', "warning")
+        return redirect(url_for('userlogin'))
 
 @app.route("/chkimage")
 def chkimage():
@@ -309,6 +308,16 @@ def chkstd():
 
     return json.dumps(response)
 
+@app.route("/chksjlist", methods=["POST"])
+def chksjlist():
+    sj = mongo.db.subject.find({})
+    response = []
+    for getchk in sj:
+        getchk['_id'] = str(getchk['_id'])
+        response.append(getchk)
+
+    return json.dumps(response)
+
 @app.route('/gencamera')
 def generate(camera):
     while True:
@@ -321,58 +330,129 @@ def generate(camera):
 
 @app.route("/training")
 def training():
-    # try:
-    #     TD = TrainData('DataSet')
-    #     print("\n Training faces. It will take a few seconds. Wait ...")
-    #     faces, ids = TD.getImagesAndLabels()
-    #     TD.recognizer.train(faces, np.array(ids))
-    #     TD.recognizer.write('Trainer/trainer.yml')
-    #     print("\n {0} faces trained. Exiting Program".format(
-    #         len(np.unique(ids))))
-    #     flash('Complete! {0} faces trained.'.format(
-    #         len(np.unique(ids))), "success")
-    #     return redirect(url_for('index'))
-    # except cv2.error:
-    #     flash('No data for training! {0} faces trained.'.format(
-    #         len(np.unique(ids))), "danger")
-    #     return redirect(url_for('index'))
+    if session.get("username", None) is not None:
+        timestart = time.time()
+        path = './static/photodataset/'
+        detector = dlib.get_frontal_face_detector()
+        sp = dlib.shape_predictor('./model/shape_predictor_68_face_landmarks.dat')
+        model = dlib.face_recognition_model_v1(
+            './model/dlib_face_recognition_resnet_model_v1.dat')
 
-    path = './static/photodataset/'
-    detector = dlib.get_frontal_face_detector()
-    sp = dlib.shape_predictor('./model/shape_predictor_68_face_landmarks.dat')
-    model = dlib.face_recognition_model_v1(
-        './model/dlib_face_recognition_resnet_model_v1.dat')
+        FACE_DESC = []
+        FACE_NAME = []
+        trained = []
+        getcount = []
+        for fn in os.listdir(path):
+            if fn.endswith('.jpg'):
+                img = cv2.imread(path + fn)[:, :, ::-1]
+                dets = detector(img, 1)
+                for k, d in enumerate(dets):
+                    shape = sp(img, d)
+                    face_desc = model.compute_face_descriptor(img, shape, 5)
+                    FACE_DESC.append(np.array(face_desc))
+                    trained.append(fn)
+                    print('Training....', fn)
+                    FACE_NAME.append(fn[: fn.index('_')])
 
-    FACE_DESC = []
-    FACE_NAME = []
-    trained = []
-    getcount = []
-    for fn in os.listdir(path):
-        if fn.endswith('.jpg'):
-            img = cv2.imread(path + fn)[:, :, ::-1]
-            dets = detector(img, 1)
-            for k, d in enumerate(dets):
-                shape = sp(img, d)
-                face_desc = model.compute_face_descriptor(img, shape, 5)
-                FACE_DESC.append(np.array(face_desc))
-                trained.append(fn)
-                print('Training....', fn)
-                FACE_NAME.append(fn[: fn.index('_')])
+        pickle.dump((FACE_DESC, FACE_NAME), open('./Trainer/trainset.pk', 'wb'))
 
-    pickle.dump((FACE_DESC, FACE_NAME), open('./Trainer/trainset.pk', 'wb'))
+        timefinish = time.time()
+        totaltime = timefinish - timestart
+        print("{0:.2f} s.".format(round(totaltime, 2)))
+        flash('Complete! trained. {0} Time total {1:.2f} s.'.format(trained,totaltime), "success")
+        return redirect(url_for('index'))
+    else:
+        flash('Please login!', "warning")
+        return redirect(url_for('userlogin'))
 
-    # for indexX in trained:
-    #     datasplit = indexX.split('_')
-    #     print(datasplit[0])
-    #     getcount.append(datasplit[0])
+@app.route('/userlogin')
+def userlogin():
+    if session.get("username", None) is not None:
+        username = session.get("username", None)
+        return render_template('testing.html', username=username)
+    else:
+        username = ""
+        return render_template('testing.html', username=username)
 
-    flash('Complete! trained. {}'.format(trained), "success")
-    return redirect(url_for('index'))
+@app.route('/adduser', methods=['POST'])
+def adduser():
+    if request.method == "POST":
+        try:
+            getuser = request.form['username']
+            getpass = request.form['password']
+            getkey = request.form['adminkey']
+            if not getuser:
+                flash('Please Enter Username!', "danger")
+                return redirect(url_for('userlogin'))
+            if not getpass:
+                flash('Please Enter Password!', "danger")
+                return redirect(url_for('userlogin'))
+            if not getkey:
+                if session.get("username", None) is not None:
+                    hashpass = argon2.using(rounds=4).hash(getpass)
+                    mongo.db.userdata.insert({'username': getuser, 'password': hashpass})
+                    flash('Add user success!', "success")
+                    return redirect(url_for('userlogin'))
+                else:
+                    flash('Please Login Or Enter Key To Create New User!', "danger")
+                    return redirect(url_for('userlogin'))
+            if getkey:
+                user = mongo.db.userdata.find({})
+                for chkuser in user:
+                    if chkuser['username'] == getkey:
+                        hashpass = argon2.using(rounds=4).hash(getpass)
+                        mongo.db.userdata.insert({'username': getuser, 'password': hashpass})
+                        flash('Add user success!', "success")
+                        return redirect(url_for('userlogin'))
+                    else:
+                        flash('Key is incorrect!', "danger")
+                        return redirect(url_for('userlogin'))
+        except pymongo.errors.DuplicateKeyError:
+            flash('Data is dupicate!', "danger")
+            return redirect(url_for('userlogin'))
 
 
+@app.route("/chkuser",  methods=['POST'])
+def chkuser():
+    if request.method == "POST":
+        getuser = request.form['username']
+        getpass = request.form['password']
+        if not getuser:
+            flash('Please Enter Username!', "danger")
+            return redirect(url_for('userlogin'))
+        if not getpass:
+            flash('Please Enter Password!', "danger")
+            return redirect(url_for('userlogin'))
+        gethashpass = ""
+        chkpass = ""
+        user = mongo.db.userdata.find({'username': getuser})
+        for chkuser in user:
+            gethashpass = chkuser['password']
+            chkpass = argon2.verify(getpass, gethashpass)
+        if chkpass == True:
+            app.permanent_session_lifetime = timedelta(minutes=300)
+            session.permanent = True
+            session["username"] = getuser.upper()
+            flash('Welcome {}'.format(getuser.upper()), "success")
+            return redirect(url_for('index'))
+        else:
+            flash('Username Not found or Password Incorrect', "danger")
+            return redirect(url_for('userlogin'))
+
+
+@app.route("/userlogout")
+def userlogout():
+    session.pop("username", None)
+    session.clear()
+    return redirect(url_for("userlogin"))
+    
 @app.route('/detection')
 def detection():
-    return render_template('detection.html')
+    if session.get("username", None) is not None:
+        return render_template('detection.html')
+    else:
+        flash('Please login!', "warning")
+        return redirect(url_for('userlogin'))
 
 
 @app.route('/addsj', methods=['POST'])
@@ -594,16 +674,20 @@ def updatestd():
 
 @app.route("/count")
 def count():
-    img_folder_path1 = './DataSet'
-    img_folder_path2 = './static/photodataset'
-    dirListing1 = os.listdir(img_folder_path1)
-    dirListing2 = os.listdir(img_folder_path2)
+    if session.get("username", None) is not None:
+        img_folder_path1 = './DataSet'
+        img_folder_path2 = './static/photodataset'
+        dirListing1 = os.listdir(img_folder_path1)
+        dirListing2 = os.listdir(img_folder_path2)
 
-    n_count1 = len(dirListing1)
-    n_count2 = len(dirListing2)
-    flash('Total image from DataSet folder {0} and Total image from photodataset folder {1}'.format(
-        len(dirListing1), len(dirListing2)), "success")
-    return redirect(url_for('index'))
+        n_count1 = len(dirListing1)
+        n_count2 = len(dirListing2)
+        flash('Total image from DataSet folder {0} and Total image from photodataset folder {1}'.format(
+            len(dirListing1), len(dirListing2)), "success")
+        return redirect(url_for('index'))
+    else:
+        flash('Please login!', "warning")
+        return redirect(url_for('userlogin'))
 
 
 @app.route("/deletestd", methods=['POST'])

@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import cupy as cp
 import dlib
 import pickle
 

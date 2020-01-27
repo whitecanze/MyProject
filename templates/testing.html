@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="{{ url_for('static', filename='img/icon.webp') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Kanit&display=swap" rel="stylesheet">
+    <!-- css and script -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pagestyle.css') }}">
+    <title>เข้าสู่ระบบ</title>
+</head>
+<style>
+    .imglogopage {
+        position: absolute;
+        top: 0;
+        left: 42.8%;
+        z-index: 1;
+        animation: trantop 1s forwards;
+    }
+
+    .form-register {
+        display: none;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+
+    .form-login {
+        display: none;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+
+    .form-register>.regis-left {
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background-color: white;
+    }
+
+    .form-login>.login-left {
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        color: white;
+    }
+
+    .form-register>.regis-right {
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        top: 0;
+        right: 0;
+        color: white;
+    }
+
+    .form-login>.login-right {
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        top: 0;
+        right: 0;
+        background-color: white;
+    }
+
+    .form-register>.regis-right>h1 {
+        position: absolute;
+        top: 35%;
+        left: 20%;
+        font-size: 10vw;
+        font-weight: bold;
+    }
+
+    .form-login>.login-left>h1 {
+        position: absolute;
+        top: 35%;
+        left: 20%;
+        font-size: 8vw;
+        font-weight: bold;
+    }
+
+    .form-regis {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .form-log {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .input-regis-username,
+    .input-login-username {
+        position: absolute;
+        top: 25%;
+        left: 25%;
+        width: 500px;
+        height: 60px;
+        background-color: none;
+        color: var(--main-color1);
+        font-size: 1.5rem;
+        padding: 2%;
+        border-top: none;
+        border-right: none;
+        border-left: none;
+    }
+
+
+    .input-regis-password,
+    .input-login-password {
+        position: absolute;
+        top: 40%;
+        left: 25%;
+        width: 500px;
+        height: 60px;
+        background-color: none;
+        color: var(--main-color1);
+        font-size: 1.5rem;
+        padding: 2%;
+        border-top: none;
+        border-right: none;
+        border-left: none;
+    }
+
+    .input-regis-key {
+        position: absolute;
+        top: 55%;
+        left: 25%;
+        width: 500px;
+        height: 60px;
+        background-color: none;
+        color: var(--main-color1);
+        font-size: 1.5rem;
+        padding: 2%;
+        border-top: none;
+        border-right: none;
+        border-left: none;
+    }
+
+    .input-regis-btn,
+    .input-login-btn {
+        position: absolute;
+        top: 70%;
+        width: auto;
+        height: auto;
+        border: none;
+        font-size: 3rem;
+        font-weight: bold;
+        animation: btnregis .5s forwards;
+        background: none;
+    }
+
+    .input-regis-btn:hover,
+    .input-login-btn:hover {
+        animation: btnregishover .5s forwards;
+    }
+
+    .input-regis-btn-cancel,
+    .input-login-btn-cancel {
+        position: absolute;
+        top: 80%;
+        width: auto;
+        height: auto;
+        border: none;
+        font-size: 1rem;
+        font-weight: bold;
+        animation: btnregisback .5s forwards;
+        background: none;
+    }
+
+    .input-regis-btn-cancel:hover,
+    .input-login-btn-cancel:hover {
+        animation: btnregisbackhover .5s forwards;
+    }
+
+    .input-regis-btn:focus,
+    .input-regis-btn-cancel:focus,
+    .input-login-btn:focus,
+    .input-login-btn-cancel:focus {
+        outline: none;
+    }
+
+    @keyframes btnregishover {
+        from {
+            color: var(--main-color2);
+            font-size: 3rem;
+            left: 40%;
+        }
+
+        to {
+            color: var(--main-color1);
+            font-size: 4rem;
+            left: 35%;
+        }
+    }
+
+    @keyframes btnregis {
+        from {
+            color: var(--main-color1);
+            font-size: 4rem;
+            left: 35%;
+        }
+
+        to {
+            color: var(--main-color2);
+            font-size: 3rem;
+            left: 40%;
+        }
+    }
+
+    @keyframes btnregisbackhover {
+        from {
+            color: var(--main-color2);
+            font-size: 2rem;
+            left: 43%;
+        }
+
+        to {
+            color: var(--main-color1);
+            font-size: 3rem;
+            left: 40%;
+        }
+    }
+
+    @keyframes btnregisback {
+        from {
+            color: var(--main-color1);
+            font-size: 3rem;
+            left: 40%;
+        }
+
+        to {
+            color: var(--main-color2);
+            font-size: 2rem;
+            left: 43%;
+        }
+    }
+
+    .input-regis-btn:focus,
+    .input-login-btn:focus {
+        outline: none;
+    }
+
+    .input-regis-username:focus,
+    .input-regis-password:focus,
+    .input-login-username:focus,
+    .input-login-password:focus,
+    .input-regis-key:focus {
+        outline: none;
+        border-color: var(--main-color1);
+    }
+
+    .banner {
+        position: absolute;
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .banner video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 150%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .banner span.tt {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        font-weight: bold;
+        text-align: center;
+        animation: chgcolor 1s forwards;
+        text-align: center;
+        line-height: 100vh;
+        mix-blend-mode: screen;
+    }
+
+    .banner span.tt>p {
+        display: none;
+        font-size: 10vw;
+    }
+
+    .banner span.tt>i {
+        display: unset;
+        position: absolute;
+        top: 15%;
+        left: 10%;
+        font-size: 35vw;
+    }
+
+    .banner span.tt:hover {
+        animation: chgcolorhover 1s forwards;
+    }
+
+    .banner span.tt:hover p {
+        display: unset;
+    }
+
+    .banner span.tt:hover i {
+        display: none;
+    }
+
+    @keyframes chgcolorhover {
+        from {
+            background: gray;
+            color: black;
+        }
+
+        to {
+            color: white;
+            background: black;
+        }
+    }
+
+    @keyframes chgcolor {
+        from {
+            color: gray;
+            background: black;
+
+        }
+
+        to {
+            background: gray;
+            color: black;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .banner {
+            flex-direction: column;
+        }
+
+        .banner span.tt {
+            height: 50%;
+            line-height: 50vh;
+            font-size: 50vw;
+        }
+    }
+</style>
+
+<body>
+    {% include 'loadingpage.html' %}
+    {% include 'aleart.html' %}
+    {% if username == ""%}
+    <div class="banner">
+        <video autoplay muted loop>
+            <source src="{{ url_for('static', filename='img/video.mp4') }}" type="video/mp4">
+        </video>
+        <span class="tt" id="registerform1">
+            <i class="fas fa-user-plus" aria-hidden="true"></i>
+            <p>เพิ่มผู้ใช้</p>
+        </span>
+        <span class="tt" id="loginform1">
+            <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
+            <p>เข้าสู่ระบบ</p>
+        </span>
+        <div class="form-register">
+            <div class="regis-left">
+                <div class="form-regis">
+                    <form action="/adduser" method="post">
+                        <input class="input-regis-username" type="text" name="username" placeholder="USERNAME">
+                        <input class="input-regis-password" type="password" name="password" placeholder="PASSWORD">
+                        <input class="input-regis-key" type="password" name="adminkey" placeholder="KEY (IMPORTANT)">
+                        <button class="input-regis-btn" type="submit">SUBMIT</button>
+                    </form>
+                    <button class="input-regis-btn-cancel" onclick="cancelregis()">CANCEL</button>
+                </div>
+            </div>
+            <div class="regis-right">
+                <h1>เพิ่มผู้ใช้</h1>
+            </div>
+        </div>
+        <div class="form-login">
+            <div class="login-left">
+                <h1>เข้าสู่ระบบ</h1>
+            </div>
+            <div class="login-right">
+                <div class="form-log">
+                    <form action="/chkuser" method="post">
+                        <input class="input-login-username" type="text" name="username" placeholder="USERNAME">
+                        <input class="input-login-password" type="password" name="password" placeholder="PASSWORD">
+                        <button class="input-login-btn" type="submit">LOGIN</button>
+                    </form>
+                    <button class="input-login-btn-cancel" onclick="cancellogin()">CANCEL</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="banner">
+        <video autoplay muted loop>
+            <source src="{{ url_for('static', filename='img/video.mp4') }}" type="video/mp4">
+        </video>
+        <span class="tt" id="registerform2">
+            <i class="fas fa-user-plus" aria-hidden="true"></i>
+            <p>เพิ่มผู้ใช้</p>
+        </span>
+        <span class="tt" id="hello1" onclick="location.href='/'">
+            <i class="fas fa-chart-line" aria-hidden="true" style="left:15%;"></i>
+            <p style="font-size: 8vw;">DASHBOARD</p>
+        </span>
+        <div class="form-register">
+            <div class="regis-left">
+                <div class="form-regis">
+                    <form action="/adduser" method="post">
+                        <input class="input-regis-username" type="text" name="username" placeholder="USERNAME">
+                        <input class="input-regis-password" type="password" name="password" placeholder="PASSWORD">
+                        <input class="input-regis-key" type="password" name="adminkey" placeholder="KEY (NOT IMPORTANT)">
+                        <button class="input-regis-btn" type="submit">SUBMIT</button>
+                    </form>
+                    <button class="input-regis-btn-cancel" onclick="cancelregis2()">CANCEL</button>
+                </div>
+            </div>
+            <div class="regis-right">
+                <h1>เพิ่มผู้ใช้</h1>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</body>
+<script src="{{ url_for('static', filename='js/myscript.js') }}"></script>
+<script src="{{ url_for('static', filename='js/loading.js') }}"></script>
+<script async src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@12.4.0/dist/lazyload.min.js"></script>
+<script>
+    $('#registerform1').on('click', () => {
+        $('#loginform1').css({
+            display: 'none'
+        })
+        setTimeout(() => {
+            $('#registerform1').fadeOut('slow')
+        }, 200)
+        setTimeout(() => {
+            $('.form-register').fadeIn('slow')
+        }, 1000)
+    })
+    $('#registerform2').on('click', () => {
+        $('#hello1').css({
+            display: 'none'
+        })
+        setTimeout(() => {
+            $('#registerform2').fadeOut('slow')
+        }, 200)
+        setTimeout(() => {
+            $('.form-register').fadeIn('slow')
+        }, 1000)
+    })
+
+    $('#loginform1').on('click', () => {
+        $('#registerform1').css({
+            display: 'none'
+        })
+        setTimeout(() => {
+            $('#loginform1').fadeOut('slow')
+        }, 200)
+        setTimeout(() => {
+            $('.form-login').fadeIn('slow')
+        }, 1000)
+    })
+
+    function cancelregis() {
+        $('.form-register').fadeOut('slow')
+        setTimeout(() => {
+            $('.form-register').css({
+                display: 'none'
+            })
+        }, 1000)
+        setTimeout(() => {
+            $('#registerform1').fadeIn('slow')
+            $('#loginform1').fadeIn('slow')
+        }, 1000)
+    }
+
+    function cancelregis2() {
+        $('.form-register').fadeOut('slow')
+        setTimeout(() => {
+            $('.form-register').css({
+                display: 'none'
+            })
+        }, 1000)
+        setTimeout(() => {
+            $('#registerform2').fadeIn('slow')
+            $('#hello1').fadeIn('slow')
+        }, 1000)
+    }
+
+    function cancellogin() {
+        $('.form-login').fadeOut('slow')
+        setTimeout(() => {
+            $('.form-login').css({
+                display: 'none'
+            })
+        }, 1000)
+        setTimeout(() => {
+            $('#registerform1').fadeIn('slow')
+            $('#loginform1').fadeIn('slow')
+        }, 1000)
+    }
+</script>
+
+</html>
