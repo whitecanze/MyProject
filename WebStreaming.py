@@ -37,14 +37,48 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 
 
 class Controlstdata:
-    def updatesj(self, oldsj_id, faculty, sj_id, sj_name, sj_StartTime, sj_FinishTime, sj_date):
+    def updatesj(self, oldsj_id, faculty, sj_id, sj_name, sj_StartTime, sj_FinishTime, sj_date,week1,week2,week3,week4,week5,week6,week7,week8,week9,week10,week11,week12,week13,week14,week15,week16):
         mongo.db.subject.update_one({"sj_id": oldsj_id}, {"$set": {"sj_id": sj_id, "fac_name": faculty, "sj_detail": {
-            "sj_name": sj_name, "sj_StartTime": sj_StartTime+".00", "sj_FinishTime": sj_FinishTime+".00", "sj_date": sj_date}}})
+            "sj_name": sj_name, "sj_StartTime": sj_StartTime+".00", "sj_FinishTime": sj_FinishTime+".00", "sj_date": sj_date, "sj_weeklist": {
+                    "week1":week1,
+                    "week2":week2,
+                    "week3":week3,
+                    "week4":week4,
+                    "week5":week5,
+                    "week6":week6,
+                    "week7":week7,
+                    "week8":week8,
+                    "week9":week9,
+                    "week10":week10,
+                    "week11":week11,
+                    "week12":week12,
+                    "week13":week13,
+                    "week14":week14,
+                    "week15":week15,
+                    "week16":week16,
+                }}}})
 
     def insertnewsj(self, faculty, sj_id, sj_name, sj_StartTime, sj_FinishTime, sj_date):
         mongo.db.subject.insert(
             {"sj_id": sj_id, "fac_name": faculty, "sj_detail": {
-                "sj_name": sj_name, "sj_StartTime": sj_StartTime+".00", "sj_FinishTime": sj_FinishTime+".00", "sj_date": sj_date}})
+                "sj_name": sj_name, "sj_StartTime": sj_StartTime + ".00", "sj_FinishTime": sj_FinishTime + ".00", "sj_date": sj_date, "sj_weeklist": {
+                    "week1":"-",
+                    "week2":"-",
+                    "week3":"-",
+                    "week4":"-",
+                    "week5":"-",
+                    "week6":"-",
+                    "week7":"-",
+                    "week8":"-",
+                    "week9":"-",
+                    "week10":"-",
+                    "week11":"-",
+                    "week12":"-",
+                    "week13":"-",
+                    "week14":"-",
+                    "week15":"-",
+                    "week16":"-",
+                }}})
 
     def deletestsj(self, st_id, sj_id):
         result = mongo.db.stdata.find({'st_id': int(st_id)})
@@ -69,7 +103,7 @@ class Controlstdata:
                 else:
                     pass
 
-    def addSubject(self, st_id, sj_id, sj_name, sj_date, sj_begin, sj_finish):
+    def addSubject(self, st_id, sj_id, sj_name, sj_date, sj_begin, sj_finish,dateweek1,dateweek2,dateweek3,dateweek4,dateweek5,dateweek6,dateweek7,dateweek8,dateweek9,dateweek10,dateweek11,dateweek12,dateweek13,dateweek14,dateweek15,dateweek16):
         result = mongo.db.stdata.find({'st_id': int(st_id)})
         for getresult in result:
             enrollresult = getresult['enroll']
@@ -87,7 +121,7 @@ class Controlstdata:
                                                             "enroll.sj_enroll.sj_list.sj_{}.sj_date".format(i+1): sj_date,
                                                             "enroll.sj_enroll.sj_list.sj_{}.sj_begin".format(i+1): sj_begin,
                                                             "enroll.sj_enroll.sj_list.sj_{}.sj_finish".format(i+1): sj_finish,
-                                                            "enroll.sj_enroll.sj_list.sj_{}.sj_chktime".format(i + 1): {"week1": {"learning_date": "-", "chk_status": "-"}, "week2": {"learning_date": "-", "chk_status": "-"}, "week3": {"learning_date": "-", "chk_status": "-"}, "week4": {"learning_date": "-", "chk_status": "-"}, "week5": {"learning_date": "-", "chk_status": "-"}, "week6": {"learning_date": "-", "chk_status": "-"}, "week7": {"learning_date": "-", "chk_status": "-"}, "week8": {"learning_date": "-", "chk_status": "-"}, "week9": {"learning_date": "-", "chk_status": "-"}, "week10": {"learning_date": "-", "chk_status": "-"}, "week11": {"learning_date": "-", "chk_status": "-"}, "week12": {"learning_date": "-", "chk_status": "-"}, "week13": {"learning_date": "-", "chk_status": "-"}, "week14": {"learning_date": "-", "chk_status": "-"}, "week15": {"learning_date": "-", "chk_status": "-"}, "week16": {"learning_date": "-", "chk_status": "-"}}}}, return_document=ReturnDocument.AFTER, upsert=True)
+                                                            "enroll.sj_enroll.sj_list.sj_{}.sj_chktime".format(i + 1): {"week1": {"learning_date": dateweek1, "chk_status": "-"}, "week2": {"learning_date": dateweek2, "chk_status": "-"}, "week3": {"learning_date": dateweek3, "chk_status": "-"}, "week4": {"learning_date": dateweek4, "chk_status": "-"}, "week5": {"learning_date": dateweek5, "chk_status": "-"}, "week6": {"learning_date": dateweek6, "chk_status": "-"}, "week7": {"learning_date": dateweek7, "chk_status": "-"}, "week8": {"learning_date": dateweek8, "chk_status": "-"}, "week9": {"learning_date": dateweek9, "chk_status": "-"}, "week10": {"learning_date": dateweek10, "chk_status": "-"}, "week11": {"learning_date": dateweek11, "chk_status": "-"}, "week12": {"learning_date": dateweek12, "chk_status": "-"}, "week13": {"learning_date": dateweek13, "chk_status": "-"}, "week14": {"learning_date": dateweek14, "chk_status": "-"}, "week15": {"learning_date": dateweek15, "chk_status": "-"}, "week16": {"learning_date": dateweek16, "chk_status": "-"}}}}, return_document=ReturnDocument.AFTER, upsert=True)
                     break
                 else:
                     pass
@@ -307,6 +341,19 @@ def chkstd():
             response.append(getchk)
 
     return json.dumps(response)
+
+@app.route("/stdsjchk", methods=["POST"])
+def stdsjchk():
+    if request.method == "POST":
+        sjid = request.json['data']
+        std = mongo.db.stdata.find({})
+        print(sjid)
+        response = []
+        for getchk in std:
+            getchk['_id'] = str(getchk['_id'])
+            response.append(getchk)
+
+        return json.dumps(response)
 
 @app.route("/chksjlist", methods=["POST"])
 def chksjlist():
@@ -569,16 +616,53 @@ def addstsj():
         if request.method == "POST":
             st_id = request.form['st_id']
             sj_data = request.form['sj1']
-
             splittxt = sj_data.split(':')
 
             if not sj_data:
                 flash('Subject id is empty', "warning")
                 return redirect(url_for('index'))
+            dateweek1 = ""
+            dateweek2 = ""
+            dateweek3 = ""
+            dateweek4 = ""
+            dateweek5= ""
+            dateweek6= ""
+            dateweek7= ""
+            dateweek8= ""
+            dateweek9= ""
+            dateweek10= ""
+            dateweek11= ""
+            dateweek12 = ""
+            dateweek13= ""
+            dateweek14= ""
+            dateweek15 = ""
+            dateweek16 = ""
+            getweeksj = mongo.db.subject.find({"sj_id": splittxt[0]})
+            for sjd in getweeksj:
+                gdetail = sjd['sj_detail']
+                gweek = gdetail['sj_weeklist']
+                dateweek1 = gweek['week1']
+                dateweek2 = gweek['week2']
+                dateweek3 = gweek['week3']
+                dateweek4 = gweek['week4']
+                dateweek5 = gweek['week5']
+                dateweek6 = gweek['week6']
+                dateweek7 = gweek['week7']
+                dateweek8 = gweek['week8']
+                dateweek9 = gweek['week9']
+                dateweek10 = gweek['week10']
+                dateweek11 = gweek['week11']
+                dateweek12 = gweek['week12']
+                dateweek13 = gweek['week13']
+                dateweek14 = gweek['week14']
+                dateweek15 = gweek['week15']
+                dateweek16 = gweek['week16']
 
             contst = Controlstdata()
             contst.addSubject(
-                st_id, splittxt[0], splittxt[1], splittxt[4], splittxt[2], splittxt[3])
+                st_id, splittxt[0], splittxt[1], splittxt[4], splittxt[2], splittxt[3],
+                dateweek1, dateweek2, dateweek3, dateweek4, dateweek5, dateweek6, dateweek7,
+                dateweek8,dateweek9,dateweek10,dateweek11,dateweek12,dateweek13,dateweek14,dateweek15,dateweek16)
 
             flash("Add New Subject Complate {} {}".format(
                 st_id, sj_data), "success")
@@ -603,6 +687,22 @@ def updatesjdata():
             sj_StartTime = request.form['startime']
             sj_FinishTime = request.form['endtime']
             sj_date = request.form['day']
+            week1 = request.form['week1']
+            week2 = request.form['week2']
+            week3 = request.form['week3']
+            week4 = request.form['week4']
+            week5 = request.form['week5']
+            week6 = request.form['week6']
+            week7 = request.form['week7']
+            week8 = request.form['week8']
+            week9 = request.form['week9']
+            week10 = request.form['week10']
+            week11 = request.form['week11']
+            week12 = request.form['week12']
+            week13 = request.form['week13']
+            week14 = request.form['week14']
+            week15 = request.form['week15']
+            week16 = request.form['week16']
 
             trandate = None
             if sj_date == "วันจันทร์":
@@ -626,10 +726,60 @@ def updatesjdata():
             if not sj_name:
                 flash('Subject name is empty', "warning")
                 return redirect(url_for('index'))
+            if not week1:
+                flash('week1 is empty', "warning")
+                return redirect(url_for('index'))
+            if not week2:
+                flash('week2 is empty', "warning")
+                return redirect(url_for('index'))
+            if not week3:
+                flash('week3 is empty', "warning")
+                return redirect(url_for('index'))
+            if not week4:
+                flash('week4 is empty', "warning")
+                return redirect(url_for('index'))
+            if not week5:
+                flash('week5 is empty', "warning")
+                return redirect(url_for('index'))
+            if not week6:
+                flash('week6 is empty', "warning")
+                return redirect(url_for('index'))
+            if not week7:
+                flash('week7 is empty', "warning")
+                return redirect(url_for('index'))
+            if not week8:
+                flash('week8 is empty', "warning")
+                return redirect(url_for('index'))
+            if not week9:
+                flash('week9 is empty', "warning")
+                return redirect(url_for('index'))
+            if not week10:
+                flash('week10 is empty', "warning")
+                return redirect(url_for('index'))
+            if not week11:
+                flash('week11 is empty', "warning")
+                return redirect(url_for('index'))
+            if not week12:
+                flash('week12 is empty', "warning")
+                return redirect(url_for('index'))
+            if not week13:
+                flash('week13 is empty', "warning")
+                return redirect(url_for('index'))
+            if not week14:
+                flash('week14 is empty', "warning")
+                return redirect(url_for('index'))
+            if not week15:
+                flash('week15 is empty', "warning")
+                return redirect(url_for('index'))
+            if not week16:
+                flash('week16 is empty', "warning")
+                return redirect(url_for('index'))
 
             contst = Controlstdata()
             contst.updatesj(oldsj_id, sj_fac, sj_id, sj_name,
-                            sj_StartTime, sj_FinishTime, trandate)
+                            sj_StartTime, sj_FinishTime, trandate,
+                            week1, week2, week3, week4, week5, week6, week7,
+                            week8,week9,week10,week11,week12,week13,week14,week15,week16)
             flash("Update Subject Complate", "success")
             return redirect(url_for('index'))
     except pymongo.errors.DuplicateKeyError:

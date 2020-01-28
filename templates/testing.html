@@ -435,7 +435,8 @@
                     <form action="/adduser" method="post">
                         <input class="input-regis-username" type="text" name="username" placeholder="USERNAME">
                         <input class="input-regis-password" type="password" name="password" placeholder="PASSWORD">
-                        <input class="input-regis-key" type="password" name="adminkey" placeholder="KEY (NOT IMPORTANT)">
+                        <input class="input-regis-key" type="password" name="adminkey"
+                            placeholder="KEY (NOT IMPORTANT)">
                         <button class="input-regis-btn" type="submit">SUBMIT</button>
                     </form>
                     <button class="input-regis-btn-cancel" onclick="cancelregis2()">CANCEL</button>
@@ -453,47 +454,36 @@
 <script async src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@12.4.0/dist/lazyload.min.js"></script>
 <script>
     $('#registerform1').on('click', () => {
-        $('#loginform1').css({
-            display: 'none'
-        })
+        $('#loginform1').fadeOut('slow')
         setTimeout(() => {
             $('#registerform1').fadeOut('slow')
-        }, 200)
+        }, 1000)
         setTimeout(() => {
             $('.form-register').fadeIn('slow')
-        }, 1000)
+        }, 1500)
     })
     $('#registerform2').on('click', () => {
-        $('#hello1').css({
-            display: 'none'
-        })
+        $('#hello1').fadeOut('slow')
         setTimeout(() => {
             $('#registerform2').fadeOut('slow')
-        }, 200)
+        }, 1000)
         setTimeout(() => {
             $('.form-register').fadeIn('slow')
-        }, 1000)
+        }, 1500)
     })
 
     $('#loginform1').on('click', () => {
-        $('#registerform1').css({
-            display: 'none'
-        })
+        $('#registerform1').fadeOut('slow')
         setTimeout(() => {
             $('#loginform1').fadeOut('slow')
-        }, 200)
+        }, 1000)
         setTimeout(() => {
             $('.form-login').fadeIn('slow')
-        }, 1000)
+        }, 1500)
     })
 
     function cancelregis() {
         $('.form-register').fadeOut('slow')
-        setTimeout(() => {
-            $('.form-register').css({
-                display: 'none'
-            })
-        }, 1000)
         setTimeout(() => {
             $('#registerform1').fadeIn('slow')
             $('#loginform1').fadeIn('slow')
@@ -503,11 +493,6 @@
     function cancelregis2() {
         $('.form-register').fadeOut('slow')
         setTimeout(() => {
-            $('.form-register').css({
-                display: 'none'
-            })
-        }, 1000)
-        setTimeout(() => {
             $('#registerform2').fadeIn('slow')
             $('#hello1').fadeIn('slow')
         }, 1000)
@@ -515,11 +500,6 @@
 
     function cancellogin() {
         $('.form-login').fadeOut('slow')
-        setTimeout(() => {
-            $('.form-login').css({
-                display: 'none'
-            })
-        }, 1000)
         setTimeout(() => {
             $('#registerform1').fadeIn('slow')
             $('#loginform1').fadeIn('slow')

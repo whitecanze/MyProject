@@ -107,24 +107,32 @@
 
                     .grid-id {
                         grid-area: dataid;
-                        background-color: aquamarine;
+                        background-color: var(--main-color2);
+                        color: white;
+                        border-right: solid 1px var(--main-color1);
                     }
 
-                    .grid-name {
-                        grid-area: dataname;
-                        background-color: blueviolet;
+                    .grid-id>h3 {
+                        margin-top: 35px;
                     }
 
                     .day-text {
                         grid-area: daytext;
-                        background-color: brown;
+                        background-color: var(--main-color2);
+                        color: white;
+                        border-bottom: solid 1px var(--main-color1);
                     }
 
                     .day-list {
                         grid-area: daylist;
-                        background-color: cadetblue;
+                        background-color: var(--main-color2);
+                        color: white;
                         display: grid;
                         grid-template-columns: repeat(16, 1fr);
+                    }
+
+                    .day-list>h5 {
+                        border-right: solid 1px var(--main-color1);
                     }
 
                     .grid-day {
@@ -138,20 +146,49 @@
                             "daylist";
                     }
 
-                    .grid-chk-table {
-                        background-color: white;
-                        grid-area: chktable;
-                    }
-
                     .grid-data-header {
                         display: grid;
                         text-align: center;
-                        background-color: aquamarine;
+                        background-color: none;
                         width: 100%;
-                        height: 100px;
-                        grid-template-columns: 10% 10% 80%;
+                        grid-template-columns: 10% 90%;
                         grid-template-areas:
-                            "dataid dataname dataday";
+                            "dataid dataday";
+                        grid-area: data-header;
+                    }
+
+                    .grid-data-body {
+                        grid-area: data-body;
+                        background-color: white;
+                        overflow-y: auto;
+                    }
+
+                    .std-chkid {
+                        grid-area: std-chkid;
+                    }
+                    .std-sj-chklist {
+                        grid-area: std-sj-chklist;
+                        color: var(--main-color2);
+                        text-align: center;
+                        display: grid;
+                        grid-template-columns: repeat(16, 1fr);
+                    }
+                    .sj-chklist {
+                        display: grid;
+                        background-color: white;
+                        grid-template-columns: 10% 90%;
+                        grid-template-areas:
+                            "std-chkid std-sj-chklist";
+                    }
+
+                    .grid-chk-table {
+                        background-color: white;
+                        grid-area: chktable;
+                        display: grid;
+                        grid-template-rows: 23% 77%;
+                        grid-template-areas:
+                            "data-header"
+                            "data-body";
                     }
 
                     .grid-std-chk {
@@ -159,7 +196,7 @@
                         height: 500px;
                         margin-left: 1%;
                         margin-top: 1%;
-                        background-color: aquamarine;
+                        background-color: none;
                         display: grid;
                         grid-template-rows: 15% 85%;
                         grid-template-columns: 30% 70%;
@@ -173,9 +210,9 @@
                     <div class="grid-menu-sj">
                         <nav class="navbar navbar-expand-sm sticky-top justify-content-center"
                             style="background-color:rgba(31, 31, 64, 1);z-index:1;">
-                            <h1 style="color:rgba(253, 184, 19, 1);">รายชื่อวิชา</h1>
+                            <p style="color:rgba(253, 184, 19, 1);height:70px;font-size:3rem;">รายชื่อวิชา</p>
                         </nav>
-                        <ul class="list-group list-group-flush" id="list-sj-data">
+                        <ul class="list-group list-group-flush" id="list-sj-data" style="color:var(--main-color2);">
                         </ul>
                     </div>
                     <div class="grid-chk-table">
@@ -183,12 +220,9 @@
                             <div class="grid-id">
                                 <h3>รหัสนิสิต</h3>
                             </div>
-                            <div class="grid-name">
-                                <h3>ชื่อ-นามสกุล</h3>
-                            </div>
                             <div class="grid-day">
                                 <div class="day-text">
-                                    <h1>สัปดาห์ที่</h1>
+                                    <h3>สัปดาห์ที่</h3>
                                 </div>
                                 <div class="day-list">
                                     {% for x in range(16) %}
@@ -196,6 +230,10 @@
                                     {% endfor %}
                                 </div>
                             </div>
+                        </div>
+                        <div class="grid-data-body" style="color:var(--main-color2);">
+                            <p id="selecttext" style="color:white;margin-left:40%;margin-top:8%;font-size:5rem;">
+                                เลือกวิชา</p>
                         </div>
                     </div>
                 </div>
@@ -226,9 +264,11 @@
                 $("#list-sj-data").empty()
                 if (jpdata != "") {
                     $.each(jpdata, (index, item) => {
-                        $('<li class="list-group-item">').text(item.sj_id + ":" + item
-                            .sj_detail.sj_name).append($(
-                            '</li>')).appendTo("#list-sj-data")
+                        $('<li class="list-group-item" id="' + item.sj_id +
+                                '" onclick="shselectsjtable(this.id)">').text(
+                                item.sj_id + ":" + item.sj_detail.sj_name).append($(
+                                '</li>'))
+                            .appendTo("#list-sj-data")
                     });
                 } else {
                     $.each(jpdata, (index, item) => {
@@ -239,6 +279,115 @@
             },
         })
     });
+
+    function shselectsjtable(sj) {
+        console.log(sj)
+        $.ajax({
+            url: '/stdsjchk',
+            type: 'POST',
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify({
+                "data": sj
+            }),
+            success: (data) => {
+                $(".grid-data-body").empty()
+                $.each(data, (index, item) => {
+                    if (item.enroll.sj_enroll.sj_list.sj_1.sj_id == sj) {
+                        //console.log(item.st_id)
+                        $('<div class="sj-chklist"><div class="std-chkid"><h3>' + item.st_id +
+                            '</h3></div><div class="std-sj-chklist">').appendTo(
+                            ".grid-data-body")
+                        $(".std-sj-chklist").empty()
+                        $.each(item.enroll.sj_enroll.sj_list.sj_1.sj_chktime, (i, d) => {
+                            //console.log(d.chk_status)
+                            $('<h3 data-toggle="tooltip1" title="'+d.learning_date+'">' + d.chk_status + '</h3>').appendTo(
+                                ".std-sj-chklist")
+                        })
+                        $('</div></div>').appendTo(".grid-data-body")
+                    }
+                    if (item.enroll.sj_enroll.sj_list.sj_2.sj_id == sj) {
+                        //console.log(item.st_id)
+                        $('<div class="sj-chklist"><div class="std-chkid"><h3>' + item.st_id +
+                            '</h3></div><div class="std-sj-chklist">').appendTo(
+                            ".grid-data-body")
+                        $(".std-sj-chklist").empty()
+                        $.each(item.enroll.sj_enroll.sj_list.sj_2.sj_chktime, (i, d) => {
+                            //console.log(d.chk_status)
+                            $('<h3 data-toggle="tooltip1" title="'+d.learning_date+'">' + d.chk_status + '</h3>').appendTo(
+                                ".std-sj-chklist")
+                        })
+                        $('</div></div>').appendTo(".grid-data-body")
+                    }
+                    if (item.enroll.sj_enroll.sj_list.sj_3.sj_id == sj) {
+                        //console.log(item.st_id)
+                        $('<div class="sj-chklist"><div class="std-chkid"><h3>' + item.st_id +
+                            '</h3></div><div class="std-sj-chklist">').appendTo(
+                            ".grid-data-body")
+                        $(".std-sj-chklist").empty()
+                        $.each(item.enroll.sj_enroll.sj_list.sj_3.sj_chktime, (i, d) => {
+                            //console.log(d.chk_status)
+                            $('<h3 data-toggle="tooltip1" title="'+d.learning_date+'">' + d.chk_status + '</h3>').appendTo(
+                                ".std-sj-chklist")
+                        })
+                        $('</div></div>').appendTo(".grid-data-body")
+                    }
+                    if (item.enroll.sj_enroll.sj_list.sj_4.sj_id == sj) {
+                        //console.log(item.st_id)
+                        $('<div class="sj-chklist"><div class="std-chkid"><h3>' + item.st_id +
+                            '</h3></div><div class="std-sj-chklist">').appendTo(
+                            ".grid-data-body")
+                        $(".std-sj-chklist").empty()
+                        $.each(item.enroll.sj_enroll.sj_list.sj_4.sj_chktime, (i, d) => {
+                            //console.log(d.chk_status)
+                            $('<h3 data-toggle="tooltip1" title="'+d.learning_date+'">' + d.chk_status + '</h3>').appendTo(
+                                ".std-sj-chklist")
+                        })
+                        $('</div></div>').appendTo(".grid-data-body")
+                    }
+                    if (item.enroll.sj_enroll.sj_list.sj_5.sj_id == sj) {
+                        //console.log(item.st_id)
+                        $('<div class="sj-chklist"><div class="std-chkid"><h3>' + item.st_id +
+                            '</h3></div><div class="std-sj-chklist">').appendTo(
+                            ".grid-data-body")
+                        $(".std-sj-chklist").empty()
+                        $.each(item.enroll.sj_enroll.sj_list.sj_5.sj_chktime, (i, d) => {
+                            //console.log(d.chk_status)
+                            $('<h3 data-toggle="tooltip1" title="'+d.learning_date+'">' + d.chk_status + '</h3>').appendTo(
+                                ".std-sj-chklist")
+                        })
+                        $('</div></div>').appendTo(".grid-data-body")
+                    }
+                    if (item.enroll.sj_enroll.sj_list.sj_6.sj_id == sj) {
+                        //console.log(item.st_id)
+                        $('<div class="sj-chklist"><div class="std-chkid"><h3>' + item.st_id +
+                            '</h3></div><div class="std-sj-chklist">').appendTo(
+                            ".grid-data-body")
+                        $(".std-sj-chklist").empty()
+                        $.each(item.enroll.sj_enroll.sj_list.sj_6.sj_chktime, (i, d) => {
+                            //console.log(d.chk_status)
+                            $('<h3 data-toggle="tooltip1" title="'+d.learning_date+'">' + d.chk_status + '</h3>').appendTo(
+                                ".std-sj-chklist")
+                        })
+                        $('</div></div>').appendTo(".grid-data-body")
+                    }
+                    if (item.enroll.sj_enroll.sj_list.sj_7.sj_id == sj) {
+                        //console.log(item.st_id)
+                        $('<div class="sj-chklist"><div class="std-chkid"><h3>' + item.st_id +
+                            '</h3></div><div class="std-sj-chklist">').appendTo(
+                            ".grid-data-body")
+                        $(".std-sj-chklist").empty()
+                        $.each(item.enroll.sj_enroll.sj_list.sj_7.sj_chktime, (i, d) => {
+                            //console.log(d.chk_status)
+                            $('<h3 data-toggle="tooltip1" title="'+d.learning_date+'">' + d.chk_status + '</h3>').appendTo(
+                                ".std-sj-chklist")
+                        })
+                        $('</div></div>').appendTo(".grid-data-body")
+                    }
+                })
+            },
+        })
+    }
 </script>
 
 </html>
