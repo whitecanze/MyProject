@@ -68,7 +68,7 @@
                     {% for x in range(16) %}
                     <div class="form-group">
                         <label>สัปดาห์ที่ {{x+1}}:</label>
-                        <input class="form-control" type="date" name="week{{x+1}}" value="">
+                        <input class="form-control" type="date" name="week{{x+1}}" value="{{getweeklist['week%s'|format(x+1)]}}">
                     </div>
                     {% endfor %}
                     <div class="form-group">
@@ -79,7 +79,7 @@
             <div class="modal-footer">
                 <form action="/deletesj" method="POST">
                     <input type="hidden" class="form-control" name="sj_id" value="{{data['sj_id']}}">
-                    <button type="submit" class="btn btn-outline-danger btn-xs"
+                    <button type="submit" class="mycustom-close-btn"
                         onclick="return confirm('คุณต้องการลบวิชานี้หรือไม่?')">ลบวิชาเรียน</button>
                 </form>
                 <button type="button" class="btn btn-outline-danger" data-dismiss="modal">ปิด</button>

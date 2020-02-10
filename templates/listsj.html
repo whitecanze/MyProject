@@ -7,6 +7,7 @@
         {% with getshsj = shsj %}
         {% for data in getshsj %}
         {% with getsjdetail = data['sj_detail'] %}
+        {% with getweeklist = getsjdetail['sj_weeklist'] %}
         <li class="list-group-item" style="color:rgba(31, 31, 64, 1);font-weight: bold;font-size:1.1rem;">
             <div class="row">
                 <div class="col-11" data-toggle="tooltip1" title="{{data['fac_name']}}">
@@ -25,6 +26,7 @@
         <!-- edit subject -->
         {% include 'editsj.html' %}
 
+        {% endwith %}
         {% endwith %}
         {% endfor %}
         {% endwith %}

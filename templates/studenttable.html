@@ -24,8 +24,13 @@
                     <td>{{data["st_id"]}}</td>
                     <td>{{data["f_name"]}}</td>
                     <td>{{data["l_name"]}}</td>
-                    <td data-toggle="tooltip1" title="{{data["last_check"]}}">
-                        {{data["st_status"]}}</td>
+                    <td data-toggle="tooltip1" title="เช็คชื่อล่าสุด:{{data["last_check"]}}">
+                        {% if data["st_status"] == "none" %}
+                        <i style="color:red;font-size:1.8rem;" class="fas fa-minus-circle"></i>
+                        {% else %}
+                        <i style="color:chartreuse;font-size:1.8rem;text-shadow:5px 0px 15px black;" class="fas fa-check"></i>
+                        {% endif %}
+                    </td>
                     <td>
                         <div class="btn-group">
                             <div class="row">
@@ -33,7 +38,7 @@
                                     <a href="" id="addimagebtn" data-toggle="modal"
                                         data-target="#modaladdimage{{data['st_id']}}">
                                         <i class="fas fa-camera-retro" style="font-size:1.5rem;" data-toggle="tooltip1"
-                                            title="เพิ่มรูปภาพ"></i>
+                                            title="เพิ่มรูปภาพ"></i></a>
                                 </div>
                                 <div class="col-3">
                                     <a href="" id="sjdatabtn" data-toggle="modal"

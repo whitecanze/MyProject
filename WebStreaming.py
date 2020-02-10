@@ -19,7 +19,6 @@ from pymongo import MongoClient
 from pymongo import ReturnDocument
 from PIL import Image
 from datetime import datetime
-from webptools import webplib as webp
 from passlib.hash import argon2
 
 app = Flask(__name__)
@@ -126,17 +125,17 @@ class Controlstdata:
                 else:
                     pass
 
-    def editData(self, st_id, fname, lname, status):
+    def editData(self, st_id, fname, lname, status, linetoken):
         mongo.db.stdata.update_one({"st_id": int(st_id)}, {"$set": {
-            "st_id": int(st_id), "f_name": fname, "l_name": lname, "st_status": status}})
+            "st_id": int(st_id), "f_name": fname, "l_name": lname, "st_status": status,"std_line_token":linetoken}})
 
     def deleteData(self, st_id):
         mongo.db.stdata.delete_one({'st_id': int(st_id)})
 
-    def insertData(self, st_id, fname, lname, fac, br, stlevel, status):
+    def insertData(self, st_id, fname, lname, fac, br, stlevel, status, linetoken):
         mongo.db.stdata.insert(
             {"st_id": int(st_id), "f_name": fname, "l_name": lname, "fac_name": fac, "br_name": br, "st_level": stlevel, "last_check": "-", "st_chk": "-", "st_status": status, "absent": 0,
-                "late": 0,
+                "late": 0, "std_line_token": linetoken,
             "enroll": {
                 "sj_enroll": {
                     "sj_list": {
@@ -347,7 +346,7 @@ def stdsjchk():
     if request.method == "POST":
         sjid = request.json['data']
         std = mongo.db.stdata.find({})
-        print(sjid)
+        # print(sjid)
         response = []
         for getchk in std:
             getchk['_id'] = str(getchk['_id'])
@@ -370,7 +369,7 @@ def generate(camera):
     while True:
         # try:
         frame = camera.get_frame()
-        yield (b'--frame\r\n' b'Content-Type: image/webp\r\n\r\n' + frame + b'\r\n\r\n')
+        yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
         # except (RuntimeError, TypeError, NameError):
         #     print('except')
 
@@ -477,8 +476,8 @@ def chkuser():
             gethashpass = chkuser['password']
             chkpass = argon2.verify(getpass, gethashpass)
         if chkpass == True:
-            app.permanent_session_lifetime = timedelta(minutes=300)
-            session.permanent = True
+            # session.permanent = True
+            # app.permanent_session_lifetime = timedelta(minutes=5)
             session["username"] = getuser.upper()
             flash('Welcome {}'.format(getuser.upper()), "success")
             return redirect(url_for('index'))
@@ -536,6 +535,7 @@ def create():
         stlevel = request.form['stlevel']
         status = request.form['st_status']
         level = request.form['level']
+        linetoken = request.form['linetoken']
 
         if not st_id:
             flash('ID is empty or Not correct', "warning")
@@ -546,9 +546,11 @@ def create():
         if not lname:
             flash('Last name is empty', "warning")
             return redirect(url_for('index'))
+        if not linetoken:
+            linetoken = "-"
         try:
             contst = Controlstdata()
-            contst.insertData(st_id, fname, lname, fac, br, stlevel, status)
+            contst.insertData(st_id, fname, lname, fac, br, stlevel, status,linetoken)
             flash("Welcome {0}".format(st_id), "success")
             # return render_template('getdata.html', data=st_id, lvl=level)
             return redirect(url_for('index'))
@@ -798,6 +800,8 @@ def updatestd():
             fname = request.form['fname']
             lname = request.form['lname']
             status = request.form['st_status']
+            linetoken = request.form['linetoken']
+
 
             if not st_id:
                 flash('ID is empty or Not correct', "warning")
@@ -810,7 +814,7 @@ def updatestd():
                 return redirect(url_for('index'))
 
             contst = Controlstdata()
-            contst.editData(st_id, fname, lname, status)
+            contst.editData(st_id, fname, lname, status, linetoken)
 
             flash("Update Student Data Complate", "success")
             return redirect(url_for('index'))

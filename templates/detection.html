@@ -26,8 +26,7 @@
             overflow: hidden;
         }
     </style>
-    <script>
-    </script>
+    <title>ระบบตรวจจับใบหน้า</title>
 </head>
 
 <body id="mypage">
@@ -89,31 +88,40 @@
     </div>
 </body>
 <script>
-    setInterval(() => {
-        $.ajax({
-            url: '/checkstd',
-            type: 'POST',
-            data: 'json',
-            success: (data) => {
-                jpdata = JSON.parse(data)
-                $("#myboxforshow").empty()
-                if (jpdata != "") {
-                    $.each(jpdata, (index, item) => {
+    let startrealtimechk
+    let realtimechkstd = () => {
+        startrealtimechk = setInterval(() => {
+            $.ajax({
+                url: '/checkstd',
+                type: 'POST',
+                data: 'json',
+                success: (data) => {
+                    jpdata = JSON.parse(data)
+                    $("#myboxforshow").empty()
+                    if (jpdata != "") {
+                        $.each(jpdata, (index, item) => {
+                            $("<ul class='list-group list-group-flush'>").append($(
+                                    "<li class='list-group-item'>"
+                                ).text(item.st_id + ":" + item.f_name).append($(
+                                    "<i class='fas fa-check'></i>"
+                                )))
+                                .appendTo(
+                                    "#myboxforshow")
+                        });
+                    } else {
                         $("<ul class='list-group list-group-flush'>").append($(
-                                "<li class='list-group-item'>"
-                            ).text(item.st_id + ":" + item.f_name).append($(
-                                "<i class='fas fa-check'></i>"
-                            )))
-                            .appendTo(
-                                "#myboxforshow")
-                    });
-                } else {
-                    $("<ul class='list-group list-group-flush'>").append($(
-                        "<li class='list-group-item'>").text("NONE")).appendTo("#myboxforshow")
-                }
-            },
-        })
-    }, 1000);
+                            "<li class='list-group-item'>").text("NONE")).appendTo(
+                            "#myboxforshow")
+                    }
+                },
+            })
+        }, 1000);
+    }
+
+
+    $(document).ready(() => {
+        realtimechkstd()
+    })
 
     $('#btnshow1').mouseover((envent) => {
         document.getElementById('open-std-cklist-text').innerHTML = "แสดงแถบรายชื่อ"
@@ -175,6 +183,7 @@
         let bar3 = document.getElementById("bar-data-header")
         let bar4 = document.getElementById("bar-data-body")
         let btn = document.getElementById("btnshow1")
+        clearInterval(startrealtimechk);
         $('#bar-data').fadeOut('slow')
         bar.style.opacity = '1'
         e.style.display = "none"
@@ -187,12 +196,11 @@
         let bar3 = document.getElementById("bar-data-header")
         let bar4 = document.getElementById("bar-data-body")
         let btn = document.getElementById("btnhide1")
+        realtimechkstd()
         $('#bar-data').fadeIn('slow')
         e.style.display = "none"
         btn.style.display = "unset"
-        /*setTimeout(function () {
-            bar.style.opacity = '0.3'
-        }, 5000);*/
+
     }
 
     /*$('#bar-data').mouseover(()=>{

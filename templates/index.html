@@ -10,6 +10,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono&display=swap" rel="stylesheet">
@@ -38,7 +41,7 @@
             <!-- alert -->
             {% include 'aleart.html' %}
             <!-- top logo  -->
-            <div class="container w3-animate-opacity" align="center">
+            <div class="container w3-animate-opacity" align="center" id="main-logo-image">
                 <img class="lazy" data-src="{{ url_for('static', filename='img/logo.webp') }}" alt="">
                 <noscript>
                     <img src="{{ url_for('static', filename='img/logo.webp') }}" alt="">
@@ -103,32 +106,45 @@
                     .grid-menu-sj>ul>li:hover {
                         background-color: var(--main-color2);
                         color: var(--main-color1);
+                        text-shadow: 5px 0px 15px var(--main-color1);
+                        border: solid 1px var(--main-color1);
+                    }
+
+                    .grid-menu-sj>ul>li.bgactive {
+                        background-color: var(--main-color2);
+                        color: var(--main-color1);
+                        text-shadow: 5px 0px 15px var(--main-color1);
+                        border: solid 1px var(--main-color1);
                     }
 
                     .grid-id {
                         grid-area: dataid;
                         background-color: var(--main-color2);
                         color: white;
-                        border-right: solid 1px var(--main-color1);
+                        border: solid 1px var(--main-color1);
+                        text-decoration: underline;
                     }
 
-                    .grid-id>h3 {
+                    .grid-id>h3,
+                    .grid-id>h5 {
                         margin-top: 35px;
                     }
 
                     .day-text {
                         grid-area: daytext;
                         background-color: var(--main-color2);
-                        color: white;
+                        color: var(--main-color1);
+                        border-top: solid 1px var(--main-color1);
                         border-bottom: solid 1px var(--main-color1);
                     }
 
                     .day-list {
                         grid-area: daylist;
                         background-color: var(--main-color2);
-                        color: white;
+                        color: var(--main-color1);
                         display: grid;
                         grid-template-columns: repeat(16, 1fr);
+                        border: solid 1px var(--main-color1);
                     }
 
                     .day-list>h5 {
@@ -159,20 +175,24 @@
 
                     .grid-data-body {
                         grid-area: data-body;
-                        background-color: white;
                         overflow-y: auto;
                     }
 
                     .std-chkid {
                         grid-area: std-chkid;
+                        border: solid 1px var(--main-color1);
+                        overflow-x: hidden;
                     }
+
                     .std-sj-chklist {
                         grid-area: std-sj-chklist;
                         color: var(--main-color2);
                         text-align: center;
                         display: grid;
                         grid-template-columns: repeat(16, 1fr);
+                        border: solid 1px var(--main-color1);
                     }
+
                     .sj-chklist {
                         display: grid;
                         background-color: white;
@@ -182,7 +202,7 @@
                     }
 
                     .grid-chk-table {
-                        background-color: white;
+                        background-color: var(--main-color2);
                         grid-area: chktable;
                         display: grid;
                         grid-template-rows: 23% 77%;
@@ -204,20 +224,115 @@
                             "texthead texthead"
                             "sjmenu chktable";
                     }
+
+                    span#clearrighttable {
+                        font-size: 1.5rem;
+                        color: white;
+                        position: absolute;
+                        right: 5%;
+                        bottom: 35%;
+                    }
+
+                    span#clearrighttable:hover {
+                        color: var(--main-color1);
+                    }
+
+                    span#helpicon {
+                        font-size: 1.5rem;
+                        color: white;
+                        position: relative;
+                        right: 0%;
+                        bottom: 5%;
+                    }
+
+                    span#helpicon:hover {
+                        color: var(--main-color1);
+                    }
+
+                    span#switchmode {
+                        color: white;
+                        position: absolute;
+                        right: 10%;
+                    }
+
+                    span#switchmode:hover {
+                        color: var(--main-color1);
+                    }
+
+                    .fast .toggle-group {
+                        transition: left 0.1s;
+                        -webkit-transition: left 0.1s;
+                    }
+                    .mycustom-close-btn{
+                        background-color: var(--main-color2);
+                        color:white;
+                        padding:10px 25px ;
+                        font-size:1rem;
+                        border:solid 1px var(--main-color1);
+                    }
+                    .mycustom-close-btn:hover{
+                        background-color: var(--main-color2);
+                        color:var(--main-color1);
+                        
+                    }
                 </style>
                 <div class="grid-std-chk">
-                    <div class="grid-head-text">ตารางแสดงรายละเอียดการเข้าชั้นเรียน</div>
+                    <div class="grid-head-text">
+                        ตารางแสดงรายละเอียดการเข้าชั้นเรียน
+                        <span id="helpicon" data-toggle="modal" data-target="#modalmoredetail">
+                            <i class="fas fa-exclamation-circle" data-toggle="tooltip1" title="รายละเอียดเพิ่มเติม"></i>
+                        </span>
+                        <div id="modalmoredetail" class="modal fade" role="dialog">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header"
+                                        style="background-color: rgba(0, 0, 64, 1);color:rgba(253, 184, 19, 1);">
+                                        <h4 class="modal-title">รายละเอียดเพิ่มเติม</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <span>
+                                            <i style="color:greenyellow;font-size:1.8rem;text-shadow:5px 0px 15px black;" class="fas fa-check"></i>
+                                            <p>เข้าเรียนตรงตามเวลา</p>
+                                        </span>
+                                        <span>
+                                            <i style="color:yellow;font-size:1.8rem;text-shadow:5px 0px 15px black;" class="fas fa-check"></i>
+                                            <p>เข้าเรียนสาย</p>
+                                        </span>
+                                        <span>
+                                            <i style="color:red;font-size:1.8rem;text-shadow:5px 0px 15px black;" class="fas fa-times"></i>
+                                            <p>ขาดเรียน</p>
+                                        </span>
+                                        <span>
+                                            <i style="color:blue;font-size:1.8rem;text-shadow:5px 0px 15px black;" class="fas fa-times"></i>
+                                            <p>ไม่มีสถานะ</p>
+                                        </span>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="mycustom-close-btn"
+                                            data-dismiss="modal">ปิด</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="grid-menu-sj">
                         <nav class="navbar navbar-expand-sm sticky-top justify-content-center"
                             style="background-color:rgba(31, 31, 64, 1);z-index:1;">
                             <p style="color:rgba(253, 184, 19, 1);height:70px;font-size:3rem;">รายชื่อวิชา</p>
+                            <span id="clearrighttable">
+                                <i class="fas fa-sync-alt" data-toggle="tooltip1" title="ล้างตาราง"></i>
+                            </span>
+
+                            <!-- <span id="switchmode">
+                                <input id="toggle-sidebar" type="checkbox" data-toggle="toggle" data-class="fast">
+                            </span> -->
                         </nav>
                         <ul class="list-group list-group-flush" id="list-sj-data" style="color:var(--main-color2);">
                         </ul>
                     </div>
                     <div class="grid-chk-table">
                         <div class="grid-data-header">
-                            <div class="grid-id">
+                            <div class="grid-id" data-toggle="tooltip1" title="คลิกเพื่อสลับระหว่าง รหัสนิสิต และ ชื่อ">
                                 <h3>รหัสนิสิต</h3>
                             </div>
                             <div class="grid-day">
@@ -232,7 +347,7 @@
                             </div>
                         </div>
                         <div class="grid-data-body" style="color:var(--main-color2);">
-                            <p id="selecttext" style="color:white;margin-left:40%;margin-top:8%;font-size:5rem;">
+                            <p id="selecttext" style="color:gray;margin-left:40%;margin-top:8%;font-size:5rem;">
                                 เลือกวิชา</p>
                         </div>
                     </div>
@@ -255,6 +370,7 @@
 </script>
 <script>
     $(document).ready(() => {
+
         $.ajax({
             url: '/chksjlist',
             type: 'POST',
@@ -264,7 +380,7 @@
                 $("#list-sj-data").empty()
                 if (jpdata != "") {
                     $.each(jpdata, (index, item) => {
-                        $('<li class="list-group-item" id="' + item.sj_id +
+                        $('<li class="list-group-item mylistchktable" id="' + item.sj_id +
                                 '" onclick="shselectsjtable(this.id)">').text(
                                 item.sj_id + ":" + item.sj_detail.sj_name).append($(
                                 '</li>'))
@@ -272,16 +388,72 @@
                     });
                 } else {
                     $.each(jpdata, (index, item) => {
-                        $('<li class="list-group-item">').text("NONE").append($(
-                            '</li>')).appendTo("#list-sj-data")
+                        $('<li class="list-group-item mylistchktable">').text("NONE")
+                            .append($(
+                                '</li>')).appendTo("#list-sj-data")
                     });
                 }
             },
         })
     });
 
+
+    $('#clearrighttable').on('click', () => {
+        $(".grid-data-body").empty()
+        $('#list-sj-data').find('.bgactive').removeClass("bgactive")
+        $('<p id="selecttext" style="color:gray;margin-left:40%;margin-top:8%;font-size:5rem;display:none">เลือกวิชา</p>')
+            .appendTo('.grid-data-body')
+        $('#selecttext').fadeIn('slow')
+    })
+
+    $('.grid-id').mouseover(() => {
+        $('.grid-id').css({
+            color: "var(--main-color1)"
+        })
+    })
+    $('.grid-id').mouseout(() => {
+        $('.grid-id').css({
+            color: "white"
+        })
+    })
+    $('.grid-id').on("click", () => {
+        if ($('.grid-id').find('h3').text() == "รหัสนิสิต") {
+            $('.grid-id').empty()
+            $('<h5>ชื่อ-นามสกุล</h5>').appendTo('.grid-id')
+        } else {
+            $('.grid-id').empty()
+            $('<h3>รหัสนิสิต</h3>').appendTo('.grid-id')
+        }
+        sj = $('.grid-id').attr("value")
+        shselectsjtable(sj)
+    })
+
+    let stdchecklist = (index, data, item) => {
+        if (data.chk_status == "absent") {
+            return $(
+                '<i style="color:red;font-size:1.8rem;text-shadow:5px 0px 15px black;" class="fas fa-times"></i></h3>'
+            ).appendTo("#text-" + index + "-" + item.st_id + "")
+        } else if (data.chk_status == "late") {
+            return $(
+                '<i style="color:yellow;font-size:1.8rem;text-shadow:5px 0px 15px black;" class="fas fa-check"></i></h3>'
+            ).appendTo("#text-" + index + "-" + item.st_id + "")
+        } else if (data.chk_status == "-") {
+            return $(
+                '<i style="color:blue;font-size:1.8rem;text-shadow:5px 0px 15px black;" class="fas fa-times"></i></h3>'
+            ).appendTo("#text-" + index + "-" + item.st_id + "")
+        } else {
+            return $(
+                '<i style="color:greenyellow;font-size:1.8rem;text-shadow:5px 0px 15px black;" class="fas fa-check"></i></h3>'
+            ).appendTo("#text-" + index + "-" + item.st_id + "")
+        }
+    }
+
     function shselectsjtable(sj) {
         console.log(sj)
+        $('.grid-id').attr("value", sj)
+        console.log("value:" + $('.grid-id').attr("value"))
+        $('#list-sj-data').find('.bgactive').removeClass("bgactive")
+        $('#list-sj-data').find('#' + sj).addClass("bgactive")
         $.ajax({
             url: '/stdsjchk',
             type: 'POST',
@@ -292,99 +464,251 @@
             }),
             success: (data) => {
                 $(".grid-data-body").empty()
-                $.each(data, (index, item) => {
-                    if (item.enroll.sj_enroll.sj_list.sj_1.sj_id == sj) {
-                        //console.log(item.st_id)
-                        $('<div class="sj-chklist"><div class="std-chkid"><h3>' + item.st_id +
-                            '</h3></div><div class="std-sj-chklist">').appendTo(
-                            ".grid-data-body")
-                        $(".std-sj-chklist").empty()
-                        $.each(item.enroll.sj_enroll.sj_list.sj_1.sj_chktime, (i, d) => {
-                            //console.log(d.chk_status)
-                            $('<h3 data-toggle="tooltip1" title="'+d.learning_date+'">' + d.chk_status + '</h3>').appendTo(
-                                ".std-sj-chklist")
-                        })
-                        $('</div></div>').appendTo(".grid-data-body")
-                    }
-                    if (item.enroll.sj_enroll.sj_list.sj_2.sj_id == sj) {
-                        //console.log(item.st_id)
-                        $('<div class="sj-chklist"><div class="std-chkid"><h3>' + item.st_id +
-                            '</h3></div><div class="std-sj-chklist">').appendTo(
-                            ".grid-data-body")
-                        $(".std-sj-chklist").empty()
-                        $.each(item.enroll.sj_enroll.sj_list.sj_2.sj_chktime, (i, d) => {
-                            //console.log(d.chk_status)
-                            $('<h3 data-toggle="tooltip1" title="'+d.learning_date+'">' + d.chk_status + '</h3>').appendTo(
-                                ".std-sj-chklist")
-                        })
-                        $('</div></div>').appendTo(".grid-data-body")
-                    }
-                    if (item.enroll.sj_enroll.sj_list.sj_3.sj_id == sj) {
-                        //console.log(item.st_id)
-                        $('<div class="sj-chklist"><div class="std-chkid"><h3>' + item.st_id +
-                            '</h3></div><div class="std-sj-chklist">').appendTo(
-                            ".grid-data-body")
-                        $(".std-sj-chklist").empty()
-                        $.each(item.enroll.sj_enroll.sj_list.sj_3.sj_chktime, (i, d) => {
-                            //console.log(d.chk_status)
-                            $('<h3 data-toggle="tooltip1" title="'+d.learning_date+'">' + d.chk_status + '</h3>').appendTo(
-                                ".std-sj-chklist")
-                        })
-                        $('</div></div>').appendTo(".grid-data-body")
-                    }
-                    if (item.enroll.sj_enroll.sj_list.sj_4.sj_id == sj) {
-                        //console.log(item.st_id)
-                        $('<div class="sj-chklist"><div class="std-chkid"><h3>' + item.st_id +
-                            '</h3></div><div class="std-sj-chklist">').appendTo(
-                            ".grid-data-body")
-                        $(".std-sj-chklist").empty()
-                        $.each(item.enroll.sj_enroll.sj_list.sj_4.sj_chktime, (i, d) => {
-                            //console.log(d.chk_status)
-                            $('<h3 data-toggle="tooltip1" title="'+d.learning_date+'">' + d.chk_status + '</h3>').appendTo(
-                                ".std-sj-chklist")
-                        })
-                        $('</div></div>').appendTo(".grid-data-body")
-                    }
-                    if (item.enroll.sj_enroll.sj_list.sj_5.sj_id == sj) {
-                        //console.log(item.st_id)
-                        $('<div class="sj-chklist"><div class="std-chkid"><h3>' + item.st_id +
-                            '</h3></div><div class="std-sj-chklist">').appendTo(
-                            ".grid-data-body")
-                        $(".std-sj-chklist").empty()
-                        $.each(item.enroll.sj_enroll.sj_list.sj_5.sj_chktime, (i, d) => {
-                            //console.log(d.chk_status)
-                            $('<h3 data-toggle="tooltip1" title="'+d.learning_date+'">' + d.chk_status + '</h3>').appendTo(
-                                ".std-sj-chklist")
-                        })
-                        $('</div></div>').appendTo(".grid-data-body")
-                    }
-                    if (item.enroll.sj_enroll.sj_list.sj_6.sj_id == sj) {
-                        //console.log(item.st_id)
-                        $('<div class="sj-chklist"><div class="std-chkid"><h3>' + item.st_id +
-                            '</h3></div><div class="std-sj-chklist">').appendTo(
-                            ".grid-data-body")
-                        $(".std-sj-chklist").empty()
-                        $.each(item.enroll.sj_enroll.sj_list.sj_6.sj_chktime, (i, d) => {
-                            //console.log(d.chk_status)
-                            $('<h3 data-toggle="tooltip1" title="'+d.learning_date+'">' + d.chk_status + '</h3>').appendTo(
-                                ".std-sj-chklist")
-                        })
-                        $('</div></div>').appendTo(".grid-data-body")
-                    }
-                    if (item.enroll.sj_enroll.sj_list.sj_7.sj_id == sj) {
-                        //console.log(item.st_id)
-                        $('<div class="sj-chklist"><div class="std-chkid"><h3>' + item.st_id +
-                            '</h3></div><div class="std-sj-chklist">').appendTo(
-                            ".grid-data-body")
-                        $(".std-sj-chklist").empty()
-                        $.each(item.enroll.sj_enroll.sj_list.sj_7.sj_chktime, (i, d) => {
-                            //console.log(d.chk_status)
-                            $('<h3 data-toggle="tooltip1" title="'+d.learning_date+'">' + d.chk_status + '</h3>').appendTo(
-                                ".std-sj-chklist")
-                        })
-                        $('</div></div>').appendTo(".grid-data-body")
-                    }
-                })
+                if ($('.grid-id').find('h3').text() == "รหัสนิสิต") {
+                    $.each(data, (index, item) => {
+                        if (item.enroll.sj_enroll.sj_list.sj_1.sj_id == sj) {
+                            //console.log(item.st_id)
+                            $('<div class="sj-chklist" style="display:none"><div class="std-chkid"><h5 data-toggle="tooltip1" title="' +
+                                item.f_name + ' ' + item.l_name + '">' +
+                                item.st_id + '</h5></div><div class="std-sj-chklist" id="' +
+                                item
+                                .st_id + '">').appendTo(".grid-data-body")
+                            $.each(item.enroll.sj_enroll.sj_list.sj_1.sj_chktime, (i, d) => {
+                                $('<h3 id="text-' + i + "-" + item.st_id +
+                                    '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
+                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_1.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_1.sj_finish+'">').appendTo("#"
+                                    + item.st_id +
+                                    "")
+                                stdchecklist(i, d, item)
+                            })
+                            $('</div></div>').appendTo(".grid-data-body")
+                        }
+                        if (item.enroll.sj_enroll.sj_list.sj_2.sj_id == sj) {
+                            //console.log(item.st_id)
+                            $('<div class="sj-chklist" style="display:none"><div class="std-chkid"><h5 data-toggle="tooltip1" title="' +
+                                item.f_name + ' ' + item.l_name + '">' +
+                                item.st_id + '</h5></div><div class="std-sj-chklist" id="' +
+                                item
+                                .st_id + '">').appendTo(".grid-data-body")
+                            $.each(item.enroll.sj_enroll.sj_list.sj_2.sj_chktime, (i, d) => {
+                                $('<h3 id="text-' + i + "-" + item.st_id +
+                                    '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
+                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_2.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_2.sj_finish+'">').appendTo("#"
+                                    + item.st_id +
+                                    "")
+                                stdchecklist(i, d, item)
+                            })
+                            $('</div></div>').appendTo(".grid-data-body")
+                        }
+                        if (item.enroll.sj_enroll.sj_list.sj_3.sj_id == sj) {
+                            //console.log(item.st_id)
+                            $('<div class="sj-chklist" style="display:none"><div class="std-chkid"><h5 data-toggle="tooltip1" title="' +
+                                item.f_name + ' ' + item.l_name + '">' +
+                                item.st_id + '</h5></div><div class="std-sj-chklist" id="' +
+                                item
+                                .st_id + '">').appendTo(".grid-data-body")
+                            $.each(item.enroll.sj_enroll.sj_list.sj_3.sj_chktime, (i, d) => {
+                                $('<h3 id="text-' + i + "-" + item.st_id +
+                                    '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
+                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_3.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_3.sj_finish+'">').appendTo("#"
+                                    + item.st_id +
+                                    "")
+                                stdchecklist(i, d, item)
+                            })
+                            $('</div></div>').appendTo(".grid-data-body")
+                        }
+                        if (item.enroll.sj_enroll.sj_list.sj_4.sj_id == sj) {
+                            //console.log(item.st_id)
+                            $('<div class="sj-chklist" style="display:none"><div class="std-chkid"><h5 data-toggle="tooltip1" title="' +
+                                item.f_name + ' ' + item.l_name + '">' +
+                                item.st_id + '</h5></div><div class="std-sj-chklist" id="' +
+                                item
+                                .st_id + '">').appendTo(".grid-data-body")
+                            $.each(item.enroll.sj_enroll.sj_list.sj_4.sj_chktime, (i, d) => {
+                                $('<h3 id="text-' + i + "-" + item.st_id +
+                                    '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
+                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_4.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_4.sj_finish+'">').appendTo("#"
+                                    + item.st_id +
+                                    "")
+                                stdchecklist(i, d, item)
+                            })
+                            $('</div></div>').appendTo(".grid-data-body")
+                        }
+                        if (item.enroll.sj_enroll.sj_list.sj_5.sj_id == sj) {
+                            //console.log(item.st_id)
+                            $('<div class="sj-chklist" style="display:none"><div class="std-chkid"><h5 data-toggle="tooltip1" title="' +
+                                item.f_name + ' ' + item.l_name + '">' +
+                                item.st_id + '</h5></div><div class="std-sj-chklist" id="' +
+                                item
+                                .st_id + '">').appendTo(".grid-data-body")
+                            $.each(item.enroll.sj_enroll.sj_list.sj_5.sj_chktime, (i, d) => {
+                                $('<h3 id="text-' + i + "-" + item.st_id +
+                                    '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
+                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_5.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_5.sj_finish+'">').appendTo("#"
+                                    + item.st_id +
+                                    "")
+                                stdchecklist(i, d, item)
+                            })
+                            $('</div></div>').appendTo(".grid-data-body")
+                        }
+                        if (item.enroll.sj_enroll.sj_list.sj_6.sj_id == sj) {
+                            //console.log(item.st_id)
+                            $('<div class="sj-chklist" style="display:none"><div class="std-chkid"><h5 data-toggle="tooltip1" title="' +
+                                item.f_name + ' ' + item.l_name + '">' +
+                                item.st_id + '</h5></div><div class="std-sj-chklist" id="' +
+                                item
+                                .st_id + '">').appendTo(".grid-data-body")
+                            $.each(item.enroll.sj_enroll.sj_list.sj_6.sj_chktime, (i, d) => {
+                                $('<h3 id="text-' + i + "-" + item.st_id +
+                                    '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
+                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_6.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_6.sj_finish+'">').appendTo("#"
+                                    + item.st_id +
+                                    "")
+                                stdchecklist(i, d, item)
+                            })
+                            $('</div></div>').appendTo(".grid-data-body")
+                        }
+                        if (item.enroll.sj_enroll.sj_list.sj_7.sj_id == sj) {
+                            //console.log(item.st_id)
+                            $('<div class="sj-chklist" style="display:none"><div class="std-chkid"><h5 data-toggle="tooltip1" title="' +
+                                item.f_name + ' ' + item.l_name + '">' +
+                                item.st_id + '</h5></div><div class="std-sj-chklist" id="' +
+                                item
+                                .st_id + '">').appendTo(".grid-data-body")
+                            $.each(item.enroll.sj_enroll.sj_list.sj_7.sj_chktime, (i, d) => {
+                                $('<h3 id="text-' + i + "-" + item.st_id +
+                                    '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
+                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_7.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_7.sj_finish+'">').appendTo("#"
+                                    + item.st_id +
+                                    "")
+                                stdchecklist(i, d, item)
+                            })
+                            $('</div></div>').appendTo(".grid-data-body")
+                        }
+                    })
+                } else {
+                    $.each(data, (index, item) => {
+                        if (item.enroll.sj_enroll.sj_list.sj_1.sj_id == sj) {
+                            //console.log(item.st_id)
+                            $('<div class="sj-chklist" style="display:none"><div class="std-chkid"><h6 data-toggle="tooltip1" title="' +
+                                item.st_id + '">' + item.f_name + ' ' + item.l_name +
+                                '</h6></div><div class="std-sj-chklist" id="' + item
+                                .st_id + '">').appendTo(".grid-data-body")
+                            $.each(item.enroll.sj_enroll.sj_list.sj_1.sj_chktime, (i, d) => {
+                                $('<h3 id="text-' + i + "-" + item.st_id +
+                                    '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
+                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_1.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_1.sj_finish+'">').appendTo("#"
+                                    + item.st_id +
+                                    "")
+                                stdchecklist(i, d, item)
+                            })
+                            $('</div></div>').appendTo(".grid-data-body")
+                        }
+                        if (item.enroll.sj_enroll.sj_list.sj_2.sj_id == sj) {
+                            //console.log(item.st_id)
+                            $('<div class="sj-chklist" style="display:none"><div class="std-chkid"><h6 data-toggle="tooltip1" title="' +
+                                item.st_id + '">' + item.f_name + ' ' + item.l_name +
+                                '</h6></div><div class="std-sj-chklist" id="' + item
+                                .st_id + '">').appendTo(".grid-data-body")
+                            $.each(item.enroll.sj_enroll.sj_list.sj_2.sj_chktime, (i, d) => {
+                                $('<h3 id="text-' + i + "-" + item.st_id +
+                                    '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
+                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_2.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_2.sj_finish+'">').appendTo("#"
+                                    + item.st_id +
+                                    "")
+                                stdchecklist(i, d, item)
+                            })
+                            $('</div></div>').appendTo(".grid-data-body")
+                        }
+                        if (item.enroll.sj_enroll.sj_list.sj_3.sj_id == sj) {
+                            //console.log(item.st_id)
+                            $('<div class="sj-chklist" style="display:none"><div class="std-chkid"><h6 data-toggle="tooltip1" title="' +
+                                item.st_id + '">' + item.f_name + ' ' + item.l_name +
+                                '</h6></div><div class="std-sj-chklist" id="' + item
+                                .st_id + '">').appendTo(".grid-data-body")
+                            $.each(item.enroll.sj_enroll.sj_list.sj_3.sj_chktime, (i, d) => {
+                                $('<h3 id="text-' + i + "-" + item.st_id +
+                                    '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
+                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_3.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_3.sj_finish+'">').appendTo("#"
+                                    + item.st_id +
+                                    "")
+                                stdchecklist(i, d, item)
+                            })
+                            $('</div></div>').appendTo(".grid-data-body")
+                        }
+                        if (item.enroll.sj_enroll.sj_list.sj_4.sj_id == sj) {
+                            //console.log(item.st_id)
+                            $('<div class="sj-chklist" style="display:none"><div class="std-chkid"><h6 data-toggle="tooltip1" title="' +
+                                item.st_id + '">' + item.f_name + ' ' + item.l_name +
+                                '</h6></div><div class="std-sj-chklist" id="' + item
+                                .st_id + '">').appendTo(".grid-data-body")
+                            $.each(item.enroll.sj_enroll.sj_list.sj_4.sj_chktime, (i, d) => {
+                                $('<h3 id="text-' + i + "-" + item.st_id +
+                                    '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
+                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_4.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_4.sj_finish+'">').appendTo("#"
+                                    + item.st_id +
+                                    "")
+                                stdchecklist(i, d, item)
+                            })
+                            $('</div></div>').appendTo(".grid-data-body")
+                        }
+                        if (item.enroll.sj_enroll.sj_list.sj_5.sj_id == sj) {
+                            //console.log(item.st_id)
+                            $('<div class="sj-chklist" style="display:none"><div class="std-chkid"><h6 data-toggle="tooltip1" title="' +
+                                item.st_id + '">' + item.f_name + ' ' + item.l_name +
+                                '</h6></div><div class="std-sj-chklist" id="' + item
+                                .st_id + '">').appendTo(".grid-data-body")
+                            $.each(item.enroll.sj_enroll.sj_list.sj_5.sj_chktime, (i, d) => {
+                                $('<h3 id="text-' + i + "-" + item.st_id +
+                                    '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
+                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_5.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_5.sj_finish+'">').appendTo("#"
+                                    + item.st_id +
+                                    "")
+                                stdchecklist(i, d, item)
+                            })
+                            $('</div></div>').appendTo(".grid-data-body")
+                        }
+                        if (item.enroll.sj_enroll.sj_list.sj_6.sj_id == sj) {
+                            //console.log(item.st_id)
+                            $('<div class="sj-chklist" style="display:none"><div class="std-chkid"><h6 data-toggle="tooltip1" title="' +
+                                item.st_id + '">' + item.f_name + ' ' + item.l_name +
+                                '</h6></div><div class="std-sj-chklist" id="' + item
+                                .st_id + '">').appendTo(".grid-data-body")
+                            $.each(item.enroll.sj_enroll.sj_list.sj_6.sj_chktime, (i, d) => {
+                                $('<h3 id="text-' + i + "-" + item.st_id +
+                                    '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
+                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_6.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_6.sj_finish+'">').appendTo("#"
+                                    + item.st_id +
+                                    "")
+                                stdchecklist(i, d, item)
+                            })
+                            $('</div></div>').appendTo(".grid-data-body")
+                        }
+                        if (item.enroll.sj_enroll.sj_list.sj_7.sj_id == sj) {
+                            //console.log(item.st_id)
+                            $('<div class="sj-chklist" style="display:none"><div class="std-chkid"><h6 data-toggle="tooltip1" title="' +
+                                item.st_id + '">' + item.f_name + ' ' + item.l_name +
+                                '</h6></div><div class="std-sj-chklist" id="' + item
+                                .st_id + '">').appendTo(".grid-data-body")
+                            $.each(item.enroll.sj_enroll.sj_list.sj_7.sj_chktime, (i, d) => {
+                                $('<h3 id="text-' + i + "-" + item.st_id +
+                                    '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
+                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_7.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_7.sj_finish+'">').appendTo("#"
+                                    + item.st_id +
+                                    "")
+                                stdchecklist(i, d, item)
+                            })
+                            $('</div></div>').appendTo(".grid-data-body")
+                        }
+                    })
+                }
+
+                $('.sj-chklist').fadeIn('slow')
+                if ($('.grid-data-body').is(':empty')) {
+                    $('<p id="selecttext" style="color:gray;margin-left:40%;margin-top:8%;font-size:5rem;display:none">ไม่มีข้อมูล</p>')
+                        .appendTo('.grid-data-body')
+                    $('#selecttext').fadeIn('slow')
+                }
             },
         })
     }

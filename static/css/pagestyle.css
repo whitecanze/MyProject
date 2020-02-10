@@ -1,4 +1,5 @@
 :root {
+    --main-color-dark: rgba(31,31,31,1);
     --main-color1: rgba(253, 184, 19, 1);
     --main-color2: rgba(31, 31, 64, 1);
     --main-color2-9: rgba(31, 31, 64, 0.9);

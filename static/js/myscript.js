@@ -1,6 +1,7 @@
 //tooltip hint
 $(document).ready(() => {
     $('[data-toggle="tooltip1"]').tooltip();
+
 });
 
 //close aleart
@@ -125,4 +126,14 @@ $('#sidebar-wrapper').mouseover(() => {
 $('#sidebar-wrapper').mouseout(() => {
     $('#wrapper').removeClass('menuDisplayed')
     $('#wrapper').addClass('menuSubDisplayed')
+})
+
+$('#switchmode').click(() => {
+    if ($('.toggle').hasClass("toggle btn btn-primary")) {
+        $('#wrapper').removeClass('menuDisplayed')
+        $('#wrapper').addClass('menuSubDisplayed')
+    } else if ($('.toggle').hasClass("toggle btn btn-light off")) {
+        $('#wrapper').removeClass('menuSubDisplayed')
+        $('#wrapper').addClass('menuDisplayed')
+    }
 })
