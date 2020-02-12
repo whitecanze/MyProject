@@ -1,6 +1,5 @@
 import numpy as np
 import time
-import pymongo
 import cv2
 import datetime
 from datetime import timedelta
@@ -9,11 +8,12 @@ import dlib
 import pickle
 import werkzeug
 from werkzeug.utils import secure_filename
-from flask import Flask, render_template, Response, redirect, url_for, request, flash, jsonify,session
+from flask import Flask, render_template, Response, redirect, url_for, request, flash, jsonify, session
 import json
 from bson import json_util, ObjectId
 from flask_cors import CORS
 from facedetection import FaceDetectionCamera
+from pymongo import MongoClient
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
 from pymongo import ReturnDocument
@@ -25,62 +25,65 @@ app = Flask(__name__)
 app.debug = True
 app.use_reloader = True
 app.secret_key = 'kimetsu no yaiba'
-app.config["MONGO_URI"] = "mongodb://localhost:27017/student"
+# app.config["MONGO_URI"] = "mongodb://localhost:27017/student"
 app.config["SERVER_NAME"] = '192.168.43.116:8485'
 app.config["IMAGE_UPLOADS"] = "./static/photodataset"
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPEG", "JPG", "PNG", "GIF", "WEBP"]
-mongo = PyMongo(app)
+client = MongoClient(
+    "mongodb+srv://whitecanze:benz11504@student-9fnju.gcp.mongodb.net/test?retryWrites=true&w=majority")
+mongo = client.student
+# mongo = PyMongo(app)
 app.app_context
 
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 
 class Controlstdata:
-    def updatesj(self, oldsj_id, faculty, sj_id, sj_name, sj_StartTime, sj_FinishTime, sj_date,week1,week2,week3,week4,week5,week6,week7,week8,week9,week10,week11,week12,week13,week14,week15,week16):
-        mongo.db.subject.update_one({"sj_id": oldsj_id}, {"$set": {"sj_id": sj_id, "fac_name": faculty, "sj_detail": {
+    def updatesj(self, oldsj_id, faculty, sj_id, sj_name, sj_StartTime, sj_FinishTime, sj_date, week1, week2, week3, week4, week5, week6, week7, week8, week9, week10, week11, week12, week13, week14, week15, week16):
+        mongo.subject.update_one({"sj_id": oldsj_id}, {"$set": {"sj_id": sj_id, "fac_name": faculty, "sj_detail": {
             "sj_name": sj_name, "sj_StartTime": sj_StartTime+".00", "sj_FinishTime": sj_FinishTime+".00", "sj_date": sj_date, "sj_weeklist": {
-                    "week1":week1,
-                    "week2":week2,
-                    "week3":week3,
-                    "week4":week4,
-                    "week5":week5,
-                    "week6":week6,
-                    "week7":week7,
-                    "week8":week8,
-                    "week9":week9,
-                    "week10":week10,
-                    "week11":week11,
-                    "week12":week12,
-                    "week13":week13,
-                    "week14":week14,
-                    "week15":week15,
-                    "week16":week16,
-                }}}})
+                "week1": week1,
+                "week2": week2,
+                "week3": week3,
+                "week4": week4,
+                "week5": week5,
+                "week6": week6,
+                "week7": week7,
+                "week8": week8,
+                "week9": week9,
+                "week10": week10,
+                "week11": week11,
+                "week12": week12,
+                "week13": week13,
+                "week14": week14,
+                "week15": week15,
+                "week16": week16,
+            }}}})
 
     def insertnewsj(self, faculty, sj_id, sj_name, sj_StartTime, sj_FinishTime, sj_date):
-        mongo.db.subject.insert(
+        mongo.subject.insert(
             {"sj_id": sj_id, "fac_name": faculty, "sj_detail": {
                 "sj_name": sj_name, "sj_StartTime": sj_StartTime + ".00", "sj_FinishTime": sj_FinishTime + ".00", "sj_date": sj_date, "sj_weeklist": {
-                    "week1":"-",
-                    "week2":"-",
-                    "week3":"-",
-                    "week4":"-",
-                    "week5":"-",
-                    "week6":"-",
-                    "week7":"-",
-                    "week8":"-",
-                    "week9":"-",
-                    "week10":"-",
-                    "week11":"-",
-                    "week12":"-",
-                    "week13":"-",
-                    "week14":"-",
-                    "week15":"-",
-                    "week16":"-",
+                    "week1": "-",
+                    "week2": "-",
+                    "week3": "-",
+                    "week4": "-",
+                    "week5": "-",
+                    "week6": "-",
+                    "week7": "-",
+                    "week8": "-",
+                    "week9": "-",
+                    "week10": "-",
+                    "week11": "-",
+                    "week12": "-",
+                    "week13": "-",
+                    "week14": "-",
+                    "week15": "-",
+                    "week16": "-",
                 }}})
 
     def deletestsj(self, st_id, sj_id):
-        result = mongo.db.stdata.find({'st_id': int(st_id)})
+        result = mongo.stdata.find({'st_id': int(st_id)})
         for getresult in result:
             enrollresult = getresult['enroll']
             sjenrollresult = enrollresult['sj_enroll']
@@ -90,20 +93,20 @@ class Controlstdata:
                 txtlist = 'sj_{}'.format(i+1)
                 getsj = listresult[txtlist]
                 if(getsj['sj_id'] == sj_id):
-                    mongo.db.stdata.find_one_and_update({"st_id": int(st_id), "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(i+1): sj_id},
-                                                        {"$set": {
-                                                            "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(i+1): "-",
-                                                            "enroll.sj_enroll.sj_list.sj_{}.sj_name".format(i+1): "-",
-                                                            "enroll.sj_enroll.sj_list.sj_{}.sj_date".format(i+1): "-",
-                                                            "enroll.sj_enroll.sj_list.sj_{}.sj_begin".format(i+1): "-",
-                                                            "enroll.sj_enroll.sj_list.sj_{}.sj_finish".format(i+1): "-",
-                                                            "enroll.sj_enroll.sj_list.sj_{}.sj_chktime".format(i + 1): {"week1": {"learning_date": "-", "chk_status": "-"}, "week2": {"learning_date": "-", "chk_status": "-"}, "week3": {"learning_date": "-", "chk_status": "-"}, "week4": {"learning_date": "-", "chk_status": "-"}, "week5": {"learning_date": "-", "chk_status": "-"}, "week6": {"learning_date": "-", "chk_status": "-"}, "week7": {"learning_date": "-", "chk_status": "-"}, "week8": {"learning_date": "-", "chk_status": "-"}, "week9": {"learning_date": "-", "chk_status": "-"}, "week10": {"learning_date": "-", "chk_status": "-"}, "week11": {"learning_date": "-", "chk_status": "-"}, "week12": {"learning_date": "-", "chk_status": "-"}, "week13": {"learning_date": "-", "chk_status": "-"}, "week14": {"learning_date": "-", "chk_status": "-"}, "week15": {"learning_date": "-", "chk_status": "-"}, "week16": {"learning_date": "-", "chk_status": "-"}}}}, return_document=ReturnDocument.AFTER, upsert=True)
+                    mongo.stdata.find_one_and_update({"st_id": int(st_id), "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(i+1): sj_id},
+                                                     {"$set": {
+                                                         "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(i+1): "-",
+                                                         "enroll.sj_enroll.sj_list.sj_{}.sj_name".format(i+1): "-",
+                                                         "enroll.sj_enroll.sj_list.sj_{}.sj_date".format(i+1): "-",
+                                                         "enroll.sj_enroll.sj_list.sj_{}.sj_begin".format(i+1): "-",
+                                                         "enroll.sj_enroll.sj_list.sj_{}.sj_finish".format(i+1): "-",
+                                                         "enroll.sj_enroll.sj_list.sj_{}.sj_chktime".format(i + 1): {"week1": {"learning_date": "-", "chk_status": "-"}, "week2": {"learning_date": "-", "chk_status": "-"}, "week3": {"learning_date": "-", "chk_status": "-"}, "week4": {"learning_date": "-", "chk_status": "-"}, "week5": {"learning_date": "-", "chk_status": "-"}, "week6": {"learning_date": "-", "chk_status": "-"}, "week7": {"learning_date": "-", "chk_status": "-"}, "week8": {"learning_date": "-", "chk_status": "-"}, "week9": {"learning_date": "-", "chk_status": "-"}, "week10": {"learning_date": "-", "chk_status": "-"}, "week11": {"learning_date": "-", "chk_status": "-"}, "week12": {"learning_date": "-", "chk_status": "-"}, "week13": {"learning_date": "-", "chk_status": "-"}, "week14": {"learning_date": "-", "chk_status": "-"}, "week15": {"learning_date": "-", "chk_status": "-"}, "week16": {"learning_date": "-", "chk_status": "-"}}}}, return_document=ReturnDocument.AFTER, upsert=True)
                     break
                 else:
                     pass
 
-    def addSubject(self, st_id, sj_id, sj_name, sj_date, sj_begin, sj_finish,dateweek1,dateweek2,dateweek3,dateweek4,dateweek5,dateweek6,dateweek7,dateweek8,dateweek9,dateweek10,dateweek11,dateweek12,dateweek13,dateweek14,dateweek15,dateweek16):
-        result = mongo.db.stdata.find({'st_id': int(st_id)})
+    def addSubject(self, st_id, sj_id, sj_name, sj_date, sj_begin, sj_finish, dateweek1, dateweek2, dateweek3, dateweek4, dateweek5, dateweek6, dateweek7, dateweek8, dateweek9, dateweek10, dateweek11, dateweek12, dateweek13, dateweek14, dateweek15, dateweek16):
+        result = mongo.stdata.find({'st_id': int(st_id)})
         for getresult in result:
             enrollresult = getresult['enroll']
             sjenrollresult = enrollresult['sj_enroll']
@@ -113,30 +116,30 @@ class Controlstdata:
                 txtlist = 'sj_{}'.format(i+1)
                 getsj = listresult[txtlist]
                 if(getsj['sj_id'] == "-"):
-                    mongo.db.stdata.find_one_and_update({"st_id": int(st_id), "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(i+1): '-'},
-                                                        {"$set": {
-                                                            "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(i+1): sj_id,
-                                                            "enroll.sj_enroll.sj_list.sj_{}.sj_name".format(i+1): sj_name,
-                                                            "enroll.sj_enroll.sj_list.sj_{}.sj_date".format(i+1): sj_date,
-                                                            "enroll.sj_enroll.sj_list.sj_{}.sj_begin".format(i+1): sj_begin,
-                                                            "enroll.sj_enroll.sj_list.sj_{}.sj_finish".format(i+1): sj_finish,
-                                                            "enroll.sj_enroll.sj_list.sj_{}.sj_chktime".format(i + 1): {"week1": {"learning_date": dateweek1, "chk_status": "-"}, "week2": {"learning_date": dateweek2, "chk_status": "-"}, "week3": {"learning_date": dateweek3, "chk_status": "-"}, "week4": {"learning_date": dateweek4, "chk_status": "-"}, "week5": {"learning_date": dateweek5, "chk_status": "-"}, "week6": {"learning_date": dateweek6, "chk_status": "-"}, "week7": {"learning_date": dateweek7, "chk_status": "-"}, "week8": {"learning_date": dateweek8, "chk_status": "-"}, "week9": {"learning_date": dateweek9, "chk_status": "-"}, "week10": {"learning_date": dateweek10, "chk_status": "-"}, "week11": {"learning_date": dateweek11, "chk_status": "-"}, "week12": {"learning_date": dateweek12, "chk_status": "-"}, "week13": {"learning_date": dateweek13, "chk_status": "-"}, "week14": {"learning_date": dateweek14, "chk_status": "-"}, "week15": {"learning_date": dateweek15, "chk_status": "-"}, "week16": {"learning_date": dateweek16, "chk_status": "-"}}}}, return_document=ReturnDocument.AFTER, upsert=True)
+                    mongo.stdata.find_one_and_update({"st_id": int(st_id), "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(i+1): '-'},
+                                                     {"$set": {
+                                                         "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(i+1): sj_id,
+                                                         "enroll.sj_enroll.sj_list.sj_{}.sj_name".format(i+1): sj_name,
+                                                         "enroll.sj_enroll.sj_list.sj_{}.sj_date".format(i+1): sj_date,
+                                                         "enroll.sj_enroll.sj_list.sj_{}.sj_begin".format(i+1): sj_begin,
+                                                         "enroll.sj_enroll.sj_list.sj_{}.sj_finish".format(i+1): sj_finish,
+                                                         "enroll.sj_enroll.sj_list.sj_{}.sj_chktime".format(i + 1): {"week1": {"learning_date": dateweek1, "chk_status": "-"}, "week2": {"learning_date": dateweek2, "chk_status": "-"}, "week3": {"learning_date": dateweek3, "chk_status": "-"}, "week4": {"learning_date": dateweek4, "chk_status": "-"}, "week5": {"learning_date": dateweek5, "chk_status": "-"}, "week6": {"learning_date": dateweek6, "chk_status": "-"}, "week7": {"learning_date": dateweek7, "chk_status": "-"}, "week8": {"learning_date": dateweek8, "chk_status": "-"}, "week9": {"learning_date": dateweek9, "chk_status": "-"}, "week10": {"learning_date": dateweek10, "chk_status": "-"}, "week11": {"learning_date": dateweek11, "chk_status": "-"}, "week12": {"learning_date": dateweek12, "chk_status": "-"}, "week13": {"learning_date": dateweek13, "chk_status": "-"}, "week14": {"learning_date": dateweek14, "chk_status": "-"}, "week15": {"learning_date": dateweek15, "chk_status": "-"}, "week16": {"learning_date": dateweek16, "chk_status": "-"}}}}, return_document=ReturnDocument.AFTER, upsert=True)
                     break
                 else:
                     pass
 
     def editData(self, st_id, fname, lname, status, linetoken):
-        mongo.db.stdata.update_one({"st_id": int(st_id)}, {"$set": {
-            "st_id": int(st_id), "f_name": fname, "l_name": lname, "st_status": status,"std_line_token":linetoken}})
+        mongo.stdata.update_one({"st_id": int(st_id)}, {"$set": {
+            "st_id": int(st_id), "f_name": fname, "l_name": lname, "st_status": status, "std_line_token": linetoken}})
 
     def deleteData(self, st_id):
-        mongo.db.stdata.delete_one({'st_id': int(st_id)})
+        mongo.stdata.delete_one({'st_id': int(st_id)})
 
     def insertData(self, st_id, fname, lname, fac, br, stlevel, status, linetoken):
-        mongo.db.stdata.insert(
+        mongo.stdata.insert(
             {"st_id": int(st_id), "f_name": fname, "l_name": lname, "fac_name": fac, "br_name": br, "st_level": stlevel, "last_check": "-", "st_chk": "-", "st_status": status, "absent": 0,
                 "late": 0, "std_line_token": linetoken,
-            "enroll": {
+             "enroll": {
                 "sj_enroll": {
                     "sj_list": {
                         "sj_1": {"sj_id": "-", "sj_name": "-", "sj_date": "-", "sj_begin": "-", "sj_finish": "-", "sj_chktime": {"week1": {"learning_date": "-", "chk_status": "-"}, "week2": {"learning_date": "-", "chk_status": "-"}, "week3": {"learning_date": "-", "chk_status": "-"}, "week4": {"learning_date": "-", "chk_status": "-"}, "week5": {"learning_date": "-", "chk_status": "-"}, "week6": {"learning_date": "-", "chk_status": "-"}, "week7": {"learning_date": "-", "chk_status": "-"}, "week8": {"learning_date": "-", "chk_status": "-"}, "week9": {"learning_date": "-", "chk_status": "-"}, "week10": {"learning_date": "-", "chk_status": "-"}, "week11": {"learning_date": "-", "chk_status": "-"}, "week12": {"learning_date": "-", "chk_status": "-"}, "week13": {"learning_date": "-", "chk_status": "-"}, "week14": {"learning_date": "-", "chk_status": "-"}, "week15": {"learning_date": "-", "chk_status": "-"}, "week16": {"learning_date": "-", "chk_status": "-"}}},
@@ -147,15 +150,15 @@ class Controlstdata:
                         "sj_6": {"sj_id": "-", "sj_name": "-", "sj_date": "-", "sj_begin": "-", "sj_finish": "-", "sj_chktime": {"week1": {"learning_date": "-", "chk_status": "-"}, "week2": {"learning_date": "-", "chk_status": "-"}, "week3": {"learning_date": "-", "chk_status": "-"}, "week4": {"learning_date": "-", "chk_status": "-"}, "week5": {"learning_date": "-", "chk_status": "-"}, "week6": {"learning_date": "-", "chk_status": "-"}, "week7": {"learning_date": "-", "chk_status": "-"}, "week8": {"learning_date": "-", "chk_status": "-"}, "week9": {"learning_date": "-", "chk_status": "-"}, "week10": {"learning_date": "-", "chk_status": "-"}, "week11": {"learning_date": "-", "chk_status": "-"}, "week12": {"learning_date": "-", "chk_status": "-"}, "week13": {"learning_date": "-", "chk_status": "-"}, "week14": {"learning_date": "-", "chk_status": "-"}, "week15": {"learning_date": "-", "chk_status": "-"}, "week16": {"learning_date": "-", "chk_status": "-"}}},
                         "sj_7": {"sj_id": "-", "sj_name": "-", "sj_date": "-", "sj_begin": "-", "sj_finish": "-", "sj_chktime": {"week1": {"learning_date": "-", "chk_status": "-"}, "week2": {"learning_date": "-", "chk_status": "-"}, "week3": {"learning_date": "-", "chk_status": "-"}, "week4": {"learning_date": "-", "chk_status": "-"}, "week5": {"learning_date": "-", "chk_status": "-"}, "week6": {"learning_date": "-", "chk_status": "-"}, "week7": {"learning_date": "-", "chk_status": "-"}, "week8": {"learning_date": "-", "chk_status": "-"}, "week9": {"learning_date": "-", "chk_status": "-"}, "week10": {"learning_date": "-", "chk_status": "-"}, "week11": {"learning_date": "-", "chk_status": "-"}, "week12": {"learning_date": "-", "chk_status": "-"}, "week13": {"learning_date": "-", "chk_status": "-"}, "week14": {"learning_date": "-", "chk_status": "-"}, "week15": {"learning_date": "-", "chk_status": "-"}, "week16": {"learning_date": "-", "chk_status": "-"}}},
                     }}},
-            "image_list": 0
-            })
+             "image_list": 0
+             })
 
     def insertImg(self, student_id, img_num):
-                mongo.db.stdata.update_one({"st_id": int(student_id)}, {"$set": {
+        mongo.stdata.update_one({"st_id": int(student_id)}, {"$set": {
             "image_list": int(img_num)}})
 
     def deleteImg(self, student_id):
-        mongo.db.stdata.update_one({"st_id": int(student_id)}, {"$set": {
+        mongo.stdata.update_one({"st_id": int(student_id)}, {"$set": {
             "image_list": 0}})
 
 
@@ -238,21 +241,21 @@ class TrainData:
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    if session.get("username",None) is not None:
-        result = mongo.db.stdata.find({})
-        getfac = mongo.db.dbfaculty.find({})
-        getfac2 = mongo.db.dbfaculty.find({})
-        getfac3 = mongo.db.dbfaculty.find({})
-        getbr = mongo.db.dbbranch.find({})
-        getSubject = mongo.db.subject.find({})
-        shSj = mongo.db.subject.find({})
-        shSj2 = mongo.db.subject.find({})
-        imglist = mongo.db.dbimagelist.find({})
+    if session.get("username", None) is not None:
+        result = mongo.stdata.find({})
+        getfac = mongo.dbfaculty.find({})
+        getfac2 = mongo.dbfaculty.find({})
+        getfac3 = mongo.dbfaculty.find({})
+        getbr = mongo.dbbranch.find({})
+        getSubject = mongo.subject.find({})
+        shSj = mongo.subject.find({})
+        shSj2 = mongo.subject.find({})
+        imglist = mongo.dbimagelist.find({})
 
-        co1 = mongo.db.stdata.count_documents({})
-        co2 = mongo.db.dbfaculty.count_documents({})
-        co3 = mongo.db.subject.count_documents({})
-        co4 = mongo.db.dbimagelist.count_documents({})
+        co1 = mongo.stdata.count_documents({})
+        co2 = mongo.dbfaculty.count_documents({})
+        co3 = mongo.subject.count_documents({})
+        co4 = mongo.dbimagelist.count_documents({})
 
         sessionname = session.get('username')
 
@@ -271,6 +274,7 @@ def index():
         flash('Please login!', "warning")
         return redirect(url_for('userlogin'))
 
+
 def allowed_image(filename):
     if not "." in filename:
         return False
@@ -279,6 +283,7 @@ def allowed_image(filename):
         return True
     else:
         return False
+
 
 @app.route("/upload-image", methods=["GET", "POST"])
 def upload_image():
@@ -315,6 +320,7 @@ def upload_image():
         flash('Please login!', "warning")
         return redirect(url_for('userlogin'))
 
+
 @app.route("/chkimage")
 def chkimage():
     return render_template('imagepage.html')
@@ -322,7 +328,7 @@ def chkimage():
 
 @app.route("/checkstdimg", methods=["POST"])
 def chkstdimg():
-    std = mongo.db.stdata.find({})
+    std = mongo.stdata.find({})
     response = []
     for getchk in std:
         if (getchk['image_list'] > 0):
@@ -330,9 +336,10 @@ def chkstdimg():
             response.append(getchk)
     return json.dumps(response)
 
+
 @app.route("/checkstd", methods=["POST"])
 def chkstd():
-    std = mongo.db.stdata.find({})
+    std = mongo.stdata.find({})
     response = []
     for getchk in std:
         if (getchk['st_status'] == "Checked"):
@@ -341,11 +348,12 @@ def chkstd():
 
     return json.dumps(response)
 
+
 @app.route("/stdsjchk", methods=["POST"])
 def stdsjchk():
     if request.method == "POST":
         sjid = request.json['data']
-        std = mongo.db.stdata.find({})
+        std = mongo.stdata.find({})
         # print(sjid)
         response = []
         for getchk in std:
@@ -354,15 +362,17 @@ def stdsjchk():
 
         return json.dumps(response)
 
+
 @app.route("/chksjlist", methods=["POST"])
 def chksjlist():
-    sj = mongo.db.subject.find({})
+    sj = mongo.subject.find({})
     response = []
     for getchk in sj:
         getchk['_id'] = str(getchk['_id'])
         response.append(getchk)
 
     return json.dumps(response)
+
 
 @app.route('/gencamera')
 def generate(camera):
@@ -380,7 +390,8 @@ def training():
         timestart = time.time()
         path = './static/photodataset/'
         detector = dlib.get_frontal_face_detector()
-        sp = dlib.shape_predictor('./model/shape_predictor_68_face_landmarks.dat')
+        sp = dlib.shape_predictor(
+            './model/shape_predictor_68_face_landmarks.dat')
         model = dlib.face_recognition_model_v1(
             './model/dlib_face_recognition_resnet_model_v1.dat')
 
@@ -400,16 +411,19 @@ def training():
                     print('Training....', fn)
                     FACE_NAME.append(fn[: fn.index('_')])
 
-        pickle.dump((FACE_DESC, FACE_NAME), open('./Trainer/trainset.pk', 'wb'))
+        pickle.dump((FACE_DESC, FACE_NAME), open(
+            './Trainer/trainset.pk', 'wb'))
 
         timefinish = time.time()
         totaltime = timefinish - timestart
         print("{0:.2f} s.".format(round(totaltime, 2)))
-        flash('Complete! trained. {0} Time total {1:.2f} s.'.format(trained,totaltime), "success")
+        flash('Complete! trained. {0} Time total {1:.2f} s.'.format(
+            trained, totaltime), "success")
         return redirect(url_for('index'))
     else:
         flash('Please login!', "warning")
         return redirect(url_for('userlogin'))
+
 
 @app.route('/userlogin')
 def userlogin():
@@ -419,6 +433,7 @@ def userlogin():
     else:
         username = ""
         return render_template('testing.html', username=username)
+
 
 @app.route('/adduser', methods=['POST'])
 def adduser():
@@ -436,18 +451,20 @@ def adduser():
             if not getkey:
                 if session.get("username", None) is not None:
                     hashpass = argon2.using(rounds=4).hash(getpass)
-                    mongo.db.userdata.insert({'username': getuser, 'password': hashpass})
+                    mongo.userdata.insert(
+                        {'username': getuser, 'password': hashpass})
                     flash('Add user success!', "success")
                     return redirect(url_for('userlogin'))
                 else:
                     flash('Please Login Or Enter Key To Create New User!', "danger")
                     return redirect(url_for('userlogin'))
             if getkey:
-                user = mongo.db.userdata.find({})
+                user = mongo.userdata.find({})
                 for chkuser in user:
                     if chkuser['username'] == getkey:
                         hashpass = argon2.using(rounds=4).hash(getpass)
-                        mongo.db.userdata.insert({'username': getuser, 'password': hashpass})
+                        mongo.userdata.insert(
+                            {'username': getuser, 'password': hashpass})
                         flash('Add user success!', "success")
                         return redirect(url_for('userlogin'))
                     else:
@@ -471,10 +488,12 @@ def chkuser():
             return redirect(url_for('userlogin'))
         gethashpass = ""
         chkpass = ""
-        user = mongo.db.userdata.find({'username': getuser})
+        getuserstatus = ""
+        user = mongo.userdata.find({'username': getuser})
         for chkuser in user:
             gethashpass = chkuser['password']
             chkpass = argon2.verify(getpass, gethashpass)
+            getuserstatus = chkuser['status']
         if chkpass == True:
             # session.permanent = True
             # app.permanent_session_lifetime = timedelta(minutes=5)
@@ -491,7 +510,8 @@ def userlogout():
     session.pop("username", None)
     session.clear()
     return redirect(url_for("userlogin"))
-    
+
+
 @app.route('/detection')
 def detection():
     if session.get("username", None) is not None:
@@ -518,8 +538,8 @@ def addsj():
             "br_name": st_br_name,
             "st_level": st_level,
         }
-        shSj = mongo.db.subject.find({})
-        getstdata = mongo.db.stdata.find({'st_id': int(st_id)})
+        shSj = mongo.subject.find({})
+        getstdata = mongo.stdata.find({'st_id': int(st_id)})
 
         return render_template('addsj.html', data=datadic, sjdata=shSj, stdata=getstdata)
 
@@ -550,7 +570,8 @@ def create():
             linetoken = "-"
         try:
             contst = Controlstdata()
-            contst.insertData(st_id, fname, lname, fac, br, stlevel, status,linetoken)
+            contst.insertData(st_id, fname, lname, fac, br,
+                              stlevel, status, linetoken)
             flash("Welcome {0}".format(st_id), "success")
             # return render_template('getdata.html', data=st_id, lvl=level)
             return redirect(url_for('index'))
@@ -602,7 +623,8 @@ def addnewsj():
                 trandate = "Sun"
 
             contst = Controlstdata()
-            contst.insertnewsj(faculty, sj_id.upper(), sj_name,sj_StartTime, sj_FinishTime, trandate)
+            contst.insertnewsj(faculty, sj_id.upper(), sj_name,
+                               sj_StartTime, sj_FinishTime, trandate)
 
             flash("Add New Subject Complate {}".format(
                 sj_id.upper()+" :: "+sj_name), "success")
@@ -627,19 +649,19 @@ def addstsj():
             dateweek2 = ""
             dateweek3 = ""
             dateweek4 = ""
-            dateweek5= ""
-            dateweek6= ""
-            dateweek7= ""
-            dateweek8= ""
-            dateweek9= ""
-            dateweek10= ""
-            dateweek11= ""
+            dateweek5 = ""
+            dateweek6 = ""
+            dateweek7 = ""
+            dateweek8 = ""
+            dateweek9 = ""
+            dateweek10 = ""
+            dateweek11 = ""
             dateweek12 = ""
-            dateweek13= ""
-            dateweek14= ""
+            dateweek13 = ""
+            dateweek14 = ""
             dateweek15 = ""
             dateweek16 = ""
-            getweeksj = mongo.db.subject.find({"sj_id": splittxt[0]})
+            getweeksj = mongo.subject.find({"sj_id": splittxt[0]})
             for sjd in getweeksj:
                 gdetail = sjd['sj_detail']
                 gweek = gdetail['sj_weeklist']
@@ -664,7 +686,7 @@ def addstsj():
             contst.addSubject(
                 st_id, splittxt[0], splittxt[1], splittxt[4], splittxt[2], splittxt[3],
                 dateweek1, dateweek2, dateweek3, dateweek4, dateweek5, dateweek6, dateweek7,
-                dateweek8,dateweek9,dateweek10,dateweek11,dateweek12,dateweek13,dateweek14,dateweek15,dateweek16)
+                dateweek8, dateweek9, dateweek10, dateweek11, dateweek12, dateweek13, dateweek14, dateweek15, dateweek16)
 
             flash("Add New Subject Complate {} {}".format(
                 st_id, sj_data), "success")
@@ -781,7 +803,7 @@ def updatesjdata():
             contst.updatesj(oldsj_id, sj_fac, sj_id, sj_name,
                             sj_StartTime, sj_FinishTime, trandate,
                             week1, week2, week3, week4, week5, week6, week7,
-                            week8,week9,week10,week11,week12,week13,week14,week15,week16)
+                            week8, week9, week10, week11, week12, week13, week14, week15, week16)
             flash("Update Subject Complate", "success")
             return redirect(url_for('index'))
     except pymongo.errors.DuplicateKeyError:
@@ -801,7 +823,6 @@ def updatestd():
             lname = request.form['lname']
             status = request.form['st_status']
             linetoken = request.form['linetoken']
-
 
             if not st_id:
                 flash('ID is empty or Not correct', "warning")
@@ -889,7 +910,7 @@ def deletestsj():
 def deletesj():
     if request.method == "POST":
         sj_id = request.form['sj_id']
-        mongo.db.subject.delete_one({'sj_id': sj_id})
+        mongo.subject.delete_one({'sj_id': sj_id})
         flash('Deleted! {}'.format(sj_id), "danger")
         return redirect(url_for('index'))
 
@@ -912,14 +933,15 @@ def get_data():
 def stsjconclusion(st_id, sj_id):
     stid = st_id
     sjid = sj_id
-    result = mongo.db.stdata.find({'st_id': stid})
+    result = mongo.stdata.find({'st_id': stid})
     return render_template('conclusion.html', data1=st_id, data2=sj_id, getdb=result)
+
 
 @app.route('/stsjconclusionall/<st_id>', methods=['GET'])
 def stsjconclusionall(st_id):
     stid = st_id
-    result = mongo.db.stdata.find({'st_id': stid})
-    return render_template('conclusionall.html', data1=st_id,getdb=result)
+    result = mongo.stdata.find({'st_id': stid})
+    return render_template('conclusionall.html', data1=st_id, getdb=result)
 
 # @app.route('/time_feed')
 # def time_feed():

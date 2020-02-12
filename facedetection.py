@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-import cupy as cp
 import dlib
 import pickle
 import requests
@@ -12,8 +11,9 @@ import time
 
 
 class FaceDetectionCamera(object):
-    client = MongoClient('localhost', 27017)
-
+    #client = MongoClient('localhost', 27017)
+    client = MongoClient(
+        "mongodb+srv://whitecanze:benz11504@student-9fnju.gcp.mongodb.net/test?retryWrites=true&w=majority")
     db = client.student
     stddatadb = db.stdata
     subjectdatadb = db.subject
@@ -78,8 +78,9 @@ class FaceDetectionCamera(object):
                 getchkday = "วันเสาร์"
 
             findsj = self.subjectdatadb.find({"sj_detail.sj_date": chkday})
-            findcomparesj = self.subjectdatadb.find({"sj_detail.sj_date": chkday})
-            
+            findcomparesj = self.subjectdatadb.find(
+                {"sj_detail.sj_date": chkday})
+
             getcompare = 0
             getsjid = ""
             getsjname = ""
@@ -95,7 +96,7 @@ class FaceDetectionCamera(object):
                 if compare1['sj_id']:
                     getcompare += 1
             # print("getcompare:"+str(getcompare))
-            if(getcompare>1):
+            if(getcompare > 1):
                 for getfindsj in findsj:
                     getdetail = getfindsj['sj_detail']
                     getweek = getdetail['sj_weeklist']
@@ -105,7 +106,8 @@ class FaceDetectionCamera(object):
                     getsplitfinishtime = getdetailfinish.split(".")
 
                     testgettime.append(getdetail['sj_StartTime'].split(".")[0])
-                    testgettime2.append(getdetail['sj_FinishTime'].split(".")[0])
+                    testgettime2.append(
+                        getdetail['sj_FinishTime'].split(".")[0])
                     testgetsjid.append(getfindsj['sj_id'])
                     testgetsjname.append(getdetail['sj_name'])
                     # print(testgettime)
@@ -131,13 +133,15 @@ class FaceDetectionCamera(object):
                                 elif int(currenthour) < int(testgettime[0]):
                                     getsjstatus = "duly"
                                     print(getsjstatus)
-                                findsj2 = self.subjectdatadb.find({"sj_id": getsjid})
+                                findsj2 = self.subjectdatadb.find(
+                                    {"sj_id": getsjid})
                                 for getfindsj2 in findsj2:
                                     getfinddetail = getfindsj2['sj_detail']
                                     getfindweek = getfinddetail['sj_weeklist']
                                     for myweek in range(16):
                                         if getfindweek['week{0}'.format(myweek + 1)] == chkdate:
-                                            getsjweek = "week{0}".format(myweek + 1)
+                                            getsjweek = "week{0}".format(
+                                                myweek + 1)
 
                             elif int(currenthour) >= int(testgettime2[0]):
                                 print("ไม่มาเรียน")
@@ -147,13 +151,15 @@ class FaceDetectionCamera(object):
                                 getsjname = testgetsjname[0]
                                 getsjweek2 = ""
 
-                                findsj2 = self.subjectdatadb.find({"sj_id": getsjid})
+                                findsj2 = self.subjectdatadb.find(
+                                    {"sj_id": getsjid})
                                 for getfindsj2 in findsj2:
                                     getfinddetail = getfindsj2['sj_detail']
                                     getfindweek = getfinddetail['sj_weeklist']
                                     for myweek in range(16):
                                         if getfindweek['week{0}'.format(myweek + 1)] == chkdate:
-                                            getsjweek2 = "week{0}".format(myweek + 1)
+                                            getsjweek2 = "week{0}".format(
+                                                myweek + 1)
 
                                 for chkall in getall:
                                     getid = chkall["st_id"]
@@ -175,9 +181,12 @@ class FaceDetectionCamera(object):
                                             getthisweek = getlistweek[getsjweek2]
                                             if getsj['sj_id'] == getsjid:
                                                 if getthisweek['chk_status'] == "-":
-                                                    query_all = {"st_id": int(getid), "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(dbi+1): getsjid}
-                                                    setall_std_sj_status = {"$set": {"absent":int(stdabsent)+1,"enroll.sj_enroll.sj_list.sj_{0}.sj_chktime.{1}.chk_status".format(dbi + 1, getsjweek2): getsjstatus}}
-                                                    self.stddatadb.update_one(query_all, setall_std_sj_status)
+                                                    query_all = {"st_id": int(
+                                                        getid), "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(dbi+1): getsjid}
+                                                    setall_std_sj_status = {"$set": {"absent": int(
+                                                        stdabsent)+1, "enroll.sj_enroll.sj_list.sj_{0}.sj_chktime.{1}.chk_status".format(dbi + 1, getsjweek2): getsjstatus}}
+                                                    self.stddatadb.update_one(
+                                                        query_all, setall_std_sj_status)
                                                 else:
                                                     pass
                                     elif chkall["st_status"] == "Checked":
@@ -203,13 +212,15 @@ class FaceDetectionCamera(object):
                                 elif int(currenthour) < int(testgettime[1]):
                                     getsjstatus = "duly"
                                     print(getsjstatus)
-                                findsj2 = self.subjectdatadb.find({"sj_id": getsjid})
+                                findsj2 = self.subjectdatadb.find(
+                                    {"sj_id": getsjid})
                                 for getfindsj2 in findsj2:
                                     getfinddetail = getfindsj2['sj_detail']
                                     getfindweek = getfinddetail['sj_weeklist']
                                     for myweek in range(16):
                                         if getfindweek['week{0}'.format(myweek + 1)] == chkdate:
-                                            getsjweek = "week{0}".format(myweek + 1)
+                                            getsjweek = "week{0}".format(
+                                                myweek + 1)
 
                             elif int(currenthour) >= int(testgettime2[1]):
                                 print("ไม่มาเรียน")
@@ -219,13 +230,15 @@ class FaceDetectionCamera(object):
                                 getsjname = testgetsjname[1]
                                 getsjweek2 = ""
 
-                                findsj2 = self.subjectdatadb.find({"sj_id": getsjid})
+                                findsj2 = self.subjectdatadb.find(
+                                    {"sj_id": getsjid})
                                 for getfindsj2 in findsj2:
                                     getfinddetail = getfindsj2['sj_detail']
                                     getfindweek = getfinddetail['sj_weeklist']
                                     for myweek in range(16):
                                         if getfindweek['week{0}'.format(myweek + 1)] == chkdate:
-                                            getsjweek2 = "week{0}".format(myweek + 1)
+                                            getsjweek2 = "week{0}".format(
+                                                myweek + 1)
 
                                 for chkall in getall:
                                     getid = chkall["st_id"]
@@ -247,15 +260,20 @@ class FaceDetectionCamera(object):
                                             getthisweek = getlistweek[getsjweek2]
                                             if getsj['sj_id'] == getsjid:
                                                 if getthisweek['chk_status'] == "-":
-                                                    query_all = {"st_id": int(getid), "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(dbi+1): getsjid}
-                                                    setall_std_sj_status = {"$set": {"absent":int(stdabsent)+1,"enroll.sj_enroll.sj_list.sj_{0}.sj_chktime.{1}.chk_status".format(dbi + 1, getsjweek2): getsjstatus}}
-                                                    self.stddatadb.update_one(query_all, setall_std_sj_status)
+                                                    query_all = {"st_id": int(
+                                                        getid), "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(dbi+1): getsjid}
+                                                    setall_std_sj_status = {"$set": {"absent": int(
+                                                        stdabsent)+1, "enroll.sj_enroll.sj_list.sj_{0}.sj_chktime.{1}.chk_status".format(dbi + 1, getsjweek2): getsjstatus}}
+                                                    self.stddatadb.update_one(
+                                                        query_all, setall_std_sj_status)
                                                 else:
                                                     pass
                                     elif chkall["st_status"] == "Checked":
                                         query_idafter = {"st_id": getid}
-                                        set_st_statusafter = {"$set": {"st_status": "none"}}
-                                        self.stddatadb.update_one(query_idafter, set_st_statusafter)
+                                        set_st_statusafter = {
+                                            "$set": {"st_status": "none"}}
+                                        self.stddatadb.update_one(
+                                            query_idafter, set_st_statusafter)
                             else:
                                 print("ไม่เข้าเงื่อนไข")
             elif getcompare == 1:
@@ -269,28 +287,49 @@ class FaceDetectionCamera(object):
                     getsplitfinishtime = getdetailfinish.split(".")
 
                     if int(currenthour) < int(getsplitstarttime[0]) or (int(currenthour) >= int(getsplitstarttime[0]) and int(currenthour) <= int(getsplitfinishtime[0])):
+                        print("มาเรียน")
                         getsjid = getfindsj['sj_id']
                         getsjname = getdetail['sj_name']
                         if int(currenthour) >= int(getsplitstarttime[0]) and int(currentminute) > 15:
                             getsjstatus = "late"
+                            print(getsjstatus)
                         elif int(currenthour) == int(getsplitstarttime[0]) and int(currentminute) <= 15:
                             getsjstatus = "duly"
+                            print(getsjstatus)
                         elif int(currenthour) < int(getsplitstarttime[0]):
                             getsjstatus = "duly"
-                        for myweek in range(16):
-                            if getweek['week{0}'.format(myweek + 1)] == chkdate:
-                                getsjweek = "week{0}".format(myweek + 1)
+                            print(getsjstatus)
+                        findsj2 = self.subjectdatadb.find(
+                            {"sj_id": getsjid})
+                        for getfindsj2 in findsj2:
+                            getfinddetail = getfindsj2['sj_detail']
+                            getfindweek = getfinddetail['sj_weeklist']
+                            for myweek in range(16):
+                                if getfindweek['week{0}'.format(myweek + 1)] == chkdate:
+                                    getsjweek = "week{0}".format(myweek + 1)
+                        # for myweek in range(16):
+                        #     if getweek['week{0}'.format(myweek + 1)] == chkdate:
+                        #         getsjweek = "week{0}".format(myweek + 1)
 
                     elif int(currenthour) >= int(getsplitfinishtime[0]):
+                        print("ไม่มาเรียน")
                         getsjstatus = "absent"
                         getall = self.stddatadb.find({})
                         getsjid = getfindsj['sj_id']
                         getsjname = getdetail['sj_name']
                         getsjweek2 = ""
 
-                        for myweek in range(16):
-                            if getweek['week{0}'.format(myweek + 1)] == chkdate:
-                                getsjweek2 = "week{0}".format(myweek + 1)
+                        findsj2 = self.subjectdatadb.find(
+                            {"sj_id": getsjid})
+                        for getfindsj2 in findsj2:
+                            getfinddetail = getfindsj2['sj_detail']
+                            getfindweek = getfinddetail['sj_weeklist']
+                            for myweek in range(16):
+                                if getfindweek['week{0}'.format(myweek + 1)] == chkdate:
+                                    getsjweek2 = "week{0}".format(myweek + 1)
+                        # for myweek in range(16):
+                        #     if getweek['week{0}'.format(myweek + 1)] == chkdate:
+                        #         getsjweek2 = "week{0}".format(myweek + 1)
 
                         for chkall in getall:
                             getid = chkall["st_id"]
@@ -312,17 +351,22 @@ class FaceDetectionCamera(object):
                                     getthisweek = getlistweek[getsjweek2]
                                     if getsj['sj_id'] == getsjid:
                                         if getthisweek['chk_status'] == "-":
-                                            query_all = {"st_id": int(getid), "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(dbi+1): getsjid}
-                                            setall_std_sj_status = {"$set": {"absent": int(stdabsent)+1, "enroll.sj_enroll.sj_list.sj_{0}.sj_chktime.{1}.chk_status".format(dbi + 1, getsjweek2): getsjstatus}}
-                                            self.stddatadb.update_one(query_all, setall_std_sj_status)
+                                            query_all = {"st_id": int(
+                                                getid), "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(dbi+1): getsjid}
+                                            setall_std_sj_status = {"$set": {"absent": int(
+                                                stdabsent)+1, "enroll.sj_enroll.sj_list.sj_{0}.sj_chktime.{1}.chk_status".format(dbi + 1, getsjweek2): getsjstatus}}
+                                            self.stddatadb.update_one(
+                                                query_all, setall_std_sj_status)
                                         else:
                                             pass
                             elif chkall["st_status"] == "Checked":
                                 query_idafter = {"st_id": getid}
-                                set_st_statusafter = {"$set": {"st_status": "none"}}
-                                self.stddatadb.update_one(query_idafter, set_st_statusafter)
+                                set_st_statusafter = {
+                                    "$set": {"st_status": "none"}}
+                                self.stddatadb.update_one(
+                                    query_idafter, set_st_statusafter)
             # TIME
-            # cv2.putText(frame, cdt, (10, 20), self.font, 0.4,(255, 0, 0), 1, cv2.LINE_AA)  
+            # cv2.putText(frame, cdt, (10, 20), self.font, 0.4,(255, 0, 0), 1, cv2.LINE_AA)
             for (x, y, w, h) in faces:
                 img = frame[y-10:y+h+10, x-10:x+w+10][:, :, ::-1]
                 dets = self.detector(img)
@@ -332,7 +376,8 @@ class FaceDetectionCamera(object):
                         img, shape)
                     d = []
                     for face_desc in self.FACE_DESC:
-                        d.append(np.linalg.norm(np.array(face_desc) - np.array(face_desc0)))
+                        d.append(np.linalg.norm(
+                            np.array(face_desc) - np.array(face_desc0)))
                     d = np.array(d)
                     idx = np.argmin(d)
                     if d[idx] < 0.5:
@@ -385,8 +430,8 @@ class FaceDetectionCamera(object):
                                         token = gettoken
                                         headers = {
                                             'content-type': 'application/x-www-form-urlencoded', 'Authorization': 'Bearer '+token}
-                                        msg = 'วิชา {0}:{1} รหัสนิสิต {2} ชื่อ {3} {4} เช็คชื่อแล้ว ณ {5} ที่ {6} เวลา {7} สถานะ {8}'.format(getsjid,getsjname,
-                                            getid, f_name, l_name, getchkday, chkdate, chktime, sendstatus,getsjstatus)
+                                        msg = 'วิชา {0}:{1} รหัสนิสิต {2} ชื่อ {3} {4} เช็คชื่อแล้ว ณ {5} ที่ {6} เวลา {7} สถานะ {8}'.format(
+                                            getsjid, getsjname, getid, f_name, l_name, getchkday, chkdate, chktime, sendstatus, getsjstatus)
                                         r = requests.post(
                                             url, headers=headers, data={'message': msg})
                                     else:
@@ -412,11 +457,12 @@ class FaceDetectionCamera(object):
             totaltime = timefinish - timestart
             ffps = self.cam.get(cv2.CAP_PROP_FPS)
             fps = (ffps/totaltime)/ffps
-            print("{0:.2f} s.".format(round(totaltime, 2)))
-            print("FPS:{0:.2f} ".format(round(fps, 2)))
+            # print("{0:.2f} s.".format(round(totaltime, 2)))
+            # print("FPS:{0:.2f} ".format(round(fps, 2)))
             cv2.putText(frame, "FPS:{0:.2f} ".format(round(fps, 2)), (10, 20), self.font,
                         0.4, (0, 255, 0), 1, cv2.LINE_AA)
-            ret, jpeg = cv2.imencode('.jpg', frame,[int(cv2.IMWRITE_JPEG_QUALITY), 100])
+            ret, jpeg = cv2.imencode(
+                '.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
             return jpeg.tobytes()
 
             # *** Old opencv prediction ***
