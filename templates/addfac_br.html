@@ -1,0 +1,266 @@
+<div id="modaladdfac_br" class="modal fade" role="dialog" align="start">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: rgba(0, 0, 64, 1);color:rgba(253, 184, 19, 1)" ;>
+                <h4 class="modal-title">แบบฟอร์มเพิ่มคณะและสาขา</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <style>
+                .select-tab {
+                    width: 100%;
+                    height: 50px;
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    grid-gap: 0px;
+                    border-bottom: 2px solid var(--main-color2);
+                }
+
+                .select-tab>button#sel-fac-btn {
+                    width: 50%;
+                    font-size: 1rem;
+                    margin-left: 50%;
+                    text-transform: uppercase;
+                    font-weight: bold;
+                    outline: none;
+                    border-top-left-radius: 8px;
+                    border-left: 5px solid var(--main-color2);
+                    border-top: 1px solid var(--main-color2);
+                    border-bottom: 1px solid var(--main-color2);
+                    border-right: 1px solid var(--main-color2);
+                    box-shadow: -5px -2px 5px;
+                }
+
+                .select-tab>button#sel-br-btn {
+                    width: 50%;
+                    font-size: 1rem;
+                    background-color: white;
+                    text-transform: uppercase;
+                    font-weight: bold;
+                    outline: none;
+                    border-top-right-radius: 8px;
+                    border-left: 1px solid var(--main-color2);
+                    border-top: 1px solid var(--main-color2);
+                    border-bottom: 1px solid var(--main-color2);
+                    border-right: 5px solid var(--main-color2);
+                    box-shadow: 5px -2px 5px;
+                }
+
+                .sel-btn-active {
+                    background-color: var(--main-color2);
+                    font-size: 1.5rem;
+                    color: var(--main-color1);
+                }
+
+                .tap-add-br {
+                    display: none;
+                }
+
+                .for-add-data {
+                    outline: none;
+                    width: 200px;
+                    animation: sbm-out-hover .3s forwards;
+                    border-radius: 3px;
+                    border: 1px solid var(--main-color2);
+                    font-weight: bold;
+                    font-size: 18px;
+                    padding: 5px 15px;
+                }
+
+                .for-add-data:hover {
+                    animation: sbm-in-hover .3s forwards;
+                }
+
+                .for-clear-data {
+                    outline: none;
+                    animation: clr-out-hover .3s forwards;
+                    border: 1px solid crimson;
+                    border-radius: 3px;
+                    font-weight: bold;
+                    font-size: 18px;
+                    padding: 5px 15px;
+                }
+
+                .for-clear-data:hover {
+                    animation: clr-in-hover .3s forwards;
+                }
+
+                @keyframes sbm-in-hover {
+                    from {}
+
+                    to {
+                        background-color: var(--main-color2);
+                        color: var(--main-color1);
+                    }
+                }
+
+                @keyframes sbm-out-hover {
+                    from {
+                        background-color: var(--main-color2);
+                        color: var(--main-color1);
+                    }
+
+                    to {
+                        background-color: white;
+                        color: var(--main-color2);
+                        text-shadow: 3px 5px 10px;
+                    }
+                }
+
+                @keyframes clr-in-hover {
+                    from {}
+
+                    to {
+                        background-color: crimson;
+                        color: var(--main-color1)
+                    }
+                }
+
+                @keyframes clr-out-hover {
+                    from {
+                        background-color: crimson;
+                        color: var(--main-color1);
+                    }
+
+                    to {
+                        background-color: white;
+                        color: crimson;
+                        text-shadow: 3px 5px 10px;
+                    }
+                }
+            </style>
+            <div class="modal-body">
+                <div class="select-tab">
+                    <button class="sel-btn-active" id="sel-fac-btn"><i
+                            class="fas fa-plus"></i>&nbsp;&nbsp;Faculty</button>
+                    <button id="sel-br-btn"><i class="fas fa-plus"></i>&nbsp;&nbsp;Branch</button>
+                </div>
+                <div class="tap-add-fac">
+                    <h1>เพิ่มคณะ</h1>
+                    <form action="/addnewfac" method="POST">
+                        <div class="form-group">
+                            <input class="form-control" type="text" name="fac_id" placeholder="รหัสคณะ">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control" type="text" name="fac_name" placeholder="ชื่อคณะ">
+                        </div>
+                        <div class="form-group">
+                            <button class="for-add-data" type="submit">เพิ่มข้อมูล</button>
+                            <button class="for-clear-data" type="reset">ล้างข้อมูล</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="tap-add-br">
+                    <h1>เพิ่มสาขา</h1>
+                    <form action="/addnewbr" method="POST">
+                        <div class="form-group">
+                            <input class="form-control" type="text" name="br_id" placeholder="รหัสสาขา">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control" type="text" name="br_name" placeholder="ชื่อสาขา">
+                        </div>
+                        <div class="form-group">
+                            <button class="for-add-data" type="submit">เพิ่มข้อมูล</button>
+                            <button class="for-clear-data" type="reset">ล้างข้อมูล</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" id="for-close-form"
+                    data-dismiss="modal">ปิด</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#for-close-form').on('click', () => {
+        $('.tap-add-br').css({
+            "display": "none"
+        })
+        $('#sel-br-btn').css({
+            "background-color": "white",
+            "color": "var(--main-color2)",
+            "font-size": "1rem"
+        })
+        $('.tap-add-fac').css({
+            "display": "none"
+        })
+        $('#sel-fac-btn').css({
+            "background-color": "white",
+            "color": "var(--main-color2)",
+            "font-size": "1rem"
+        })
+    })
+    $('#sel-fac-btn').on('click', () => {
+        if ($('#sel-br-btn').hasClass("sel-btn-active")) {
+            $('#sel-br-btn').removeClass("sel-btn-active")
+            $('#sel-br-btn').css({
+                "background-color": "white",
+                "color": "var(--main-color2)",
+                "font-size": "1rem"
+            })
+            $('#sel-fac-btn').addClass("sel-btn-active")
+            $('.tap-add-br').css({
+                "display": "none"
+            })
+            $('.tap-add-fac').fadeIn()
+
+        } else {
+            $('#sel-fac-btn').removeClass("sel-btn-active")
+            $('#sel-fac-btn').addClass("sel-btn-active")
+            $('.tap-add-fac').fadeIn()
+        }
+    })
+    $('#sel-br-btn').on('click', () => {
+        if ($('#sel-fac-btn').hasClass("sel-btn-active")) {
+            $('#sel-fac-btn').removeClass("sel-btn-active")
+            $('#sel-fac-btn').css({
+                "background-color": "white",
+                "color": "var(--main-color2)",
+                "font-size": "1rem"
+            })
+            $('#sel-br-btn').addClass("sel-btn-active")
+            $('.tap-add-fac').css({
+                "display": "none"
+            })
+            $('.tap-add-br').fadeIn()
+        } else {
+            $('#sel-br-btn').removeClass("sel-btn-active")
+            $('#sel-br-btn').addClass("sel-btn-active")
+            $('.tap-add-br').fadeIn()
+        }
+    })
+    $('#sel-fac-btn').mouseover(() => {
+        if ($('#sel-fac-btn').hasClass("")) {
+            $('#sel-fac-btn').css({
+                "background-color": "var(--main-color2)",
+                "color": "var(--main-color1)"
+            })
+        }
+    })
+    $('#sel-br-btn').mouseover(() => {
+        if ($('#sel-br-btn').hasClass("")) {
+            $('#sel-br-btn').css({
+                "background-color": "var(--main-color2)",
+                "color": "var(--main-color1)"
+            })
+        }
+    })
+    $('#sel-fac-btn').mouseout(() => {
+        if ($('#sel-fac-btn').hasClass("")) {
+            $('#sel-fac-btn').css({
+                "background-color": "white",
+                "color": "var(--main-color2)"
+            })
+        }
+    })
+    $('#sel-br-btn').mouseout(() => {
+        if ($('#sel-br-btn').hasClass("")) {
+            $('#sel-br-btn').css({
+                "background-color": "white",
+                "color": "var(--main-color2)"
+            })
+        }
+    })
+</script>

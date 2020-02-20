@@ -20,6 +20,7 @@ from pymongo import ReturnDocument
 from PIL import Image
 from datetime import datetime
 from passlib.hash import argon2
+import pymongo
 
 app = Flask(__name__)
 app.debug = True
@@ -160,6 +161,12 @@ class Controlstdata:
     def deleteImg(self, student_id):
         mongo.stdata.update_one({"st_id": int(student_id)}, {"$set": {
             "image_list": 0}})
+
+    def insertfac(self, f_id, f_name):
+        mongo.dbfaculty.insert({"fac_id": f_id, "fac_name": f_name})
+
+    def insertbr(self, b_id, b_name):
+        mongo.dbbranch.insert({"br_id": b_id, "br_name": b_name})
 
 
 class DataGenerator:
@@ -319,6 +326,50 @@ def upload_image():
     else:
         flash('Please login!', "warning")
         return redirect(url_for('userlogin'))
+
+
+@app.route("/addnewfac", methods=["POST"])
+def addnewfac():
+    if request.method == "POST":
+        fac_id = request.form['fac_id']
+        fac_name = request.form['fac_name']
+
+        if not fac_id:
+            flash('Please Enter Faculty ID!', "warning")
+            return redirect(url_for('index'))
+        if not fac_name:
+            flash('Please Enter Faculty Name!', "warning")
+            return redirect(url_for('index'))
+
+        addfac = Controlstdata()
+        try:
+            addfac.insertfac(fac_id, fac_name)
+            return redirect(url_for('index'))
+        except pymongo.errors.DuplicateKeyError:
+            flash('Data is dupicate!', "danger")
+            return redirect(url_for('index'))
+
+
+@app.route("/addnewbr", methods=["POST"])
+def addnewbr():
+    if request.method == "POST":
+        br_id = request.form['br_id']
+        br_name = request.form['br_name']
+
+        if not br_id:
+            flash('Please Enter Branch ID!', "warning")
+            return redirect(url_for('index'))
+        if not br_name:
+            flash('Please Enter Branch Name!', "warning")
+            return redirect(url_for('index'))
+
+        addbr = Controlstdata()
+        try:
+            addbr.insertbr(br_id, br_name)
+            return redirect(url_for('index'))
+        except pymongo.errors.DuplicateKeyError:
+            flash('Data is dupicate!', "danger")
+            return redirect(url_for('index'))
 
 
 @app.route("/chkimage")

@@ -53,6 +53,8 @@
             {% include 'subcontent.html' %}
             <!-- form add student -->
             {% include 'addstd.html' %}
+            <!-- add faculty and branch -->
+            {% include 'addfac_br.html' %}
             <!-- main content -->
             <div class="main-content" style="margin-top: 1%;overflow:hidden;">
                 <div class="row" id="mian-container">
@@ -263,17 +265,19 @@
                         transition: left 0.1s;
                         -webkit-transition: left 0.1s;
                     }
-                    .mycustom-close-btn{
+
+                    .mycustom-close-btn {
                         background-color: var(--main-color2);
-                        color:white;
-                        padding:10px 25px ;
-                        font-size:1rem;
-                        border:solid 1px var(--main-color1);
+                        color: white;
+                        padding: 10px 25px;
+                        font-size: 1rem;
+                        border: solid 1px var(--main-color1);
                     }
-                    .mycustom-close-btn:hover{
+
+                    .mycustom-close-btn:hover {
                         background-color: var(--main-color2);
-                        color:var(--main-color1);
-                        
+                        color: var(--main-color1);
+
                     }
                 </style>
                 <div class="grid-std-chk">
@@ -291,19 +295,23 @@
                                     </div>
                                     <div class="modal-body">
                                         <span>
-                                            <i style="color:greenyellow;font-size:1.8rem;text-shadow:5px 0px 15px black;" class="fas fa-check"></i>
+                                            <i style="color:greenyellow;font-size:1.8rem;text-shadow:5px 0px 15px black;"
+                                                class="fas fa-check"></i>
                                             <p>เข้าเรียนตรงตามเวลา</p>
                                         </span>
                                         <span>
-                                            <i style="color:yellow;font-size:1.8rem;text-shadow:5px 0px 15px black;" class="fas fa-check"></i>
+                                            <i style="color:yellow;font-size:1.8rem;text-shadow:5px 0px 15px black;"
+                                                class="fas fa-check"></i>
                                             <p>เข้าเรียนสาย</p>
                                         </span>
                                         <span>
-                                            <i style="color:red;font-size:1.8rem;text-shadow:5px 0px 15px black;" class="fas fa-times"></i>
+                                            <i style="color:red;font-size:1.8rem;text-shadow:5px 0px 15px black;"
+                                                class="fas fa-times"></i>
                                             <p>ขาดเรียน</p>
                                         </span>
                                         <span>
-                                            <i style="color:blue;font-size:1.8rem;text-shadow:5px 0px 15px black;" class="fas fa-times"></i>
+                                            <i style="color:blue;font-size:1.8rem;text-shadow:5px 0px 15px black;"
+                                                class="fas fa-times"></i>
                                             <p>ไม่มีสถานะ</p>
                                         </span>
                                     </div>
@@ -370,7 +378,6 @@
 </script>
 <script>
     $(document).ready(() => {
-
         $.ajax({
             url: '/chksjlist',
             type: 'POST',
@@ -476,8 +483,11 @@
                             $.each(item.enroll.sj_enroll.sj_list.sj_1.sj_chktime, (i, d) => {
                                 $('<h3 id="text-' + i + "-" + item.st_id +
                                     '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
-                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_1.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_1.sj_finish+'">').appendTo("#"
-                                    + item.st_id +
+                                    .learning_date + " เวลาเรียน: " + item.enroll
+                                    .sj_enroll.sj_list.sj_1.sj_begin + "-" + item.enroll
+                                    .sj_enroll.sj_list.sj_1.sj_finish + '">').appendTo(
+                                    "#" +
+                                    item.st_id +
                                     "")
                                 stdchecklist(i, d, item)
                             })
@@ -493,8 +503,11 @@
                             $.each(item.enroll.sj_enroll.sj_list.sj_2.sj_chktime, (i, d) => {
                                 $('<h3 id="text-' + i + "-" + item.st_id +
                                     '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
-                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_2.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_2.sj_finish+'">').appendTo("#"
-                                    + item.st_id +
+                                    .learning_date + " เวลาเรียน: " + item.enroll
+                                    .sj_enroll.sj_list.sj_2.sj_begin + "-" + item.enroll
+                                    .sj_enroll.sj_list.sj_2.sj_finish + '">').appendTo(
+                                    "#" +
+                                    item.st_id +
                                     "")
                                 stdchecklist(i, d, item)
                             })
@@ -510,8 +523,11 @@
                             $.each(item.enroll.sj_enroll.sj_list.sj_3.sj_chktime, (i, d) => {
                                 $('<h3 id="text-' + i + "-" + item.st_id +
                                     '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
-                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_3.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_3.sj_finish+'">').appendTo("#"
-                                    + item.st_id +
+                                    .learning_date + " เวลาเรียน: " + item.enroll
+                                    .sj_enroll.sj_list.sj_3.sj_begin + "-" + item.enroll
+                                    .sj_enroll.sj_list.sj_3.sj_finish + '">').appendTo(
+                                    "#" +
+                                    item.st_id +
                                     "")
                                 stdchecklist(i, d, item)
                             })
@@ -527,8 +543,11 @@
                             $.each(item.enroll.sj_enroll.sj_list.sj_4.sj_chktime, (i, d) => {
                                 $('<h3 id="text-' + i + "-" + item.st_id +
                                     '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
-                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_4.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_4.sj_finish+'">').appendTo("#"
-                                    + item.st_id +
+                                    .learning_date + " เวลาเรียน: " + item.enroll
+                                    .sj_enroll.sj_list.sj_4.sj_begin + "-" + item.enroll
+                                    .sj_enroll.sj_list.sj_4.sj_finish + '">').appendTo(
+                                    "#" +
+                                    item.st_id +
                                     "")
                                 stdchecklist(i, d, item)
                             })
@@ -544,8 +563,11 @@
                             $.each(item.enroll.sj_enroll.sj_list.sj_5.sj_chktime, (i, d) => {
                                 $('<h3 id="text-' + i + "-" + item.st_id +
                                     '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
-                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_5.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_5.sj_finish+'">').appendTo("#"
-                                    + item.st_id +
+                                    .learning_date + " เวลาเรียน: " + item.enroll
+                                    .sj_enroll.sj_list.sj_5.sj_begin + "-" + item.enroll
+                                    .sj_enroll.sj_list.sj_5.sj_finish + '">').appendTo(
+                                    "#" +
+                                    item.st_id +
                                     "")
                                 stdchecklist(i, d, item)
                             })
@@ -561,8 +583,11 @@
                             $.each(item.enroll.sj_enroll.sj_list.sj_6.sj_chktime, (i, d) => {
                                 $('<h3 id="text-' + i + "-" + item.st_id +
                                     '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
-                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_6.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_6.sj_finish+'">').appendTo("#"
-                                    + item.st_id +
+                                    .learning_date + " เวลาเรียน: " + item.enroll
+                                    .sj_enroll.sj_list.sj_6.sj_begin + "-" + item.enroll
+                                    .sj_enroll.sj_list.sj_6.sj_finish + '">').appendTo(
+                                    "#" +
+                                    item.st_id +
                                     "")
                                 stdchecklist(i, d, item)
                             })
@@ -578,8 +603,11 @@
                             $.each(item.enroll.sj_enroll.sj_list.sj_7.sj_chktime, (i, d) => {
                                 $('<h3 id="text-' + i + "-" + item.st_id +
                                     '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
-                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_7.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_7.sj_finish+'">').appendTo("#"
-                                    + item.st_id +
+                                    .learning_date + " เวลาเรียน: " + item.enroll
+                                    .sj_enroll.sj_list.sj_7.sj_begin + "-" + item.enroll
+                                    .sj_enroll.sj_list.sj_7.sj_finish + '">').appendTo(
+                                    "#" +
+                                    item.st_id +
                                     "")
                                 stdchecklist(i, d, item)
                             })
@@ -597,8 +625,11 @@
                             $.each(item.enroll.sj_enroll.sj_list.sj_1.sj_chktime, (i, d) => {
                                 $('<h3 id="text-' + i + "-" + item.st_id +
                                     '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
-                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_1.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_1.sj_finish+'">').appendTo("#"
-                                    + item.st_id +
+                                    .learning_date + " เวลาเรียน: " + item.enroll
+                                    .sj_enroll.sj_list.sj_1.sj_begin + "-" + item.enroll
+                                    .sj_enroll.sj_list.sj_1.sj_finish + '">').appendTo(
+                                    "#" +
+                                    item.st_id +
                                     "")
                                 stdchecklist(i, d, item)
                             })
@@ -613,8 +644,11 @@
                             $.each(item.enroll.sj_enroll.sj_list.sj_2.sj_chktime, (i, d) => {
                                 $('<h3 id="text-' + i + "-" + item.st_id +
                                     '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
-                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_2.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_2.sj_finish+'">').appendTo("#"
-                                    + item.st_id +
+                                    .learning_date + " เวลาเรียน: " + item.enroll
+                                    .sj_enroll.sj_list.sj_2.sj_begin + "-" + item.enroll
+                                    .sj_enroll.sj_list.sj_2.sj_finish + '">').appendTo(
+                                    "#" +
+                                    item.st_id +
                                     "")
                                 stdchecklist(i, d, item)
                             })
@@ -629,8 +663,11 @@
                             $.each(item.enroll.sj_enroll.sj_list.sj_3.sj_chktime, (i, d) => {
                                 $('<h3 id="text-' + i + "-" + item.st_id +
                                     '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
-                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_3.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_3.sj_finish+'">').appendTo("#"
-                                    + item.st_id +
+                                    .learning_date + " เวลาเรียน: " + item.enroll
+                                    .sj_enroll.sj_list.sj_3.sj_begin + "-" + item.enroll
+                                    .sj_enroll.sj_list.sj_3.sj_finish + '">').appendTo(
+                                    "#" +
+                                    item.st_id +
                                     "")
                                 stdchecklist(i, d, item)
                             })
@@ -645,8 +682,11 @@
                             $.each(item.enroll.sj_enroll.sj_list.sj_4.sj_chktime, (i, d) => {
                                 $('<h3 id="text-' + i + "-" + item.st_id +
                                     '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
-                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_4.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_4.sj_finish+'">').appendTo("#"
-                                    + item.st_id +
+                                    .learning_date + " เวลาเรียน: " + item.enroll
+                                    .sj_enroll.sj_list.sj_4.sj_begin + "-" + item.enroll
+                                    .sj_enroll.sj_list.sj_4.sj_finish + '">').appendTo(
+                                    "#" +
+                                    item.st_id +
                                     "")
                                 stdchecklist(i, d, item)
                             })
@@ -661,8 +701,11 @@
                             $.each(item.enroll.sj_enroll.sj_list.sj_5.sj_chktime, (i, d) => {
                                 $('<h3 id="text-' + i + "-" + item.st_id +
                                     '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
-                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_5.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_5.sj_finish+'">').appendTo("#"
-                                    + item.st_id +
+                                    .learning_date + " เวลาเรียน: " + item.enroll
+                                    .sj_enroll.sj_list.sj_5.sj_begin + "-" + item.enroll
+                                    .sj_enroll.sj_list.sj_5.sj_finish + '">').appendTo(
+                                    "#" +
+                                    item.st_id +
                                     "")
                                 stdchecklist(i, d, item)
                             })
@@ -677,8 +720,11 @@
                             $.each(item.enroll.sj_enroll.sj_list.sj_6.sj_chktime, (i, d) => {
                                 $('<h3 id="text-' + i + "-" + item.st_id +
                                     '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
-                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_6.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_6.sj_finish+'">').appendTo("#"
-                                    + item.st_id +
+                                    .learning_date + " เวลาเรียน: " + item.enroll
+                                    .sj_enroll.sj_list.sj_6.sj_begin + "-" + item.enroll
+                                    .sj_enroll.sj_list.sj_6.sj_finish + '">').appendTo(
+                                    "#" +
+                                    item.st_id +
                                     "")
                                 stdchecklist(i, d, item)
                             })
@@ -693,8 +739,11 @@
                             $.each(item.enroll.sj_enroll.sj_list.sj_7.sj_chktime, (i, d) => {
                                 $('<h3 id="text-' + i + "-" + item.st_id +
                                     '" data-toggle="tooltip1" title="วันที่เรียน: ' + d
-                                    .learning_date + " เวลาเรียน: "+item.enroll.sj_enroll.sj_list.sj_7.sj_begin+"-"+item.enroll.sj_enroll.sj_list.sj_7.sj_finish+'">').appendTo("#"
-                                    + item.st_id +
+                                    .learning_date + " เวลาเรียน: " + item.enroll
+                                    .sj_enroll.sj_list.sj_7.sj_begin + "-" + item.enroll
+                                    .sj_enroll.sj_list.sj_7.sj_finish + '">').appendTo(
+                                    "#" +
+                                    item.st_id +
                                     "")
                                 stdchecklist(i, d, item)
                             })
