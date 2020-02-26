@@ -13,13 +13,13 @@ import json
 from bson import json_util, ObjectId
 from flask_cors import CORS
 from facedetection import FaceDetectionCamera
-from pymongo import MongoClient
 from flask_pymongo import PyMongo
+import pymongo
+from pymongo import MongoClient
 from pymongo import ReturnDocument
 from PIL import Image
 from datetime import datetime
 from passlib.hash import argon2
-import pymongo
 
 app = Flask(__name__)
 app.debug = True
