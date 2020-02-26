@@ -48,6 +48,62 @@
         height: 250px;
     }
 
+    .count-image-btn {
+        position: relative;
+        top: 17%;
+        width: 130px;
+        height: 100px;
+        border-top-right-radius: 15px;
+        border-bottom-right-radius: 15px;
+        animation: tranbox2 .5s forwards;
+        z-index: 3;
+        font-size: 1.5rem;
+
+    }
+    .count-image-btn:hover {
+        animation: tranbox .5s forwards;
+    }
+
+    .count-image-btn>i {
+        position: absolute;
+        top: 17%;
+        left: 35%;
+    }
+    .count-image-btn>span {
+        position: absolute;
+        left: 15%;
+        top: 50%;
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+    .count-image-btn-hover {
+        animation: tranbox .5s forwards;
+    }
+
+    @keyframes tranbox {
+        from {
+            left: -120px;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        to {
+            left: 0px;
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+    }
+
+    @keyframes tranbox2 {
+        from {
+            left: 0px;
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        to {
+            left: -120px;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    }
+
     .my-search {
         position: absolute;
         border-radius: 20px;
@@ -109,6 +165,8 @@
 <body>
     <!-- loadding page -->
     {% include 'loadingpage.html' %}
+    <!-- alert -->
+    {% include 'aleart.html' %}
     <nav class="navbar sticky-top justify-content-between" style="padding:0" id="top-nav">
         <button class="back-home-btn" id="back-btn" onclick="location.href='/'">
             <i class="fas fa-arrow-left" id=""></i>
@@ -119,6 +177,10 @@
         </div>
     </nav>
     <div class="search-image-wrapper">
+        <div class="count-image-btn">
+            <i class="fas fa-calculator"></i>
+            <span>นับรูปภาพ</span>
+        </div>
         <div class="search-wrapper">
             <p style="font-size: 3rem;">ค้นหารูปภาพ <span id="countloop"></span> </p>
             <div class="my-search" align="center">
@@ -150,6 +212,17 @@
         elements_selector: '.lazy'
     }
 
+  /* $('.count-image-btn').mouseover(()=>{
+        $('.count-image-btn').addClass('count-image-btn-hover')
+    })
+    $('.count-image-btn').mouseout(()=>{
+        $('.count-image-btn').removeClass('count-image-btn-hover')
+    })*/
+
+    $('.count-image-btn').on('click',()=>{
+        location.href="/count"
+    })
+
     $('#back-btn').mouseover((event) => {
         document.getElementById('back-text').innerHTML = "กลับหน้าแรก"
     })
@@ -164,12 +237,12 @@
                 $('#img-result').html('')
             }
         })
-        $('#search').keyup(() => {
-            $('#result').html('')
-            $('#img-result').html('')
+        $('#search').keydown(() => {
+            $('#result').empty()
+            $('#img-result').empty()
             let keyword = $('#search').val()
             let expression = new RegExp(keyword, "i")
-            if (keyword != "") {
+            if (keyword) {
                 $.ajax({
                     url: '/checkstdimg',
                     type: 'POST',
@@ -177,11 +250,12 @@
                     success: (data) => {
                         $.each(JSON.parse(data), (key, value) => {
                             let cst_id = value.st_id.toString()
-                            if (cst_id.search(expression) != -1 || value.f_name
-                                .search(
+                            let cst_fname = value.f_name.toString()
+                            if (cst_id.search(expression) != -1 || cst_fname.search(
                                     expression) != -1) {
                                 $('#result').append(
-                                    "<li class='list-group-item' style='color:black;'>" +
+                                    "<li id='" + value.st_id +
+                                    "' class='list-group-item' style='color:black;'>" +
                                     "รหัสนิสิต: " + value.st_id + " " +
                                     "ชื่อ-นามสกุล: " +
                                     value.f_name + " " + value.l_name +
@@ -191,7 +265,8 @@
                                     "</li>")
                                 for (let i = 1; i <= value.image_list; i++) {
                                     $('#img-result').append(
-                                        '<li style="color:black;"><img width="15%" height="15%" src="../static/photodataset/' +
+                                        '<li id="' + cst_id + '_' + i +
+                                        '" style="color:black;"><img width="15%" height="15%" src="../static/photodataset/' +
                                         cst_id + '_' + i + '.jpg">' +
                                         '<span>ชื่อรูปภาพ :' +
                                         cst_id + '_' + i + '.JPG</span>' +
@@ -203,8 +278,8 @@
                     }
                 })
             } else {
-                $('#result').html('')
-                $('#img-result').html('')
+                $('#result').empty()
+                $('#img-result').empty()
             }
         })
     })

@@ -30,16 +30,348 @@ class FaceDetectionCamera(object):
         self.face_detector = cv2.CascadeClassifier(
             './model/haarcascade_frontalface_default.xml')
 
+        dlib.cuda.set_device(0)
         self.detector = dlib.get_frontal_face_detector()
-        self.sp = dlib.shape_predictor(
+        self.genshape = dlib.shape_predictor(
             './model/shape_predictor_68_face_landmarks.dat')
         self.model = dlib.face_recognition_model_v1(
             './model/dlib_face_recognition_resnet_model_v1.dat')
         self.FACE_DESC, self.FACE_NAME = pickle.load(
             open('./Trainer/trainset.pk', 'rb'))
+        self.cdt = ""
+        self.chkday = ""
+        self.getchkday = ""
+        self.chkdate = ""
+        self.chktime = ""
+        self.currenthour = ""
+        self.currentminute = ""
+        self.currentsecond = ""
+        self.getsjid = ""
+        self.getsjweek = ""
+        self.getsjweek2 = ""
+        self.getsjstatus = ""
+        self.getsjname = ""
+        self.check_datetime()
+        self.chk_current_sj()
 
     def __del__(self):
         self.cam.release()
+
+    def chk_current_sj(self):
+        findsj = self.subjectdatadb.find({"sj_detail.sj_date": self.chkday})
+        findcomparesj = self.subjectdatadb.find(
+            {"sj_detail.sj_date": self.chkday})
+
+        getcompare = 0
+        self.getsjid = ""
+        self.getsjname = ""
+        self.getsjweek = ""
+        self.getsjstatus = ""
+        countdatasj = 0
+        testgettime = []
+        testgettime2 = []
+        testgetsjid = []
+        testgetsjname = []
+
+        for compare1 in findcomparesj:
+            if compare1['sj_id']:
+                getcompare += 1
+        # print("getcompare:"+str(getcompare))
+        if(getcompare > 1):
+            for getfindsj in findsj:
+                getdetail = getfindsj['sj_detail']
+                getweek = getdetail['sj_weeklist']
+                getdetailstart = getdetail['sj_StartTime']
+                getdetailfinish = getdetail['sj_FinishTime']
+                getsplitstarttime = getdetailstart.split(".")
+                getsplitfinishtime = getdetailfinish.split(".")
+
+                testgettime.append(getdetail['sj_StartTime'].split(".")[0])
+                testgettime2.append(
+                    getdetail['sj_FinishTime'].split(".")[0])
+                testgetsjid.append(getfindsj['sj_id'])
+                testgetsjname.append(getdetail['sj_name'])
+                # print(testgettime)
+                # print(testgettime2)
+                # print(testgetsjid)
+                # print(testgetsjname)
+                if len(testgettime) > 1:
+                    # print("1:"+str(int(currenthour)-int(testgettime[0])))
+                    # print("2:"+str(int(currenthour)-int(testgettime[1])))
+                    print("more than 1 subject")
+                    if (int(self.currenthour) - int(testgettime[0])) < (int(self.currenthour) - int(testgettime[1])):
+                        print("subject 1 case")
+                        if int(self.currenthour) < int(testgettime[0]) or (int(self.currenthour) >= int(testgettime[0]) and int(self.currenthour) <= int(testgettime2[0])):
+                            print("มาเรียน")
+                            self.getsjid = testgetsjid[0]
+                            self.getsjname = testgetsjname[0]
+                            if int(self.currenthour) >= int(testgettime[0]) and int(self.currentminute) > 15:
+                                self.getsjstatus = "late"
+                                print(self.getsjstatus)
+                            elif int(self.currenthour) == int(testgettime[0]) and int(self.currentminute) <= 15:
+                                self.getsjstatus = "duly"
+                                print(self.getsjstatus)
+                            elif int(self.currenthour) < int(testgettime[0]):
+                                self.getsjstatus = "duly"
+                                print(self.getsjstatus)
+                            findsj2 = self.subjectdatadb.find(
+                                {"sj_id": self.getsjid})
+                            for getfindsj2 in findsj2:
+                                getfinddetail = getfindsj2['sj_detail']
+                                getfindweek = getfinddetail['sj_weeklist']
+                                for myweek in range(16):
+                                    if getfindweek['week{0}'.format(myweek + 1)] == self.chkdate:
+                                        self.getsjweek = "week{0}".format(
+                                            myweek + 1)
+
+                        elif int(self.currenthour) >= int(testgettime2[0]):
+                            print("ไม่มาเรียน")
+                            self.getsjstatus = "absent"
+                            getall = self.stddatadb.find({})
+                            self.getsjid = testgetsjid[0]
+                            self.getsjname = testgetsjname[0]
+                            self.getsjweek2 = ""
+
+                            findsj2 = self.subjectdatadb.find(
+                                {"sj_id": self.getsjid})
+                            for getfindsj2 in findsj2:
+                                getfinddetail = getfindsj2['sj_detail']
+                                getfindweek = getfinddetail['sj_weeklist']
+                                for myweek in range(16):
+                                    if getfindweek['week{0}'.format(myweek + 1)] == self.chkdate:
+                                        self.getsjweek2 = "week{0}".format(
+                                            myweek + 1)
+
+                            for chkall in getall:
+                                getid = chkall["st_id"]
+                                f_name = chkall["f_name"]
+                                l_name = chkall["l_name"]
+                                stdabsent = chkall["absent"]
+                                gettoken = chkall["std_line_token"]
+                                st_status = chkall["st_status"]
+                                enrollresult = chkall['enroll']
+                                sjenrollresult = enrollresult['sj_enroll']
+                                listresult = sjenrollresult['sj_list']
+                                countlist = len(listresult)
+
+                                if chkall['st_status'] == "none":
+                                    for dbi in range(countlist):
+                                        txtlist = 'sj_{}'.format(dbi+1)
+                                        getsj = listresult[txtlist]
+                                        getlistweek = getsj['sj_chktime']
+                                        getthisweek = getlistweek[self.getsjweek2]
+                                        if getsj['sj_id'] == self.getsjid:
+                                            if getthisweek['chk_status'] == "-":
+                                                query_all = {"st_id": int(
+                                                    getid), "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(dbi+1): self.getsjid}
+                                                setall_std_sj_status = {"$set": {"absent": int(
+                                                    stdabsent)+1, "enroll.sj_enroll.sj_list.sj_{0}.sj_chktime.{1}.chk_status".format(dbi + 1, self.getsjweek2): self.getsjstatus}}
+                                                self.stddatadb.update_one(
+                                                    query_all, setall_std_sj_status)
+                                            else:
+                                                pass
+                                elif chkall["st_status"] == "Checked":
+                                    query_idafter = {"st_id": getid}
+                                    set_st_statusafter = {
+                                        "$set": {"st_status": "none"}}
+                                    self.stddatadb.update_one(
+                                        query_idafter, set_st_statusafter)
+                        else:
+                            print("ไม่เข้าเงื่อนไข")
+                    else:
+                        print("subject 2 case")
+                        if int(self.currenthour) < int(testgettime[1]) or (int(self.currenthour) >= int(testgettime[1]) and int(self.currenthour) <= int(testgettime2[1])):
+                            print("มาเรียน")
+                            self.getsjid = testgetsjid[1]
+                            self.getsjname = testgetsjname[1]
+                            if int(self.currenthour) >= int(testgettime[1]) and int(self.currentminute) > 15:
+                                self.getsjstatus = "late"
+                                print(self.getsjstatus)
+                            elif int(self.currenthour) == int(testgettime[1]) and int(self.currentminute) <= 15:
+                                self.getsjstatus = "duly"
+                                print(self.getsjstatus)
+                            elif int(self.currenthour) < int(testgettime[1]):
+                                self.getsjstatus = "duly"
+                                print(self.getsjstatus)
+                            findsj2 = self.subjectdatadb.find(
+                                {"sj_id": self.getsjid})
+                            for getfindsj2 in findsj2:
+                                getfinddetail = getfindsj2['sj_detail']
+                                getfindweek = getfinddetail['sj_weeklist']
+                                for myweek in range(16):
+                                    if getfindweek['week{0}'.format(myweek + 1)] == self.chkdate:
+                                        getsjweek = "week{0}".format(
+                                            myweek + 1)
+
+                        elif int(self.currenthour) >= int(testgettime2[1]):
+                            print("ไม่มาเรียน")
+                            self.getsjstatus = "absent"
+                            getall = self.stddatadb.find({})
+                            self.getsjid = testgetsjid[1]
+                            self.getsjname = testgetsjname[1]
+                            self.getsjweek2 = ""
+
+                            findsj2 = self.subjectdatadb.find(
+                                {"sj_id": self.getsjid})
+                            for getfindsj2 in findsj2:
+                                getfinddetail = getfindsj2['sj_detail']
+                                getfindweek = getfinddetail['sj_weeklist']
+                                for myweek in range(16):
+                                    if getfindweek['week{0}'.format(myweek + 1)] == self.chkdate:
+                                        self.getsjweek2 = "week{0}".format(
+                                            myweek + 1)
+
+                            for chkall in getall:
+                                getid = chkall["st_id"]
+                                f_name = chkall["f_name"]
+                                l_name = chkall["l_name"]
+                                stdabsent = chkall["absent"]
+                                gettoken = chkall["std_line_token"]
+                                st_status = chkall["st_status"]
+                                enrollresult = chkall['enroll']
+                                sjenrollresult = enrollresult['sj_enroll']
+                                listresult = sjenrollresult['sj_list']
+                                countlist = len(listresult)
+
+                                if chkall['st_status'] == "none":
+                                    for dbi in range(countlist):
+                                        txtlist = 'sj_{}'.format(dbi+1)
+                                        getsj = listresult[txtlist]
+                                        getlistweek = getsj['sj_chktime']
+                                        getthisweek = getlistweek[self.getsjweek2]
+                                        if getsj['sj_id'] == self.getsjid:
+                                            if getthisweek['chk_status'] == "-":
+                                                query_all = {"st_id": int(
+                                                    getid), "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(dbi+1): self.getsjid}
+                                                setall_std_sj_status = {"$set": {"absent": int(
+                                                    stdabsent)+1, "enroll.sj_enroll.sj_list.sj_{0}.sj_chktime.{1}.chk_status".format(dbi + 1, self.getsjweek2): self.getsjstatus}}
+                                                self.stddatadb.update_one(
+                                                    query_all, setall_std_sj_status)
+                                            else:
+                                                pass
+                                elif chkall["st_status"] == "Checked":
+                                    query_idafter = {"st_id": getid}
+                                    set_st_statusafter = {
+                                        "$set": {"st_status": "none"}}
+                                    self.stddatadb.update_one(
+                                        query_idafter, set_st_statusafter)
+                        else:
+                            print("ไม่เข้าเงื่อนไข")
+        elif getcompare == 1:
+            print("just 1 subject")
+            for getfindsj in findsj:
+                getdetail = getfindsj['sj_detail']
+                getweek = getdetail['sj_weeklist']
+                getdetailstart = getdetail['sj_StartTime']
+                getdetailfinish = getdetail['sj_FinishTime']
+                getsplitstarttime = getdetailstart.split(".")
+                getsplitfinishtime = getdetailfinish.split(".")
+
+                if int(self.currenthour) < int(getsplitstarttime[0]) or (int(self.currenthour) >= int(getsplitstarttime[0]) and int(self.currenthour) <= int(getsplitfinishtime[0])):
+                    print("มาเรียน")
+                    self.getsjid = getfindsj['sj_id']
+                    self.getsjname = getdetail['sj_name']
+                    if int(self.currenthour) >= int(getsplitstarttime[0]) and int(self.currentminute) > 15:
+                        self.getsjstatus = "late"
+                        print(self.getsjstatus)
+                    elif int(self.currenthour) == int(getsplitstarttime[0]) and int(self.currentminute) <= 15:
+                        self.getsjstatus = "duly"
+                        print(self.getsjstatus)
+                    elif int(self.currenthour) < int(getsplitstarttime[0]):
+                        self.getsjstatus = "duly"
+                        print(self.getsjstatus)
+                    findsj2 = self.subjectdatadb.find(
+                        {"sj_id": self.getsjid})
+                    for getfindsj2 in findsj2:
+                        getfinddetail = getfindsj2['sj_detail']
+                        getfindweek = getfinddetail['sj_weeklist']
+                        for myweek in range(16):
+                            if getfindweek['week{0}'.format(myweek + 1)] == self.chkdate:
+                                self.getsjweek = "week{0}".format(myweek + 1)
+                    # for myweek in range(16):
+                    #     if getweek['week{0}'.format(myweek + 1)] == chkdate:
+                    #         getsjweek = "week{0}".format(myweek + 1)
+
+                elif int(self.currenthour) >= int(getsplitfinishtime[0]):
+                    print("ไม่มาเรียน")
+                    self.getsjstatus = "absent"
+                    getall = self.stddatadb.find({})
+                    self.getsjid = getfindsj['sj_id']
+                    self.getsjname = getdetail['sj_name']
+                    self.getsjweek2 = ""
+
+                    findsj2 = self.subjectdatadb.find(
+                        {"sj_id": self.getsjid})
+                    for getfindsj2 in findsj2:
+                        getfinddetail = getfindsj2['sj_detail']
+                        getfindweek = getfinddetail['sj_weeklist']
+                        for myweek in range(16):
+                            if getfindweek['week{0}'.format(myweek + 1)] == self.chkdate:
+                                self.getsjweek2 = "week{0}".format(myweek + 1)
+                    # for myweek in range(16):
+                    #     if getweek['week{0}'.format(myweek + 1)] == chkdate:
+                    #         getsjweek2 = "week{0}".format(myweek + 1)
+
+                    for chkall in getall:
+                        getid = chkall["st_id"]
+                        f_name = chkall["f_name"]
+                        l_name = chkall["l_name"]
+                        stdabsent = chkall["absent"]
+                        gettoken = chkall["std_line_token"]
+                        st_status = chkall["st_status"]
+                        enrollresult = chkall['enroll']
+                        sjenrollresult = enrollresult['sj_enroll']
+                        listresult = sjenrollresult['sj_list']
+                        countlist = len(listresult)
+
+                        if chkall['st_status'] == "none":
+                            for dbi in range(countlist):
+                                txtlist = 'sj_{}'.format(dbi+1)
+                                getsj = listresult[txtlist]
+                                getlistweek = getsj['sj_chktime']
+                                getthisweek = getlistweek[self.getsjweek2]
+                                if getsj['sj_id'] == self.getsjid:
+                                    if getthisweek['chk_status'] == "-":
+                                        query_all = {"st_id": int(
+                                            getid), "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(dbi+1): self.getsjid}
+                                        setall_std_sj_status = {"$set": {"absent": int(
+                                            stdabsent)+1, "enroll.sj_enroll.sj_list.sj_{0}.sj_chktime.{1}.chk_status".format(dbi + 1, self.getsjweek2): self.getsjstatus}}
+                                        self.stddatadb.update_one(
+                                            query_all, setall_std_sj_status)
+                                    else:
+                                        pass
+                        elif chkall["st_status"] == "Checked":
+                            query_idafter = {"st_id": getid}
+                            set_st_statusafter = {
+                                "$set": {"st_status": "none"}}
+                            self.stddatadb.update_one(
+                                query_idafter, set_st_statusafter)
+
+    def check_datetime(self):
+        self.cdt = datetime.datetime.now().strftime("%a %Y-%m-%d %H:%M:%S")
+        splitdate = self.cdt.split(" ")
+        self.chkday = splitdate[0]
+        self.chkdate = splitdate[1]
+        self.chktime = splitdate[2]
+        splitcurrenttime = self.chktime.split(":")
+        self.currenthour = splitcurrenttime[0]
+        self.currentminute = splitcurrenttime[1]
+        self.currentsecond = splitcurrenttime[2]
+
+        if self.chkday == "Sun":
+            self.getchkday = "วันอาทิตย์"
+        elif self.chkday == "Mon":
+            self.getchkday = "วันจันทร์"
+        elif self.chkday == "Tue":
+            self.getchkday = "วันอังคาร"
+        elif self.chkday == "Wed":
+            self.getchkday = "วันพุธ"
+        elif self.chkday == "Thu":
+            self.getchkday = "วันพฤหัสบดี"
+        elif self.chkday == "Fri":
+            self.getchkday = "วันศุกร์"
+        elif self.chkday == "Sat":
+            self.getchkday = "วันเสาร์"
 
     def get_frame(self):
 
@@ -50,339 +382,54 @@ class FaceDetectionCamera(object):
 
             _, frame = self.cam.read()
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            faces = self.face_detector.detectMultiScale(gray, 1.2, 5)
-            cdt = datetime.datetime.now().strftime("%a %Y-%m-%d %H:%M:%S")
-            splitdate = cdt.split(" ")
-            chkday = splitdate[0]
-            chkdate = splitdate[1]
-            chktime = splitdate[2]
-            splitcurrenttime = chktime.split(":")
-            currenthour = splitcurrenttime[0]
-            currentminute = splitcurrenttime[1]
-            currentsecond = splitcurrenttime[2]
-            getchkday = ""
+            faces = self.face_detector.detectMultiScale(gray, 1.6, 1)
+            timestart6 = time.time()
+            self.check_datetime()
+            timeend4 = time.time()
+            print("Test Datetime1 :{0:.4f}".format(timeend4-timestart6))
 
-            if chkday == "Sun":
-                getchkday = "วันอาทิตย์"
-            elif chkday == "Mon":
-                getchkday = "วันจันทร์"
-            elif chkday == "Tue":
-                getchkday = "วันอังคาร"
-            elif chkday == "Wed":
-                getchkday = "วันพุธ"
-            elif chkday == "Thu":
-                getchkday = "วันพฤหัสบดี"
-            elif chkday == "Fri":
-                getchkday = "วันศุกร์"
-            elif chkday == "Sat":
-                getchkday = "วันเสาร์"
-
-            findsj = self.subjectdatadb.find({"sj_detail.sj_date": chkday})
-            findcomparesj = self.subjectdatadb.find(
-                {"sj_detail.sj_date": chkday})
-
-            getcompare = 0
-            getsjid = ""
-            getsjname = ""
-            getsjweek = ""
-            getsjstatus = ""
-            countdatasj = 0
-            testgettime = []
-            testgettime2 = []
-            testgetsjid = []
-            testgetsjname = []
-
-            for compare1 in findcomparesj:
-                if compare1['sj_id']:
-                    getcompare += 1
-            # print("getcompare:"+str(getcompare))
-            if(getcompare > 1):
-                for getfindsj in findsj:
-                    getdetail = getfindsj['sj_detail']
-                    getweek = getdetail['sj_weeklist']
-                    getdetailstart = getdetail['sj_StartTime']
-                    getdetailfinish = getdetail['sj_FinishTime']
-                    getsplitstarttime = getdetailstart.split(".")
-                    getsplitfinishtime = getdetailfinish.split(".")
-
-                    testgettime.append(getdetail['sj_StartTime'].split(".")[0])
-                    testgettime2.append(
-                        getdetail['sj_FinishTime'].split(".")[0])
-                    testgetsjid.append(getfindsj['sj_id'])
-                    testgetsjname.append(getdetail['sj_name'])
-                    # print(testgettime)
-                    # print(testgettime2)
-                    # print(testgetsjid)
-                    # print(testgetsjname)
-                    if len(testgettime) > 1:
-                        # print("1:"+str(int(currenthour)-int(testgettime[0])))
-                        # print("2:"+str(int(currenthour)-int(testgettime[1])))
-                        print("more than 1 subject")
-                        if (int(currenthour) - int(testgettime[0])) < (int(currenthour) - int(testgettime[1])):
-                            print("subject 1 case")
-                            if int(currenthour) < int(testgettime[0]) or (int(currenthour) >= int(testgettime[0]) and int(currenthour) <= int(testgettime2[0])):
-                                print("มาเรียน")
-                                getsjid = testgetsjid[0]
-                                getsjname = testgetsjname[0]
-                                if int(currenthour) >= int(testgettime[0]) and int(currentminute) > 15:
-                                    getsjstatus = "late"
-                                    print(getsjstatus)
-                                elif int(currenthour) == int(testgettime[0]) and int(currentminute) <= 15:
-                                    getsjstatus = "duly"
-                                    print(getsjstatus)
-                                elif int(currenthour) < int(testgettime[0]):
-                                    getsjstatus = "duly"
-                                    print(getsjstatus)
-                                findsj2 = self.subjectdatadb.find(
-                                    {"sj_id": getsjid})
-                                for getfindsj2 in findsj2:
-                                    getfinddetail = getfindsj2['sj_detail']
-                                    getfindweek = getfinddetail['sj_weeklist']
-                                    for myweek in range(16):
-                                        if getfindweek['week{0}'.format(myweek + 1)] == chkdate:
-                                            getsjweek = "week{0}".format(
-                                                myweek + 1)
-
-                            elif int(currenthour) >= int(testgettime2[0]):
-                                print("ไม่มาเรียน")
-                                getsjstatus = "absent"
-                                getall = self.stddatadb.find({})
-                                getsjid = testgetsjid[0]
-                                getsjname = testgetsjname[0]
-                                getsjweek2 = ""
-
-                                findsj2 = self.subjectdatadb.find(
-                                    {"sj_id": getsjid})
-                                for getfindsj2 in findsj2:
-                                    getfinddetail = getfindsj2['sj_detail']
-                                    getfindweek = getfinddetail['sj_weeklist']
-                                    for myweek in range(16):
-                                        if getfindweek['week{0}'.format(myweek + 1)] == chkdate:
-                                            getsjweek2 = "week{0}".format(
-                                                myweek + 1)
-
-                                for chkall in getall:
-                                    getid = chkall["st_id"]
-                                    f_name = chkall["f_name"]
-                                    l_name = chkall["l_name"]
-                                    stdabsent = chkall["absent"]
-                                    gettoken = chkall["std_line_token"]
-                                    st_status = chkall["st_status"]
-                                    enrollresult = chkall['enroll']
-                                    sjenrollresult = enrollresult['sj_enroll']
-                                    listresult = sjenrollresult['sj_list']
-                                    countlist = len(listresult)
-
-                                    if chkall['st_status'] == "none":
-                                        for dbi in range(countlist):
-                                            txtlist = 'sj_{}'.format(dbi+1)
-                                            getsj = listresult[txtlist]
-                                            getlistweek = getsj['sj_chktime']
-                                            getthisweek = getlistweek[getsjweek2]
-                                            if getsj['sj_id'] == getsjid:
-                                                if getthisweek['chk_status'] == "-":
-                                                    query_all = {"st_id": int(
-                                                        getid), "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(dbi+1): getsjid}
-                                                    setall_std_sj_status = {"$set": {"absent": int(
-                                                        stdabsent)+1, "enroll.sj_enroll.sj_list.sj_{0}.sj_chktime.{1}.chk_status".format(dbi + 1, getsjweek2): getsjstatus}}
-                                                    self.stddatadb.update_one(
-                                                        query_all, setall_std_sj_status)
-                                                else:
-                                                    pass
-                                    elif chkall["st_status"] == "Checked":
-                                        query_idafter = {"st_id": getid}
-                                        set_st_statusafter = {
-                                            "$set": {"st_status": "none"}}
-                                        self.stddatadb.update_one(
-                                            query_idafter, set_st_statusafter)
-                            else:
-                                print("ไม่เข้าเงื่อนไข")
-                        else:
-                            print("subject 2 case")
-                            if int(currenthour) < int(testgettime[1]) or (int(currenthour) >= int(testgettime[1]) and int(currenthour) <= int(testgettime2[1])):
-                                print("มาเรียน")
-                                getsjid = testgetsjid[1]
-                                getsjname = testgetsjname[1]
-                                if int(currenthour) >= int(testgettime[1]) and int(currentminute) > 15:
-                                    getsjstatus = "late"
-                                    print(getsjstatus)
-                                elif int(currenthour) == int(testgettime[1]) and int(currentminute) <= 15:
-                                    getsjstatus = "duly"
-                                    print(getsjstatus)
-                                elif int(currenthour) < int(testgettime[1]):
-                                    getsjstatus = "duly"
-                                    print(getsjstatus)
-                                findsj2 = self.subjectdatadb.find(
-                                    {"sj_id": getsjid})
-                                for getfindsj2 in findsj2:
-                                    getfinddetail = getfindsj2['sj_detail']
-                                    getfindweek = getfinddetail['sj_weeklist']
-                                    for myweek in range(16):
-                                        if getfindweek['week{0}'.format(myweek + 1)] == chkdate:
-                                            getsjweek = "week{0}".format(
-                                                myweek + 1)
-
-                            elif int(currenthour) >= int(testgettime2[1]):
-                                print("ไม่มาเรียน")
-                                getsjstatus = "absent"
-                                getall = self.stddatadb.find({})
-                                getsjid = testgetsjid[1]
-                                getsjname = testgetsjname[1]
-                                getsjweek2 = ""
-
-                                findsj2 = self.subjectdatadb.find(
-                                    {"sj_id": getsjid})
-                                for getfindsj2 in findsj2:
-                                    getfinddetail = getfindsj2['sj_detail']
-                                    getfindweek = getfinddetail['sj_weeklist']
-                                    for myweek in range(16):
-                                        if getfindweek['week{0}'.format(myweek + 1)] == chkdate:
-                                            getsjweek2 = "week{0}".format(
-                                                myweek + 1)
-
-                                for chkall in getall:
-                                    getid = chkall["st_id"]
-                                    f_name = chkall["f_name"]
-                                    l_name = chkall["l_name"]
-                                    stdabsent = chkall["absent"]
-                                    gettoken = chkall["std_line_token"]
-                                    st_status = chkall["st_status"]
-                                    enrollresult = chkall['enroll']
-                                    sjenrollresult = enrollresult['sj_enroll']
-                                    listresult = sjenrollresult['sj_list']
-                                    countlist = len(listresult)
-
-                                    if chkall['st_status'] == "none":
-                                        for dbi in range(countlist):
-                                            txtlist = 'sj_{}'.format(dbi+1)
-                                            getsj = listresult[txtlist]
-                                            getlistweek = getsj['sj_chktime']
-                                            getthisweek = getlistweek[getsjweek2]
-                                            if getsj['sj_id'] == getsjid:
-                                                if getthisweek['chk_status'] == "-":
-                                                    query_all = {"st_id": int(
-                                                        getid), "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(dbi+1): getsjid}
-                                                    setall_std_sj_status = {"$set": {"absent": int(
-                                                        stdabsent)+1, "enroll.sj_enroll.sj_list.sj_{0}.sj_chktime.{1}.chk_status".format(dbi + 1, getsjweek2): getsjstatus}}
-                                                    self.stddatadb.update_one(
-                                                        query_all, setall_std_sj_status)
-                                                else:
-                                                    pass
-                                    elif chkall["st_status"] == "Checked":
-                                        query_idafter = {"st_id": getid}
-                                        set_st_statusafter = {
-                                            "$set": {"st_status": "none"}}
-                                        self.stddatadb.update_one(
-                                            query_idafter, set_st_statusafter)
-                            else:
-                                print("ไม่เข้าเงื่อนไข")
-            elif getcompare == 1:
-                print("just 1 subject")
-                for getfindsj in findsj:
-                    getdetail = getfindsj['sj_detail']
-                    getweek = getdetail['sj_weeklist']
-                    getdetailstart = getdetail['sj_StartTime']
-                    getdetailfinish = getdetail['sj_FinishTime']
-                    getsplitstarttime = getdetailstart.split(".")
-                    getsplitfinishtime = getdetailfinish.split(".")
-
-                    if int(currenthour) < int(getsplitstarttime[0]) or (int(currenthour) >= int(getsplitstarttime[0]) and int(currenthour) <= int(getsplitfinishtime[0])):
-                        print("มาเรียน")
-                        getsjid = getfindsj['sj_id']
-                        getsjname = getdetail['sj_name']
-                        if int(currenthour) >= int(getsplitstarttime[0]) and int(currentminute) > 15:
-                            getsjstatus = "late"
-                            print(getsjstatus)
-                        elif int(currenthour) == int(getsplitstarttime[0]) and int(currentminute) <= 15:
-                            getsjstatus = "duly"
-                            print(getsjstatus)
-                        elif int(currenthour) < int(getsplitstarttime[0]):
-                            getsjstatus = "duly"
-                            print(getsjstatus)
-                        findsj2 = self.subjectdatadb.find(
-                            {"sj_id": getsjid})
-                        for getfindsj2 in findsj2:
-                            getfinddetail = getfindsj2['sj_detail']
-                            getfindweek = getfinddetail['sj_weeklist']
-                            for myweek in range(16):
-                                if getfindweek['week{0}'.format(myweek + 1)] == chkdate:
-                                    getsjweek = "week{0}".format(myweek + 1)
-                        # for myweek in range(16):
-                        #     if getweek['week{0}'.format(myweek + 1)] == chkdate:
-                        #         getsjweek = "week{0}".format(myweek + 1)
-
-                    elif int(currenthour) >= int(getsplitfinishtime[0]):
-                        print("ไม่มาเรียน")
-                        getsjstatus = "absent"
-                        getall = self.stddatadb.find({})
-                        getsjid = getfindsj['sj_id']
-                        getsjname = getdetail['sj_name']
-                        getsjweek2 = ""
-
-                        findsj2 = self.subjectdatadb.find(
-                            {"sj_id": getsjid})
-                        for getfindsj2 in findsj2:
-                            getfinddetail = getfindsj2['sj_detail']
-                            getfindweek = getfinddetail['sj_weeklist']
-                            for myweek in range(16):
-                                if getfindweek['week{0}'.format(myweek + 1)] == chkdate:
-                                    getsjweek2 = "week{0}".format(myweek + 1)
-                        # for myweek in range(16):
-                        #     if getweek['week{0}'.format(myweek + 1)] == chkdate:
-                        #         getsjweek2 = "week{0}".format(myweek + 1)
-
-                        for chkall in getall:
-                            getid = chkall["st_id"]
-                            f_name = chkall["f_name"]
-                            l_name = chkall["l_name"]
-                            stdabsent = chkall["absent"]
-                            gettoken = chkall["std_line_token"]
-                            st_status = chkall["st_status"]
-                            enrollresult = chkall['enroll']
-                            sjenrollresult = enrollresult['sj_enroll']
-                            listresult = sjenrollresult['sj_list']
-                            countlist = len(listresult)
-
-                            if chkall['st_status'] == "none":
-                                for dbi in range(countlist):
-                                    txtlist = 'sj_{}'.format(dbi+1)
-                                    getsj = listresult[txtlist]
-                                    getlistweek = getsj['sj_chktime']
-                                    getthisweek = getlistweek[getsjweek2]
-                                    if getsj['sj_id'] == getsjid:
-                                        if getthisweek['chk_status'] == "-":
-                                            query_all = {"st_id": int(
-                                                getid), "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(dbi+1): getsjid}
-                                            setall_std_sj_status = {"$set": {"absent": int(
-                                                stdabsent)+1, "enroll.sj_enroll.sj_list.sj_{0}.sj_chktime.{1}.chk_status".format(dbi + 1, getsjweek2): getsjstatus}}
-                                            self.stddatadb.update_one(
-                                                query_all, setall_std_sj_status)
-                                        else:
-                                            pass
-                            elif chkall["st_status"] == "Checked":
-                                query_idafter = {"st_id": getid}
-                                set_st_statusafter = {
-                                    "$set": {"st_status": "none"}}
-                                self.stddatadb.update_one(
-                                    query_idafter, set_st_statusafter)
+            #
             # TIME
             # cv2.putText(frame, cdt, (10, 20), self.font, 0.4,(255, 0, 0), 1, cv2.LINE_AA)
+            timestart2 = time.time()
             for (x, y, w, h) in faces:
                 img = frame[y-10:y+h+10, x-10:x+w+10][:, :, ::-1]
                 dets = self.detector(img)
                 for k, d in enumerate(dets):
-                    shape = self.sp(img, d)
+                    timestart3 = time.time()
+
+                    shape = self.genshape(img, d)
                     face_desc0 = self.model.compute_face_descriptor(
-                        img, shape)
+                        img, shape, 0, 0.1)
+                    timeend1 = time.time()
+                    print("Test inside1 :{0:.4f}".format(timeend1-timestart3))
+
+                    timestart4 = time.time()
+
                     d = []
                     for face_desc in self.FACE_DESC:
                         d.append(np.linalg.norm(
                             np.array(face_desc) - np.array(face_desc0)))
                     d = np.array(d)
                     idx = np.argmin(d)
+
+                    timeend2 = time.time()
+                    print("Test inside2 :{0:.4f}".format(timeend2-timestart4))
+
                     if d[idx] < 0.5:
                         id_data = self.FACE_NAME[idx]
                         print(id_data)
+                        cv2.putText(frame, id_data, (x, y-5),
+                                    cv2.FONT_HERSHEY_SIMPLEX, .5, (255, 255, 255), 2)
+                        cv2.rectangle(
+                            frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                        timestart5 = time.time()
+                        if int(self.currentminute) == 16 or int(self.currentminute) == 00:
+                            self.chk_current_sj()
+                        timeend3 = time.time()
+                        print("Test CheckSj1 :{0:.4f}".format(
+                            timeend3-timestart5))
+
                         results = self.stddatadb.find({"st_id": int(id_data)})
                         for getresult in results:
                             getid = getresult["st_id"]
@@ -397,31 +444,31 @@ class FaceDetectionCamera(object):
                             countlist = len(listresult)
 
                             if st_status == "none":
-                                if (getsjweek):
+                                if (self.getsjweek):
                                     sendstatus = ""
                                     newstdlate = 0
-                                    if getsjstatus == "duly":
+                                    if self.getsjstatus == "duly":
                                         sendstatus = "ตรงเวลา"
-                                    elif getsjstatus == "late":
+                                    elif self.getsjstatus == "late":
                                         sendstatus = "สาย"
                                         newstdlate = int(stdlate)+1
 
                                     # update st_status
                                     query_id = {"st_id": getid}
                                     set_st_status = {
-                                        "$set": {"last_check": cdt, "st_status": "Checked", "late": newstdlate}}
+                                        "$set": {"last_check": self.cdt, "st_status": "Checked", "late": newstdlate}}
                                     self.stddatadb.update_one(
                                         query_id, set_st_status)
 
                                     # update st subject
                                     for dbi in range(countlist):
-                                        txtlist = 'sj_{}'.format(dbi+1)
+                                        txtlist = f'sj_{dbi+1}'
                                         getsj = listresult[txtlist]
-                                        if getsj['sj_id'] == getsjid:
+                                        if getsj['sj_id'] == self.getsjid:
                                             query_at = {"st_id": int(
-                                                getid), "enroll.sj_enroll.sj_list.sj_{}.sj_id".format(dbi+1): getsjid}
+                                                getid), f"enroll.sj_enroll.sj_list.sj_{dbi+1}.sj_id": self.getsjid}
                                             set_std_sj_status = {"$set": {
-                                                "enroll.sj_enroll.sj_list.sj_{0}.sj_chktime.{1}.chk_status".format(dbi + 1, getsjweek): getsjstatus}}
+                                                f"enroll.sj_enroll.sj_list.sj_{dbi + 1}.sj_chktime.{self.getsjweek}.chk_status": self.getsjstatus}}
                                             self.stddatadb.update_one(
                                                 query_at, set_std_sj_status)
                                     # line notify
@@ -430,27 +477,26 @@ class FaceDetectionCamera(object):
                                         token = gettoken
                                         headers = {
                                             'content-type': 'application/x-www-form-urlencoded', 'Authorization': 'Bearer '+token}
-                                        msg = 'วิชา {0}:{1} รหัสนิสิต {2} ชื่อ {3} {4} เช็คชื่อแล้ว ณ {5} ที่ {6} เวลา {7} สถานะ {8}'.format(
-                                            getsjid, getsjname, getid, f_name, l_name, getchkday, chkdate, chktime, sendstatus, getsjstatus)
+                                        msg = f'วิชา {self.getsjid}:{self.getsjname} รหัสนิสิต {getid} ชื่อ {f_name} {l_name} เช็คชื่อแล้ว ณ {self.getchkday} ที่ {self.chkdate} เวลา {self.chktime} สถานะ {sendstatus}'
                                         r = requests.post(
                                             url, headers=headers, data={'message': msg})
                                     else:
                                         pass
                                 else:
                                     pass
-
                             else:
                                 pass
-                        cv2.putText(frame, id_data, (x, y-5),
-                                    cv2.FONT_HERSHEY_SIMPLEX, .5, (255, 255, 255), 2)
-                        cv2.rectangle(
-                            frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
                     else:
                         cv2.putText(frame, "UNKNOWN", (x, y-5),
                                     cv2.FONT_HERSHEY_SIMPLEX, .5, (0, 0, 255), 2)
                         cv2.rectangle(
                             frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
-
+                    # timeend3 = time.time()
+                    # print("Test inside3 :{0:.4f}".format(timeend3-timestart3))
+            timefinish2 = time.time()
+            totaltime2 = timefinish2 - timestart2
+            # print("totaltime:{0:.4f}".format(totaltime2))
             # ret, webp = cv2.imencode('.webp', frame,[cv2.IMWRITE_WEBP_QUALITY, 100])
             # return webp.tobytes()
             timefinish = time.time()

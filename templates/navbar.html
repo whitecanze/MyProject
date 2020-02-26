@@ -1,72 +1,16 @@
 <style>
-    
+    .dashborad {
+        text-transform: uppercase;
+        font-weight: bold;
+        margin-top: 2.5%;
+        color: white;
+    }
 </style>
 <nav class="navbar navbar-expand-sm sticky-top justify-content-center"
     style="background-color:rgba(31, 31, 64, 1);z-index:2;">
-    <!-- <span id="sidebarCollapse">
-        <i id="icon1" class="fas fa fa-ellipsis-v"></i>
-    </span> -->
     <div>
-        <h1 style="color:white;text-transform:uppercase;font-weight:bold;margin-top:2.5%;" class="dashborad">dashboard</h1>
+        <h1 class="dashborad" id="mydashborad">
+            dashboard
+        </h1>
     </div>
-    <!-- <form class="form-inline w3-animate-opacity">
-                    <div class="input-group mb-3" style="margin-top: 5%;">
-                        <input type="search" class="form-control" placeholder="Search... Ex.59010001"
-                            aria-label="Search" aria-describedby="Search">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-warning" type="submit"><i class="fas fa-search"></i></button>
-                        </div>
-                    </div>
-                </form> -->
 </nav>
-
-<script>
-    $('#sidebarCollapse').on('click', () => {
-        $('#wrapper').toggleClass('menuDisplayed menuSubDisplayed');
-        $('#icon1').toggleClass('fas fa fa-list-ul fas fa fa-ellipsis-v');
-        $('#icon1').addClass('shaking')
-        var delayInMilliseconds = 820;
-        setTimeout(() => {
-            $('#icon1').removeClass('shaking')
-        }, delayInMilliseconds);
-    });
-    $('#rel1').on('click', () => {
-        $('#rel1').addClass('shaking')
-        $('#rel1').find('a').addClass('nav-link disabled')
-        var delayInMilliseconds = 820;
-        var delayInMilliseconds2 = 1000;
-        setTimeout(() => {
-            $('#rel1').removeClass('shaking')
-            $('#rel1').find('a').removeClass('nav-link disabled')
-        }, delayInMilliseconds);
-
-    });
-    $('#add1').on('click', () => {
-        $('#add1').addClass('shaking')
-        var delayInMilliseconds = 820;
-        setTimeout(() => {
-            $('#add1').removeClass('shaking')
-        }, delayInMilliseconds);
-    });
-    $('#add2').on('click', () => {
-        $('#add2').addClass('shaking')
-        var delayInMilliseconds = 820;
-        setTimeout(() => {
-            $('#add2').removeClass('shaking')
-        }, delayInMilliseconds);
-    });
-    $('#add3').on('click', () => {
-        $('#add3').addClass('shaking')
-        var delayInMilliseconds = 820;
-        setTimeout(() => {
-            $('#add3').removeClass('shaking')
-        }, delayInMilliseconds);
-    });
-    $('#add4').on('click', () => {
-        $('#add4').addClass('shaking')
-        var delayInMilliseconds = 820;
-        setTimeout(() => {
-            $('#add4').removeClass('shaking')
-        }, delayInMilliseconds);
-    });
-</script>

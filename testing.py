@@ -3,17 +3,29 @@
 # # import requests
 from pymongo import MongoClient
 from pymongo import *
-# import json
+import json
 
 
 client = MongoClient(
     "mongodb+srv://whitecanze:benz11504@student-9fnju.gcp.mongodb.net/test?retryWrites=true&w=majority")
 db = client["student"]
-getdata = db["stdata"]
-result = getdata.find()
 
-for std in result:
-    print(std['st_id'])
+data = db.userdata.find({'username': 'admin'})
+
+resultusername = ""
+resultpassword = ""
+resultstatus = ""
+for getre in data:
+    getre['_id'] = str(getre['_id'])
+    resultusername = getre['username']
+    resultpassword = getre['password']
+    resultstatus = getre['status']
+print(resultusername,resultpassword,resultstatus)
+# getdata = db["stdata"]
+# result = getdata.find()
+
+# for std in result:
+#     print(std['st_id'])
 
 # def testjson():
 #     client = MongoClient('localhost', 27017)

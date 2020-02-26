@@ -45,7 +45,8 @@
         <div class="collapse navbar-collapse " id="collapsibleNavbar">
             <ul class="navbar-nav" id="mininav1">
                 <li class="nav-item add1" id="add1">
-                    <a href="" data-toggle="modal" style="font-size: 1.25rem;" data-target="#modalcreate">
+                    <a class="nav-link" href="" data-toggle="modal" style="font-size: 1.25rem;"
+                        data-target="#modalcreate">
                         <div class="row">
                             <div class="col-4" style="text-align: center;">
                                 <i class="fas fa-user-graduate"></i>
@@ -102,6 +103,7 @@
                 <div class="row">
                     <div class="col-4" style="text-align:center;padding:0;">
                         <i class="fas fa-fingerprint"></i>
+                        <!-- <img src="{{ url_for('static', filename='img/brain.svg') }}" width="30px" height="30px" alt="Kiwi standing on oval"> -->
                     </div>
                     <div class="col-8" style="padding:0;text-align:left;left:0;">
                         {{sendtextpage['sidebartextbody3']}}
@@ -109,7 +111,7 @@
                 </div>
             </a>
         </li>
-        <li id="rel4">
+        <!-- <li id="rel4">
             <a href="/count">
                 <div class="row">
                     <div class="col-4" style="text-align:center;padding:0;">
@@ -120,8 +122,8 @@
                     </div>
                 </div>
             </a>
-        </li>
-        <li id="rel5">
+        </li> -->
+        <!-- <li id="rel5">
             <a href="/chkimage">
                 <div class="row">
                     <div class="col-4" style="text-align:center;padding:0;">
@@ -132,7 +134,7 @@
                     </div>
                 </div>
             </a>
-        </li>
+        </li> -->
         <!-- <li id="rel6">
             <a href="/userlogin">
                 <div class="row">
@@ -149,29 +151,110 @@
 </div>
 <div class="sidebar-footer w3-animate-opacity">
     <span id="textcon1" style="font-weight: bold;">{{session['username']}}</span><br><br>
-    <a href="/userlogin">ADD USER</a> <span id="textcon2">|</span> <a href="/userlogout">LOGOUT</a>
+    <a href="/userlogin">ADD USER</a> <span id="textcon2">|</span> <a href="/chkimage">IMAGE</a> <span id="textcon3">|</span> <a
+        href="/userlogout">LOGOUT</a>
 </div>
 
 <script>
+    $('#textcon1').mouseover(() => {
+        $('#textcon1').css({
+            color: "var(--main-color1)"
+        })
+    })
+    $('#textcon1').mouseout(() => {
+        $('#textcon1').css({
+            color: "white"
+        })
+    })
+
+    $('#textcon1').on('click', () => {
+        if ($('#textcon1').text() != "BOARD") {
+            $('.main-content').fadeOut('slow')
+            $('#textcon1').text("BOARD")
+            $('#rel1').fadeOut('slow')
+            setTimeout(() => {
+                $('.secure-zone').fadeIn('slow')
+            }, 300)
+        } else {
+            $('.secure-zone').fadeOut('slow')
+            $('#textcon1').text("{{session['username']}}")
+            setTimeout(() => {
+                $('#rel1').fadeIn('slow')
+                $('.main-content').fadeIn('slow')
+            }, 300)
+
+        }
+    })
+
+
+
     $("#firstchoice").on('click', () => {
         let reletive1 = document.getElementById("rel1")
         let reletive2 = document.getElementById("rel2")
         let reletive3 = document.getElementById("rel3")
         let reletive4 = document.getElementById("rel4")
         let reletive5 = document.getElementById("rel5")
-        if (reletive1.className == "" && reletive2.className == "" && reletive3.className == "" &&
-            reletive4.className == "" && reletive5.className == "") {
+        if (reletive1.className == "" && reletive2.className == "" && reletive3.className == "" /*&&
+            reletive4.className == "" && reletive5.className == ""*/) {
             reletive1.className += "short"
             reletive2.className += "short"
             reletive3.className += "short"
-            reletive4.className += "short"
-            reletive5.className += "short"
+            /*reletive4.className += "short"
+            reletive5.className += "short"*/
         } else {
             reletive1.className = reletive1.className.replace(/(?:^|\s)short(?!\S)/g, '')
             reletive2.className = reletive2.className.replace(/(?:^|\s)short(?!\S)/g, '')
             reletive3.className = reletive3.className.replace(/(?:^|\s)short(?!\S)/g, '')
-            reletive4.className = reletive4.className.replace(/(?:^|\s)short(?!\S)/g, '')
-            reletive5.className = reletive5.className.replace(/(?:^|\s)short(?!\S)/g, '')
+            /*reletive4.className = reletive4.className.replace(/(?:^|\s)short(?!\S)/g, '')
+            reletive5.className = reletive5.className.replace(/(?:^|\s)short(?!\S)/g, '')*/
         }
     });
+
+    /*$('#sidebarCollapse').on('click', () => {
+        $('#wrapper').toggleClass('menuDisplayed menuSubDisplayed');
+        $('#icon1').toggleClass('fas fa fa-list-ul fas fa fa-ellipsis-v');
+        $('#icon1').addClass('shaking')
+        var delayInMilliseconds = 820;
+        setTimeout(() => {
+            $('#icon1').removeClass('shaking')
+        }, delayInMilliseconds);
+    });*/
+    $('#rel1').on('click', () => {
+        //$('#rel1').addClass('shaking')
+        $('#rel1').find('a').addClass('nav-link disabled')
+        var delayInMilliseconds = 820;
+        setTimeout(() => {
+            //$('#rel1').removeClass('shaking')
+            $('#rel1').find('a').removeClass('nav-link disabled')
+        }, delayInMilliseconds);
+
+    });
+    /*$('#add1').on('click', () => {
+        $('#add1').addClass('shaking')
+        var delayInMilliseconds = 820;
+        setTimeout(() => {
+            $('#add1').removeClass('shaking')
+        }, delayInMilliseconds);
+    });
+    $('#add2').on('click', () => {
+        $('#add2').addClass('shaking')
+        var delayInMilliseconds = 820;
+        setTimeout(() => {
+            $('#add2').removeClass('shaking')
+        }, delayInMilliseconds);
+    });
+    $('#add3').on('click', () => {
+        $('#add3').addClass('shaking')
+        var delayInMilliseconds = 820;
+        setTimeout(() => {
+            $('#add3').removeClass('shaking')
+        }, delayInMilliseconds);
+    });
+    $('#add4').on('click', () => {
+        $('#add4').addClass('shaking')
+        var delayInMilliseconds = 820;
+        setTimeout(() => {
+            $('#add4').removeClass('shaking')
+        }, delayInMilliseconds);
+    });*/
 </script>

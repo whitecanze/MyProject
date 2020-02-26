@@ -1,0 +1,78 @@
+<div class="grid-std-chk">
+    <div class="grid-head-text">
+        ตารางแสดงรายละเอียดการเข้าชั้นเรียน
+        <span id="helpicon" data-toggle="modal" data-target="#modalmoredetail">
+            <i class="fas fa-exclamation-circle" data-toggle="tooltip1" title="รายละเอียดเพิ่มเติม"></i>
+        </span>
+        <div id="modalmoredetail" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: rgba(0, 0, 64, 1);color:rgba(253, 184, 19, 1);">
+                        <h4 class="modal-title">รายละเอียดเพิ่มเติม</h4>
+                    </div>
+                    <div class="modal-body">
+                        <span>
+                            <i style="color:greenyellow;font-size:1.8rem;text-shadow:5px 0px 15px black;"
+                                class="fas fa-check"></i>
+                            <p>เข้าเรียนตรงตามเวลา</p>
+                        </span>
+                        <span>
+                            <i style="color:yellow;font-size:1.8rem;text-shadow:5px 0px 15px black;"
+                                class="fas fa-check"></i>
+                            <p>เข้าเรียนสาย</p>
+                        </span>
+                        <span>
+                            <i style="color:red;font-size:1.8rem;text-shadow:5px 0px 15px black;"
+                                class="fas fa-times"></i>
+                            <p>ขาดเรียน</p>
+                        </span>
+                        <span>
+                            <i style="color:blue;font-size:1.8rem;text-shadow:5px 0px 15px black;"
+                                class="fas fa-times"></i>
+                            <p>ไม่มีสถานะ</p>
+                        </span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="mycustom-close-btn" data-dismiss="modal">ปิด</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid-menu-sj">
+        <nav class="navbar navbar-expand-sm sticky-top justify-content-center"
+            style="background-color:rgba(31, 31, 64, 1);z-index:1;">
+            <p style="color:rgba(253, 184, 19, 1);height:70px;font-size:3rem;">รายชื่อวิชา</p>
+            <span id="clearrighttable">
+                <i class="fas fa-sync-alt" data-toggle="tooltip1" title="ล้างตาราง"></i>
+            </span>
+
+            <!-- <span id="switchmode">
+                                <input id="toggle-sidebar" type="checkbox" data-toggle="toggle" data-class="fast">
+                            </span> -->
+        </nav>
+        <ul class="list-group list-group-flush" id="list-sj-data" style="color:var(--main-color2);">
+        </ul>
+    </div>
+    <div class="grid-chk-table">
+        <div class="grid-data-header">
+            <div class="grid-id" data-toggle="tooltip1" title="คลิกเพื่อสลับระหว่าง รหัสนิสิต และ ชื่อ">
+                <h3>รหัสนิสิต</h3>
+            </div>
+            <div class="grid-day">
+                <div class="day-text">
+                    <h3>สัปดาห์ที่</h3>
+                </div>
+                <div class="day-list">
+                    {% for x in range(16) %}
+                    <h5>{{x+1}}</h5>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="grid-data-body" style="color:var(--main-color2);">
+            <p id="selecttext" style="color:gray;margin-left:40%;margin-top:8%;font-size:5rem;">
+                เลือกวิชา</p>
+        </div>
+    </div>
+</div>

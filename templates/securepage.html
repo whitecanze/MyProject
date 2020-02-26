@@ -1,0 +1,377 @@
+<style>
+    .control-user {
+        width: 98%;
+        height: 670px;
+        background-color: none;
+        margin-left: 1%;
+        border: solid 3px var(--main-color2);
+    }
+
+    .control-user>.control-header {
+        width: 100%;
+        background-color: var(--main-color2);
+        height: 15%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        color: var(--main-color1);
+    }
+
+    .control-user>.main-control {
+        width: 100%;
+        background-color: none;
+        height: 85%;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .control-main-user {
+        width: 100%;
+        height: 30%;
+        background-color: none;
+        display: flex;
+        justify-items: center;
+        align-items: center;
+        border-bottom: solid 5px var(--main-color2);
+    }
+
+    .control-table {
+        width: 100%;
+        height: 40%;
+        overflow-y: auto;
+    }
+
+    .control-table>table {
+        width: 100%;
+        height: 100%;
+        color: var(--main-color1);
+        background-color: var(--main-color2);
+        text-align: center;
+        /*border: solid 1px var(--main-color1);*/
+        font-size: 2rem;
+    }
+
+    .control-table>table>tbody {
+        color: white;
+        /*border: solid 1px var(--main-color1);*/
+        font-size: 1.5rem;
+    }
+
+    .control-table>table>tbody>tr>td {
+        color: var(--main-color2);
+        background-color: white;
+        text-align: left;
+        /*border: solid 1px var(--main-color1);*/
+    }
+
+    .control-panel>button:nth-child(1) {
+        font-size: 1rem;
+        font-weight: bold;
+        color: var(--main-color1);
+        background-color: var(--main-color2);
+        border: none;
+        outline: none;
+        padding: 15px 20px;
+    }
+
+    .control-panel>button:nth-child(2) {
+        font-size: 1rem;
+        font-weight: bold;
+        color: var(--main-color1);
+        background-color: var(--main-color2);
+        border: none;
+        outline: none;
+        padding: 15px 20px;
+        margin-top: 5%;
+        display: none;
+    }
+
+    .control-panel>button:nth-child(3) {
+        font-size: 1rem;
+        font-weight: bold;
+        color: var(--main-color1);
+        background-color: var(--main-color2);
+        border: none;
+        outline: none;
+        padding: 15px 20px;
+        margin-top: 5%;
+        display: none;
+    }
+
+    #update-admin-data-table {
+        display: none;
+    }
+
+    .update-admin-input {
+        width: 95%;
+        padding-left: 10px;
+        margin-left: 2%;
+        margin-right: 2%;
+        border: none;
+        border-bottom: solid 2px var(--main-color2);
+    }
+
+    .update-admin-input:focus {
+        border: none;
+        outline: none;
+        border-bottom: solid 5px var(--main-color1);
+    }
+
+    #update-admin-data-table {
+        width: 90%;
+        margin: 1%;
+        font-weight: bold;
+        font-size: 1.2rem;
+        border: none;
+    }
+
+    .control-edit-user {
+        width: 100%;
+        height: 30%;
+        background-color: var(--main-color2);
+    }
+
+    .control-edit-user>table {
+        width: 100%;
+        height: 100%;
+        border: solid 1px white;
+    }
+
+    .control-edit-user>table>tbody>tr>th {
+        color: var(--main-color1);
+        width: 40%;
+        text-align: center;
+    }
+
+    #user-table {
+        display: none;
+    }
+
+    #update-user-data {
+        outline: none;
+        border: solid 1px var(--main-color1);
+        background-color: var(--main-color2);
+        color: var(--main-color1);
+        padding: 10px 15px;
+        font-size: 1.5rem;
+        width: 95%;
+        height: 40%;
+        margin: 1%;
+    }
+
+    #update-user-data:hover {
+        box-shadow: 0px 0px 10px var(--main-color1);
+        text-shadow: 0px 0px 10px var(--main-color1);
+    }
+
+    #cancel-update-user-data {
+        outline: none;
+        border: solid 1px var(--main-color1);
+        background-color: var(--main-color2);
+        color: var(--main-color1);
+        padding: 10px 15px;
+        font-size: 1.5rem;
+        width: 47%;
+        height: 40%;
+    }
+
+    #delete-this-user-data {
+        outline: none;
+        border: solid 1px var(--main-color1);
+        background-color: var(--main-color2);
+        color: var(--main-color1);
+        padding: 10px 15px;
+        font-size: 1.5rem;
+        width: 46%;
+        height: 40%;
+        margin: 1%;
+    }
+
+    #delete-this-user-data:hover {
+        box-shadow: 0px 0px 10px var(--main-color1);
+        text-shadow: 0px 0px 10px var(--main-color1);
+    }
+
+    #cancel-update-user-data:hover {
+        box-shadow: 0px 0px 10px var(--main-color1);
+        text-shadow: 0px 0px 10px var(--main-color1);
+    }
+
+
+    #user-table-body>tr>td>button:hover {
+        box-shadow: 0px 0px 10px var(--main-color2);
+        text-shadow: 0px 0px 10px var(--main-color2);
+        background-color: var(--main-color2);
+        color: var(--main-color1);
+    }
+
+    .thisBtnIsActive {
+        width: 100%;
+        height: 100%;
+        outline: none;
+        border: none;
+        box-shadow: 0px 0px 10px var(--main-color2);
+        text-shadow: 0px 0px 10px var(--main-color2);
+        background-color: var(--main-color2);
+        color: var(--main-color1);
+    }
+
+    .thisBtnIsActive:focus {
+        outline: none;
+        border: none;
+    }
+
+    .thisBtnIsDeActive {
+        width: 100%;
+        height: 100%;
+        outline: none;
+        border: none;
+        color: white;
+        background-color: var(--main-color2);
+
+    }
+
+    #update-password {
+        border: none;
+        outline: none;
+        padding-left: 5px;
+        border-bottom: solid 1px var(--main-color1);
+        background: none;
+        color: var(--main-color1);
+    }
+
+    #update-password:focus {
+        border: none;
+        outline: none;
+        border-bottom: solid 1px var(--main-color1);
+        box-shadow: 0px 0px 15px var(--main-color1);
+
+    }
+
+    #update-status {
+        border: none;
+        outline: none;
+        padding-left: 5px;
+        border-bottom: solid 1px var(--main-color1);
+        background: none;
+        color: var(--main-color1);
+    }
+
+    #update-status:focus {
+        border: none;
+        outline: none;
+        border-bottom: solid 1px var(--main-color1);
+        box-shadow: 0px 0px 15px var(--main-color1);
+    }
+</style>
+
+<div class="control-user">
+    <div class="control-header">
+        <h1>จัดการข้อมูลผู้ใช้</h1>
+    </div>
+    <div class="main-control">
+        <div class="control-main-user">
+            <table id="admin-data-table" style="width: 90%;margin:1%;font-weight:bold;font-size:1.2rem;">
+                <tr>
+                    <th colspan="2" id="result-stat" style="width:100;text-align: center;"></th>
+                </tr>
+                <tr id="tr-username">
+                    <th width="40%" style="text-align: center;">
+                        ชื่อผู้ใช้
+                    </th>
+                    <td id="current-username">
+                        &nbsp;&nbsp;<span id="fetch-username"></span>
+                    </td>
+                </tr>
+                <tr id="tr-password">
+                    <th style="text-align: center;">รหัสผ่าน
+                    </th>
+                    <td id="current-password">&nbsp;&nbsp;<span id="fetch-password"></span></td>
+                </tr>
+                <tr id="tr-status">
+                    <th style="text-align: center;">สถานะ</th>
+                    <td id="current-status">&nbsp;&nbsp;<span id="fetch-status"></span></td>
+                </tr>
+                <tr id="tr-login">
+                    <th style="text-align: center;">เข้าสู่ระบบล่าสุด</th>
+                    <td id="current-status">&nbsp;&nbsp;<span id="fetch-login"></span></td>
+                </tr>
+                <tr id="tr-logout">
+                    <th style="text-align: center;">ออกจากระบบล่าสุด</th>
+                    <td id="current-status">&nbsp;&nbsp;<span id="fetch-logout"></span></td>
+                </tr>
+            </table>
+            <table id="update-admin-data-table">
+                <tr>
+                    <th style="text-align: center;">รหัสผ่านปัจจุบัน</th>
+                    <td>
+                        <input class="update-admin-input" type="password" id="c_password" name="c_password"
+                            placeholder="Current Password">
+                    </td>
+                </tr>
+                <tr>
+                    <th style="text-align: center;">รหัสผ่านใหม่</th>
+                    <td>
+                        <input class="update-admin-input" type="password" id="n_password" name="n_password"
+                            placeholder="New Password">
+                    </td>
+                </tr>
+            </table>
+            <div class="control-panel">
+                <button id="edit-this-data">เปลี่ยนรหัสผ่าน</button>
+                <button id="update-this-data">อัพเดท</button>
+                <button id="cancel-this-data">ยกเลิก</button>
+            </div>
+        </div>
+        <div class="control-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ชื่อผู้ใช้</th>
+                        <th>รหัสผ่าน</th>
+                        <th>สถานะ</th>
+                        <th>จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="user-table-body">
+
+                </tbody>
+            </table>
+        </div>
+        <div class="control-edit-user">
+            <span id="control-head-text"
+                style="position:relative;width:100%;height:100%;display:flex;justify-items:center;align-items:center;left:45%">
+                <h1 style="color: gray;">กดที่ปุ่มแก้ไขข้อมูล</h1>
+            </span>
+            <table id="user-table">
+                <tr>
+                    <th>ชื่อผู้ใช้</th>
+                    <td><span id="update-username" style="color: var(--main-color1);"></span></td>
+                    <td rowspan="3">
+                        <button id="update-user-data">อัพเดท</button>
+                        <button id="delete-this-user-data">ลบผู้ใช้</button>
+                        <button id="cancel-update-user-data">ยกเลิก</button>
+                    </td>
+                </tr>
+                <tr>
+                    <th>รหัสผ่านใหม่</th>
+                    <td>
+                        <input type="password" name="" id="update-password" placeholder="New Password">
+                        <input type="hidden" name="" id="hidden-update-password">
+                    </td>
+                </tr>
+                <tr>
+                    <th>สถานะ</th>
+                    <td>
+                        <input type="text" name="" id="update-status" placeholder="Status">
+                        <!-- <select type="text" name="" id="">
+                            <option value="student">STUDENT</option>
+                            <option value="admin">ADMIN</option>
+                        </select> -->
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
